@@ -6,7 +6,6 @@
 #'
 #' @param X A matrix or data.frame of the observed responses (ordinal or binary response).
 #' @param incl_set A vector of the items (columns) number in the data.frame X that are included in the included set.
-#' @param incl_sets A matrix as a results of a \code{rbind} of \code{incl_set}.
 #' @param type The type of the score. \code{ipoqll} if we ignore the presence of the DIF and \code{ipoqlldif} if we want to consider the DIF effect.
 #' @param groups_map Matrix to map the respondents to the DIF groups.
 #' @param init_par_iq Initial values of the parameters in the included set before the estimation begin.
@@ -155,6 +154,7 @@ compute_scores_unparalleled <- function(X, itemsets, type = c("ipoqll","ipoqlldi
   return(res)
 }
 
+#' @param incl_sets A matrix as a results of a \code{rbind} of \code{incl_set}.
 #' @param cores Number of cores that is used in the paralellization.
 #'
 #' @return
