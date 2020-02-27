@@ -74,7 +74,7 @@ autoRasch_options_default <- function(){
     isPenalized_theta = TRUE,
     groups_map = c(),
     # resp.th = c()
-    optz_method = c("optim","nlminb"),
+    # optz_method = c("optim","nlminb"),
     optz_tuner = list(maxit = 2e+4, reltol = 1e-12, fnscale = 10),
     # objtype = "",
     # desc = NULL,
