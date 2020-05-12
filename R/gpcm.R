@@ -21,7 +21,7 @@
 #' In the discrimination parameters estimation, instead of estimating the discrimination parameters,
 #' we are estimating the natural logarithm of the parameters to avoid negative values, \eqn{\alpha = exp(\gamma)}.
 #'
-#' @seealso \code{\link{pcm}}, \code{\link{pcm_dif}}, \code{\link{gpcm}}, \code{\link{gpcm_dif}}
+#' @seealso \code{\link{pcm}}, \code{\link{gpcm}}
 #'
 #' @examples
 #' res <- gpcm(poly_inh_dset)
@@ -31,7 +31,7 @@
 #' @export
 gpcm <- function(X, isHessian = TRUE){
 
-  result <- pjmle(X = X, fixed_par = c("deltabeta"), isPenalized_deltabeta = FALSE, isHessian = isHessian)
+  result <- pjmle(X = X, isHessian = isHessian)
   class(result) <- c("armodels","gpcm","autoRasch")
   return(result)
 }

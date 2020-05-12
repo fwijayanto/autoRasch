@@ -19,7 +19,7 @@
 #' \item{beta}{   A vector of the difficulty parameter of each categories of items (thresholds).}
 #' \item{theta}{   A vector of the ability parameters of each individuals.}
 #'
-#' @seealso \code{\link{pcm}}, \code{\link{pcm_dif}}, \code{\link{gpcm}}, \code{\link{gpcm_dif}}
+#' @seealso \code{\link{pcm}}, \code{\link{gpcm}}
 #'
 #' @examples
 #' res <- pcm(poly_inh_dset)
@@ -30,7 +30,7 @@
 #' @export
 pcm <- function(X, isHessian = TRUE){
 
-  result <- pjmle(X = X, fixed_par = c("gamma","deltabeta"), isPenalized_gamma = FALSE, isPenalized_deltabeta = FALSE, isHessian = isHessian)
+  result <- pjmle(X = X, fixed_par = c("gamma"), isPenalized_gamma = FALSE, isHessian = isHessian)
   class(result) <- c("armodels","pcm","autoRasch")
   return(result)
 
@@ -43,7 +43,7 @@ pcm <- function(X, isHessian = TRUE){
 #'
 #' @param obj The object of class \code{'pcm'}.
 #' @param isAlpha Boolean value that indicates whether the discrimination parameters is needed to be estimated or not.
-#' The discrimination parameters are estimated using the corresponding models (GPCM or GPCM-DIF).
+#' The discrimination parameters are estimated using the corresponding models (GPCM).
 #'
 #' @return
 #' \strong{\code{fitStats()} will return a \code{\link[base:list]{list}} which contains:}
@@ -68,7 +68,7 @@ pcm <- function(X, isHessian = TRUE){
 #' pcmdif_res <- pcm_dif(polydif_inh_dset, groups_map = c(rep(1,245),rep(0,245)))
 #' fit_res <- fitStats(pcmdif_res)
 #' summary(fit_res)
-#' plot(fit_res, plotx = "gamma", ploty = "outfit")
+#' plot(fit_res, plot.x = "gamma", plot.y = "outfit")
 #'
 #' @rdname pcm
 #' @export

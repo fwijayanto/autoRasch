@@ -1,7 +1,7 @@
 
 fitStats <- function (obj, isAlpha = TRUE) {
-  if(!("pcm" %in% class(obj)) & !("pcmdif" %in% class(obj))){
-    stop("autoRasch ERROR: itemfit is only for rasch, pcm and pcmdif object.")
+  if(!("pcm" %in% class(obj))){
+    stop("autoRasch ERROR: itemfit is only for pcm.")
   }
   UseMethod("fitStats", obj)
 }

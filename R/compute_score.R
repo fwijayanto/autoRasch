@@ -22,7 +22,7 @@
 #'
 #' @rdname compute_score
 #' @export
-compute_score <- function(X, incl_set, type = c("ipoqll","ipoqlldif"), groups_map = c(),
+compute_score <- function(X, incl_set, type = c("ipoqll"), groups_map = c(),
                           init_par_iq = c(), init_par_oq = c(), optz_tuner_iq = c(), optz_tuner_oq = c(),
                           isTracked = FALSE){
 
@@ -33,13 +33,6 @@ compute_score <- function(X, incl_set, type = c("ipoqll","ipoqlldif"), groups_ma
   if(type[1] == "ipoqll"){
     fixed_par <- c("deltabeta")
     isPenalized_deltabeta <- FALSE
-  } else if(type[1] == "ipoqlldif"){
-    fixed_par <- c()
-    isPenalized_deltabeta <- TRUE
-    if(is.null(groups_map)){
-      stop("autoRasch ERROR: to use the `ipoqlldif`, `groups_map` must be provided.")
-    }
-    groups_map <- as.matrix(groups_map)
   }
 
   dset <- as.matrix(X)
@@ -49,14 +42,14 @@ compute_score <- function(X, incl_set, type = c("ipoqll","ipoqlldif"), groups_ma
     excl_resp <- dset[,-c(incl_set)]
   }
 
-  iqll <- pjmle(incl_resp, init_par = init_par_iq, fixed_par = fixed_par, isPenalized_deltabeta = isPenalized_deltabeta,
+  iqll <- pjmle(incl_resp, init_par = init_par_iq, fixed_par = fixed_par,
                 optz_tuner = optz_tuner_iq, groups_map = groups_map, isHessian = FALSE, isTracked = isTracked)
 
   if(ncol(dset) == length(incl_set)){
     loglik_oqll <- NA
   } else {
     oqll <- pjmle(excl_resp, init_par = init_par_oq, fixed_par = c("theta",fixed_par), fixed_theta = iqll$theta,
-                  isPenalized_theta = FALSE, isPenalized_deltabeta = isPenalized_deltabeta, lambda_deltabeta = 15, optz_tuner = optz_tuner_oq,
+                  isPenalized_theta = FALSE, optz_tuner = optz_tuner_oq,
                   groups_map = groups_map, isHessian = FALSE, isTracked = isTracked)
     loglik_oqll <- oqll$loglik
   }
@@ -64,27 +57,17 @@ compute_score <- function(X, incl_set, type = c("ipoqll","ipoqlldif"), groups_ma
   ipoqll <- sum(c(iqll$loglik,loglik_oqll),na.rm = TRUE)
   res <- c(iqll$loglik, loglik_oqll, ipoqll)
 
-  if(type[1] == "ipoqlldif"){
-    n_par <- sum(nrow(dset),((1+ncol(groups_map)+(max(dset,na.rm = TRUE)-min(dset,na.rm = TRUE)))*ncol(dset)))
-    iqll_params <- c(iqll$theta, iqll$beta, iqll$gamma, iqll$deltabeta)
-    if(ncol(dset) == length(incl_set)){
-      oqll_params <- NA
-    } else {
-      oqll_params <- c(oqll$beta, oqll$gamma, oqll$deltabeta)
-    }
-    length(iqll_params) <- n_par
-    length(oqll_params) <- n_par - nrow(dset)
+
+  n_par <- sum(nrow(dset),((1+(max(dset,na.rm = TRUE)-min(dset,na.rm = TRUE)))*ncol(dset)))
+  iqll_params <- c(iqll$theta, iqll$beta, iqll$gamma)
+  if(ncol(dset) == length(incl_set)){
+    oqll_params <- NA
   } else {
-    n_par <- sum(nrow(dset),((1+(max(dset,na.rm = TRUE)-min(dset,na.rm = TRUE)))*ncol(dset)))
-    iqll_params <- c(iqll$theta, iqll$beta, iqll$gamma)
-    if(ncol(dset) == length(incl_set)){
-      oqll_params <- NA
-    } else {
-      oqll_params <- c(oqll$beta, oqll$gamma)
-    }
-    length(iqll_params) <- n_par
-    length(oqll_params) <- n_par - nrow(dset)
+    oqll_params <- c(oqll$beta, oqll$gamma)
   }
+  length(iqll_params) <- n_par
+  length(oqll_params) <- n_par - nrow(dset)
+
 
   length(incl_set) <- ncol(dset)
   res <- c(res, incl_set, iqll_params, oqll_params)
@@ -92,7 +75,7 @@ compute_score <- function(X, incl_set, type = c("ipoqll","ipoqlldif"), groups_ma
   return(res)
 }
 
-compute_scores_unparalleled <- function(X, itemsets, type = c("ipoqll","ipoqlldif"), step_direct = c("fixed","forward","backward"), groups_map = c(),
+compute_scores_unparalleled <- function(X, itemsets, type = c("ipoqll"), step_direct = c("fixed","forward","backward"), groups_map = c(),
                            init_par_iq = c(), init_par_oq = c(), optz_tuner_iq = c(), optz_tuner_oq = c()){
 
 
@@ -100,14 +83,6 @@ compute_scores_unparalleled <- function(X, itemsets, type = c("ipoqll","ipoqlldi
   incl_sets <- itemsets
   if(is.vector(incl_sets) & length(incl_sets) > ncol(dset)){
     stop("autoRasch ERROR: the number of items in the incl_set can not exceed the initial items.")
-  }
-
-  if(type[1] == "ipoqlldif"){
-    if(is.null(groups_map)){
-      stop("autoRasch ERROR: to use the `ipoqlldif`, `groups_map` must be provided.")
-    }
-  } else {
-    type <- "ipoqll"
   }
 
   if(is.matrix(incl_sets) | is.null(step_direct)){
@@ -162,7 +137,7 @@ compute_scores_unparalleled <- function(X, itemsets, type = c("ipoqll","ipoqlldi
 #'
 #' @rdname compute_score
 #' @export
-compute_scores <- function(X, itemsets, type = c("ipoqll","ipoqlldif"), step_direct = c("fixed","forward","backward"), groups_map = c(),
+compute_scores <- function(X, itemsets, type = c("ipoqll"), step_direct = c("fixed","forward","backward"), groups_map = c(),
                            init_par_iq = c(), init_par_oq = c(), optz_tuner_iq = c(), optz_tuner_oq = c(), cores = NULL){
 
 

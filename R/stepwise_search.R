@@ -3,7 +3,7 @@
 #' To search itemset that give maximum value of the criterion
 #'
 #' @param X A matrix or data.frame of the observed responses (ordinal or binary response).
-#' @param criterion The criterion that should be used, either ipoqll or ipoqlldif. The default is ipoqll.
+#' @param criterion The criterion that should be used. The default is ipoqll.
 #' @param incl_set A vector of initial items in the included set to start the search. The default is to start with full items.
 #' @param groups_map A matrix or vector to map the subject to the DIFs groups.
 #' @param cores An integer value of number of cores should be used for computation. The default is 2.
@@ -26,7 +26,7 @@
 #'
 #' @rdname search
 #' @export
-stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = c(), groups_map = c(), cores = NULL,
+stepwise_search <- function(X, criterion = c("ipoqll") , incl_set = c(), groups_map = c(), cores = NULL,
                             optz_tuner_iq = c(), optz_tuner_oq = c(), isTracked = TRUE, isContinued = FALSE,
                             prevData = c(), isLegacy = FALSE, fileOutput = FALSE, tempFile = "temp_stepSearch.RData",
                             isConvert = FALSE){
@@ -51,11 +51,8 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
     optz_tuner_oq <- optz_tuner_oq
   }
 
-  if(criterion[1] == "ipoqlldif"){
-    n_par <- sum(nrow(X),((1+ncol(groups_map)+(max(X,na.rm = TRUE)-min(X,na.rm = TRUE)))*ncol(X)))
-  } else {
-    n_par <- sum(nrow(X),((1+(max(X,na.rm = TRUE)-min(X,na.rm = TRUE)))*ncol(X)))
-  }
+  n_par <- sum(nrow(X),((1+(max(X,na.rm = TRUE)-min(X,na.rm = TRUE)))*ncol(X)))
+
 
   trace <- list()
   trace[["isLegacy"]] <- isLegacy
@@ -351,25 +348,6 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
     res_search <- res_search[,1:(3+ncol(X))]
   }
 
-  if(isConvert){
-    if(criterion[1] == "ipoqll"){
-      if(!is.null(groups_map)){
-        if(isTracked){
-          cat("::: Start converting.... :::")
-          cat("\n")
-        }
-        res_search <- compute_scores(X, itemsets = res_search[,4:(3+ncol(X))], type = c("ipoqlldif"), step_direct = c("fixed"), groups_map = groups_map,
-                                   init_par_iq = c(), init_par_oq = c(), optz_tuner_iq = c(), optz_tuner_oq = c(), cores = NULL)
-        res_search <- res_search[,1:(3+ncol(X))]
-      } else {
-        "Can not convert the score, groups_map is not provided."
-      }
-    } else {
-      cat("The criterion is already IPOQ-LL-DIF.")
-      cat("\n")
-    }
-  }
-
   # If saved in file
   if(fileOutput != FALSE & !is.null(fileOutput)){
     save(res_search, file = fileOutput)
@@ -377,11 +355,6 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
     write.csv(res_search, file = namecsv)
   }
 
-  if((isConvert & !is.null(groups_map)) | criterion[1] == "ipoqlldif"){
-    class(res_search) <- c("search", "ipoqlldif", "autoRasch")
-  } else {
-    class(res_search) <- c("search", "ipoqll", "autoRasch")
-  }
 
   if("ipoqll" %in% class(obj)){
     dimnames(res_search) <- list(c(1:ncol(res_search)),c("IQ-LL","OQ-LL","IPOQ-LL",paste("V",c(1:ncol(res_search)),sep = '')))
@@ -396,7 +369,7 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
 #' search_res <- backward_search(poly_inh_dset,criterion = "ipoqll", incl_set = c(1:18), cores = 2, isLegacy = TRUE)
 #' @rdname search
 #' @export
-backward_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = c(), groups_map = c(), cores = NULL,
+backward_search <- function(X, criterion = c("ipoqll") , incl_set = c(), groups_map = c(), cores = NULL,
                             optz_tuner_iq = c(), optz_tuner_oq = c(), isTracked = TRUE, isContinued = FALSE,
                             prevData = c(), isLegacy = FALSE, fileOutput = FALSE, tempFile = "temp_backSearch.RData",
                             isConvert = FALSE){
@@ -418,11 +391,7 @@ backward_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
     optz_tuner_oq <- optz_tuner_oq
   }
 
-  if(criterion[1] == "ipoqlldif"){
-    n_par <- sum(nrow(X),((1+ncol(groups_map)+(max(X,na.rm = TRUE)-min(X,na.rm = TRUE)))*ncol(X)))
-  } else {
-    n_par <- sum(nrow(X),((1+(max(X,na.rm = TRUE)-min(X,na.rm = TRUE)))*ncol(X)))
-  }
+  n_par <- sum(nrow(X),((1+(max(X,na.rm = TRUE)-min(X,na.rm = TRUE)))*ncol(X)))
 
   trace <- list()
   trace[["isLegacy"]] <- isLegacy
@@ -555,36 +524,11 @@ backward_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
     res_search <- res_search[,1:(3+ncol(X))]
   }
 
-  if(isConvert){
-    if(criterion[1] == "ipoqll"){
-      if(!is.null(groups_map)){
-        if(isTracked){
-          cat("::: Start converting.... :::")
-          cat("\n")
-        }
-        res_search <- compute_scores(X, itemsets = res_search[,4:(3+ncol(X))], type = c("ipoqlldif"), step_direct = c("fixed"), groups_map = groups_map,
-                                     init_par_iq = c(), init_par_oq = c(), optz_tuner_iq = c(), optz_tuner_oq = c(), cores = NULL)
-        res_search <- res_search[,1:(3+ncol(X))]
-      } else {
-        "Can not convert the score, groups_map is not provided."
-      }
-    } else {
-      cat("The criterion is already IPOQ-LL-DIF.")
-      cat("\n")
-    }
-  }
-
   # If saved in file
   if(fileOutput != FALSE & !is.null(fileOutput)){
     save(res_search, file = fileOutput)
     namecsv <- paste(paste(strsplit(fileOutput, "(\\.)")[[1]][1:(length(strsplit(fileOutput, "(\\.)")[[1]])-1)],collapse = "."),".csv",sep = "")
     write.csv(res_search, file = namecsv)
-  }
-
-  if((isConvert & !is.null(groups_map)) | criterion[1] == "ipoqlldif"){
-    class(res_search) <- c("search", "ipoqlldif", "autoRasch")
-  } else {
-    class(res_search) <- c("search", "ipoqll", "autoRasch")
   }
 
   if("ipoqll" %in% class(obj)){

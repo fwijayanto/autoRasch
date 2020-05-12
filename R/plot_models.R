@@ -255,7 +255,7 @@ plot_PImap <- function(obj, th_dif = 1e-2, main = NULL, xlab = NULL, cex = NULL,
                        cex.axis = NULL, cex.main = NULL, lwd = NULL){
 
   if(!("pcmdif" %in% class(obj)) & !("pcm" %in% class(obj))){
-    stop("autoRasch ERROR: person-item map only for \"pcm\" and \"pcmdif\" object.")
+    stop("autoRasch ERROR: person-item map only for \"pcm\" object.")
   }
 
   if(is.null(th_dif)){
