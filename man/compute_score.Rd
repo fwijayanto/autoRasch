@@ -5,11 +5,11 @@
 \alias{compute_scores}
 \title{Compute the In-plus-out-of-questionnaire log likelihood (IPOQ-LL)}
 \usage{
-compute_score(X, incl_set, type = c("ipoqll", "ipoqlldif"),
-  groups_map = c(), init_par_iq = c(), init_par_oq = c(),
-  optz_tuner_iq = c(), optz_tuner_oq = c(), isTracked = FALSE)
+compute_score(X, incl_set, type = c("ipoqll"), groups_map = c(),
+  init_par_iq = c(), init_par_oq = c(), optz_tuner_iq = c(),
+  optz_tuner_oq = c(), isTracked = FALSE)
 
-compute_scores(X, itemsets, type = c("ipoqll", "ipoqlldif"),
+compute_scores(X, itemsets, type = c("ipoqll"),
   step_direct = c("fixed", "forward", "backward"), groups_map = c(),
   init_par_iq = c(), init_par_oq = c(), optz_tuner_iq = c(),
   optz_tuner_oq = c(), cores = NULL)

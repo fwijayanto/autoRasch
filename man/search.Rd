@@ -7,19 +7,17 @@
 \alias{plot.search}
 \title{Stepwise Selection Search}
 \usage{
-stepwise_search(X, criterion = c("ipoqll", "ipoqlldif"),
-  incl_set = c(), groups_map = c(), cores = NULL,
-  optz_tuner_iq = c(), optz_tuner_oq = c(), isTracked = TRUE,
-  isContinued = FALSE, prevData = c(), isLegacy = FALSE,
-  fileOutput = FALSE, tempFile = "temp_stepSearch.RData",
-  isConvert = FALSE)
+stepwise_search(X, criterion = c("ipoqll"), incl_set = c(),
+  groups_map = c(), cores = NULL, optz_tuner_iq = c(),
+  optz_tuner_oq = c(), isTracked = TRUE, isContinued = FALSE,
+  prevData = c(), isLegacy = FALSE, fileOutput = FALSE,
+  tempFile = "temp_stepSearch.RData", isConvert = FALSE)
 
-backward_search(X, criterion = c("ipoqll", "ipoqlldif"),
-  incl_set = c(), groups_map = c(), cores = NULL,
-  optz_tuner_iq = c(), optz_tuner_oq = c(), isTracked = TRUE,
-  isContinued = FALSE, prevData = c(), isLegacy = FALSE,
-  fileOutput = FALSE, tempFile = "temp_backSearch.RData",
-  isConvert = FALSE)
+backward_search(X, criterion = c("ipoqll"), incl_set = c(),
+  groups_map = c(), cores = NULL, optz_tuner_iq = c(),
+  optz_tuner_oq = c(), isTracked = TRUE, isContinued = FALSE,
+  prevData = c(), isLegacy = FALSE, fileOutput = FALSE,
+  tempFile = "temp_backSearch.RData", isConvert = FALSE)
 
 \method{summary}{search}(obj)
 
@@ -30,7 +28,7 @@ backward_search(X, criterion = c("ipoqll", "ipoqlldif"),
 \arguments{
 \item{X}{A matrix or data.frame of the observed responses (ordinal or binary response).}
 
-\item{criterion}{The criterion that should be used, either ipoqll or ipoqlldif. The default is ipoqll.}
+\item{criterion}{The criterion that should be used. The default is ipoqll.}
 
 \item{incl_set}{A vector of initial items in the included set to start the search. The default is to start with full items.}
 

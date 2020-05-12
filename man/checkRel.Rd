@@ -7,7 +7,7 @@
 checkRel(obj)
 }
 \arguments{
-\item{obj}{Object that resulted from any models estimation, e.g., \code{PCM}, \code{GPCM}, \code{PCMDIF}, and \code{GPCMDIF}.}
+\item{obj}{Object that resulted from any models estimation, e.g., \code{PCM} and \code{GPCM}.}
 }
 \value{
 A list of two objects, the reliability and the standard error.

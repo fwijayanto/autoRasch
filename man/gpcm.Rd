@@ -50,5 +50,5 @@ summary(res)
 
 }
 \seealso{
-\code{\link{pcm}}, \code{\link{pcm_dif}}, \code{\link{gpcm}}, \code{\link{gpcm_dif}}
+\code{\link{pcm}}, \code{\link{gpcm}}
 }

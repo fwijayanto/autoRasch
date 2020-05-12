@@ -25,7 +25,7 @@ The Hessian matrix is needed to compute the separation reliability.}
 \item{obj}{The object of class \code{'pcm'}.}
 
 \item{isAlpha}{Boolean value that indicates whether the discrimination parameters is needed to be estimated or not.
-The discrimination parameters are estimated using the corresponding models (GPCM or GPCM-DIF).}
+The discrimination parameters are estimated using the corresponding models (GPCM).}
 
 \item{par}{The parameter that are wanted to be summarized.}
 }
@@ -71,9 +71,9 @@ summary(res)
 pcmdif_res <- pcm_dif(polydif_inh_dset, groups_map = c(rep(1,245),rep(0,245)))
 fit_res <- fitStats(pcmdif_res)
 summary(fit_res)
-plot(fit_res, plotx = "gamma", ploty = "outfit")
+plot(fit_res, plot.x = "gamma", plot.y = "outfit")
 
 }
 \seealso{
-\code{\link{pcm}}, \code{\link{pcm_dif}}, \code{\link{gpcm}}, \code{\link{gpcm_dif}}
+\code{\link{pcm}}, \code{\link{gpcm}}
 }
