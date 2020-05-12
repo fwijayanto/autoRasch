@@ -6,7 +6,6 @@ Authors@R:
 Author:
 Maintainer:
 Depends: R (>= 3.1.0)
-
 Suggests: 
     knitr,
     rmarkdown
