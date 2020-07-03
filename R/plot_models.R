@@ -230,9 +230,7 @@ emat_compute <- function(obj, theta.lim = c(-10,10)){
 #'
 #' This function maps the distribution of the persons' abilities and the items difficulties along the latent continuum.
 #'
-#' @param obj The object of class \code{'pcm'} or \code{'pcmdif'}.
-#' @param th_dif The threshold of DIF parameters value that considered as a DIF.
-#' Items with DIF parameter Value higher than threshold will be split.
+#' @param obj The object of class \code{'pcm'}.
 #' @param main main title of the plot; see \code{\link[graphics:plot.default]{plot.default()}}.
 #' @param xlab Label for the x-axis; see \code{\link[graphics:plot.default]{plot.default()}}.
 #' @param cex A numerical value giving the amount by which plotting text and symbols should be magnified relative to the default;
@@ -251,16 +249,14 @@ emat_compute <- function(obj, theta.lim = c(-10,10)){
 #' plot_PImap(res)
 #'
 #' @export
-plot_PImap <- function(obj, th_dif = 1e-2, main = NULL, xlab = NULL, cex = NULL, cex.lab = NULL,
+plot_PImap <- function(obj, main = NULL, xlab = NULL, cex = NULL, cex.lab = NULL,
                        cex.axis = NULL, cex.main = NULL, lwd = NULL){
 
-  if(!("pcmdif" %in% class(obj)) & !("pcm" %in% class(obj))){
+  if(!("pcm" %in% class(obj))){
     stop("autoRasch ERROR: person-item map only for \"pcm\" object.")
   }
 
-  if(is.null(th_dif)){
-    th_dif <- 1e-2
-  }
+
   par(mar = c(0, 1, 3, 0), oma = c(0, 0,0, 0))
   layout(matrix(c(1,2,3,4), 2, 2, byrow = TRUE), widths=c(9,1), heights=c(1,3))
 
@@ -269,21 +265,10 @@ plot_PImap <- function(obj, th_dif = 1e-2, main = NULL, xlab = NULL, cex = NULL,
   beta_mat <- as.data.frame(round(beta_mat,4), row.names = obj$itemName)
   colnames(beta_mat) <- paste("Th_",c(1:max(obj$mt_vek)),sep = "")
 
-  if("pcmdif" %in% class(obj)){
-    deltabeta_mat <- matrix(obj$deltabeta, ncol = ncol(obj$groups_map))
-    for(i in 1:ncol(obj$groups_map)){
-      idx <- which(deltabeta_mat[,i] > th_dif)
-      for(j in idx){
-        tempName <- paste(rownames(beta_mat)[j],"_",letters[i],sep = "")
-        tempItem <- beta_mat[j,] + deltabeta_mat[j,i]
-        beta_mat[nrow(beta_mat)+1,] <- tempItem
-        rownames(beta_mat)[nrow(beta_mat)] <- tempName
-      }
-    }
-  }
-
   beta_mat[["Item Loc."]] <- round(apply(beta_mat,1,mean,na.rm=TRUE),4)
-  beta_mat$` ` <- apply(beta_mat[,1:max(obj$mt_vek)],1,function(x){if(is.unsorted(na.omit(x))){return("*")}else{return("")}})
+  if(max(obj$mt_vek) > 1){
+    beta_mat$` ` <- apply(beta_mat[,1:max(obj$mt_vek)],1,function(x){if(is.unsorted(na.omit(x))){return("*")}else{return("")}})
+  }
   beta_mat <- beta_mat[order(as.numeric(beta_mat[,(max(obj$mt_vek,na.rm = TRUE)+1)]),decreasing = TRUE),]
 
   x_minbound <- ceiling(min(c(as.vector(obj$theta),as.vector(reported_beta)),na.rm = TRUE) - 1)
@@ -319,20 +304,28 @@ plot_PImap <- function(obj, th_dif = 1e-2, main = NULL, xlab = NULL, cex = NULL,
   par(mar = c(5, 1, 0, 0))
   plot(c(1:1),c(1:1),xlim = c(x_minbound,x_maxbound) ,ylim = c(0,nrow(beta_mat)+1), type = "n", yaxt='n', main = "", xlab = xlab, ylab = "", cex.lab = cex.lab, cex.axis = cex.axis)
   for(i in 1:nrow(beta_mat)){
-    if(beta_mat[i,(max(obj$mt_vek,na.rm = TRUE)+2)] == "*"){
-      col <- "red"
+    if(max(obj$mt_vek) > 1){
+      if(beta_mat[i,(max(obj$mt_vek,na.rm = TRUE)+2)] == "*"){
+        col <- "red"
+      } else {
+        col <- "black"
+      }
     } else {
       col <- "black"
     }
-    points(c(beta_mat[i,1:max(obj$mt_vek,na.rm = TRUE)]), rep(i,4),type = "b", bg = col, col = col, fg = col, pch = 16, lwd = lwd)
+    points(c(beta_mat[i,1:max(obj$mt_vek,na.rm = TRUE)]), rep(i,max(obj$mt_vek,na.rm = TRUE)),type = "b", bg = col, col = col, fg = col, pch = 16, lwd = lwd)
     points(beta_mat[i,(max(obj$mt_vek,na.rm = TRUE)+1)], c(i), type = "p", pch=22, bg = col, col = col, fg = col)
     text(c(beta_mat[i,1:max(obj$mt_vek,na.rm = TRUE)]), rep(i-0.5,4), labels = c(1:max(obj$mt_vek,na.rm = TRUE)), adj = c(0.5,NA), col = col, cex = (0.7*cex))
   }
   par(mar = c(5, 0, 0, 1))
   plot(c(1:1),c(1:1),xlim = c(0,10),ylim = c(0,nrow(beta_mat)+1), type = "n", yaxt='n', xaxt = 'n', main = "", xlab = "", ylab = "", bty = "n")
   for(i in 1:nrow(beta_mat)){
-    if(beta_mat[i,(max(obj$mt_vek,na.rm = TRUE)+2)] == "*"){
-      col <- "red"
+    if(max(obj$mt_vek) > 1){
+      if(beta_mat[i,(max(obj$mt_vek,na.rm = TRUE)+2)] == "*"){
+        col <- "red"
+      } else {
+        col <- "black"
+      }
     } else {
       col <- "black"
     }

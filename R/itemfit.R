@@ -1,7 +1,10 @@
+#' FIt statistics
 
-fitStats <- function (obj, isAlpha = TRUE) {
-  if(!("pcm" %in% class(obj))){
-    stop("autoRasch ERROR: itemfit is only for pcm.")
+#' @rdname fit
+#' @export
+fitStats <- function (obj, isAlpha = TRUE, isTraced = FALSE) {
+  if(!("pcm" %in% class(obj)) & !("pcmdif" %in% class(obj))){
+    stop("autoRasch ERROR: itemfit is only for rasch and pcm object.")
   }
   UseMethod("fitStats", obj)
 }

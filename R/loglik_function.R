@@ -106,7 +106,7 @@ par_map <- function(nlmPar, estPar_arr, estLength_array, fixValue, fixed_par, fi
 ##########################################################################################
 
 loglik_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_deltabeta, lambda_deltagamma = 1e+6, eps = 0,
-                       estPar_arr, fixLength_arr, estLength_array, allcat, n_th, XN, XNA, groups_map, mt_vek, fixed_par, fixValue,
+                       estPar_arr, fixLength_arr, estLength_array, allcat, n_th, XN, XNA, XREAL, groups_map, mt_vek, fixed_par, fixValue,
                        isPenalized_gamma, isPenalized_theta, isPenalized_deltabeta, tracked){
 
 
@@ -146,7 +146,7 @@ loglik_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda
   disc_diff <- disc_diff * exp_deltagamma_tot_rep
 
   ### map the corresponding NA value of the dataset to the matrix
-  disc_diff <- XNA * disc_diff
+  disc_diff <- XNA * disc_diff #  * XREAL
 
   ### compute the first part of the log-likelihood (simple addition part)
   l1 <- sum((XN * disc_diff), na.rm = TRUE)
@@ -208,8 +208,8 @@ loglik_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda
 
 #rasch.gpcm.dif3.grad <- function(nlmPar,dset = c(),zeroIdx = c(), lambda_theta, lambda_in, lambda_out, lambda_deltabeta, lambda_deltagamma, eps, estPar_arr = c(), fixLength_arr = c(), estLength_array = c(), allcat = c(), n_th = c(), idx.1st.cat = c(), XN = c(), XNA = c(), groups_map = c(), mt_vek = c(),fixed_par = c(),fixValue = c(), isPenalized_gamma = TRUE, isPenalized_theta = TRUE,tracked = TRUE, isPenalized_deltabeta = TRUE){
 grad_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_deltabeta, lambda_deltagamma = 1e+6, eps = 0,
-                         estPar_arr, fixLength_arr, estLength_array, allcat, n_th, XN, XNA, groups_map, mt_vek, fixed_par, fixValue,
-                         isPenalized_gamma, isPenalized_theta, isPenalized_deltabeta, tracked){
+                     estPar_arr, fixLength_arr, estLength_array, allcat, n_th, XN, XNA, XREAL, groups_map, mt_vek, fixed_par, fixValue,
+                     isPenalized_gamma, isPenalized_theta, isPenalized_deltabeta, tracked){
 
   lambda_theta <- lambda_theta*2
   lambda_in <- lambda_in*2
@@ -249,7 +249,7 @@ grad_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_d
   disc_diff <- t_diff * total_alpha_mat
   # disc_diff <- t_diff * exp_gamma
   # disc_diff <- disc_diff * exp_deltagamma_tot_rep
-  disc_diff <- XNA * disc_diff
+  disc_diff <- XNA * disc_diff #* XREAL
 
   ##### first part of gradient ###
 
@@ -449,7 +449,7 @@ grad_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_d
   # if(!is.null(zeroIdx)){
   #   grad_tot <- output[-c(zeroIdx)]
   # } else {
-    grad_tot <- output
+  grad_tot <- output
   # }
 
   return(-grad_tot)
@@ -570,7 +570,6 @@ GPCMDIF_LL <- function(dset = c(), fixValue.theta, fixValue.beta, fixValue.gamma
   } else if(isPenalized_theta){
     lnL <- st1st2[1] - st1st2[2] - (lambda_theta*(sum(theta^2)))- (lambda_deltabeta*(sum(abs(deltabeta)^(1+eps))))- (lambda_deltagamma*(sum(abs(deltagamma)^(1+eps))))
   } else {
-    print("in")
     lnL <- st1st2[1] - st1st2[2]
   }
 

@@ -4,15 +4,11 @@
 \alias{plot_PImap}
 \title{Plot The Person-Item Map}
 \usage{
-plot_PImap(obj, th_dif = 0.01, main = NULL, xlab = NULL,
-  cex = NULL, cex.lab = NULL, cex.axis = NULL, cex.main = NULL,
-  lwd = NULL)
+plot_PImap(obj, main = NULL, xlab = NULL, cex = NULL,
+  cex.lab = NULL, cex.axis = NULL, cex.main = NULL, lwd = NULL)
 }
 \arguments{
-\item{obj}{The object of class \code{'pcm'} or \code{'pcmdif'}.}
-
-\item{th_dif}{The threshold of DIF parameters value that considered as a DIF.
-Items with DIF parameter Value higher than threshold will be split.}
+\item{obj}{The object of class \code{'pcm'}.}
 
 \item{main}{main title of the plot; see \code{\link[graphics:plot.default]{plot.default()}}.}
 

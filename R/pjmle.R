@@ -8,20 +8,12 @@
 
 # jml.gpcm.dif3.est <- function(X, opts$fixed_par = c(), opts$fixed_theta = c(), opts$fixed_beta = c(), opts$fixed_gamma = c(), opts$fixed_deltabeta = c(), gamma_penalized = TRUE, deltabeta_penalized = TRUE, theta_penalized = TRUE, resp.info = c(), resp.th = c(0), opt.method = c("nlminb"), plot.ll = FALSE, opt.tuner = list(iter.max = 20000, eval.max = 30000, rel.tol = 1e-10, step.max = 0.000001), opt.plot = list(), psi = 0.0078, max.iter = 150, objtype = "", desc = NULL,THETA.PCOEFF = 0.05, GAMMA.PCOEFF = 50, SMALLGAMMA.COEFF = 0.000005, DELTABETA.PCOEFF = 10000, DELTAGAMMA.PCOEFF = 10000, eps = 0.0, random.init = FALSE, random.init.th = 1e-2, init.par = c(), hessian = FALSE,tracked = TRUE){
 
+#' @export
 pjmle <- function(X, init_par = c(), ...){
 
   dset <- as.data.frame(X)                          ### makes sure that the dataset has a matrix format
 
   dotdotdot <- list(...)
-
-  # print(length(dotdotdot))
-  # print(length(dotdotdot[[1]]))
-  #
-  # if((length(dotdotdot) == 1 & length(dotdotdot[[1]]) == 1) | length(dotdotdot) > 1){
-  #   dotdotdot <- dotdotdot
-  # } else {
-  #   dotdotdot <- dotdotdot[[1]]
-  # }
 
   opts_default <- autoRaschOptions()
 
@@ -30,35 +22,21 @@ pjmle <- function(X, init_par = c(), ...){
   for (i in opt_names) {
     if(!is.null(dotdotdot[[i]])){
       opts[[i]] <- dotdotdot[[i]]
-      # print(i)
     }
   }
-  opts[["fixed_par"]] <- c(opts[["fixed_par"]], "deltabeta")
   opts[["fixed_par"]] <- c(opts[["fixed_par"]], "deltagamma")
 
-  # THETA.PCOEFF <- THETA.PCOEFF
-  # GAMMA.PCOEFF <- GAMMA.PCOEFF
-  # SMALLGAMMA.COEFF <- SMALLGAMMA.COEFF
-  # DELTABETA.PCOEFF <- DELTABETA.PCOEFF
-  # DELTAGAMMA.PCOEFF <- DELTAGAMMA.PCOEFF
-  # eps <- eps
 
   dataPrep <- data_prep(dset = dset, fixed_par = opts$fixed_par, groups_map = opts$groups_map)
 
   ### Intializing the parameters ###
-  # if(random.init){
-  #   theta <- runif(nrow(dataPrep$dset),-1,1)*random.init.th
-  #   beta <- runif(allcat,-1,1)*random.init.th
-  #   gamma <- runif(ncol(dataPrep$dset),-1,1)*random.init.th
-  #   deltabeta <- runif((ncol(dataPrep$dset)*ncol(dataPrep$groups_map)),-1,1)*random.init.th
-  #   deltagamma <- runif((ncol(dataPrep$dset)*ncol(dataPrep$groups_map)),-1,1)*random.init.th
-  # } else {
-    theta <- rep(0,nrow(dataPrep$dset))
-    beta <- rep(0,dataPrep$allcat)
-    gamma <- rep(0,ncol(dataPrep$dset)) #gpcm uses different gamma for each item
-    deltabeta <- rep(0,(ncol(dataPrep$dset)*ncol(dataPrep$groups_map)))
-    deltagamma <- rep(0,(ncol(dataPrep$dset)*ncol(dataPrep$groups_map)))
-  # }
+  #
+  theta <- rep(0,nrow(dataPrep$dset))
+  beta <- rep(0,dataPrep$allcat)
+  gamma <- rep(0,ncol(dataPrep$dset)) #gpcm uses different gamma for each item
+  deltabeta <- rep(0,(ncol(dataPrep$dset)*ncol(dataPrep$groups_map)))
+  deltagamma <- rep(0,(ncol(dataPrep$dset)*ncol(dataPrep$groups_map)))
+  #
 
 
   ### setting the optimized parameter
@@ -103,7 +81,7 @@ pjmle <- function(X, init_par = c(), ...){
       } else {
         fixValue <- c(rep(0,ncol(dset)), rep(0,(ncol(dset)*ncol(dataPrep$groups_map))), fixValue)
       }
-   } else {
+    } else {
       nlmPar <- nlmPar[-c((sum(length_array[1:2])+1):(sum(length_array[1:3])))]
       estLength_array <- estLength_array[-c(3)]
       if(!is.null(opts$fixed_gamma)){
@@ -128,42 +106,35 @@ pjmle <- function(X, init_par = c(), ...){
     nlmPar <- init_par
   }
 
-  # fixValue <- fixValue
-
   ### Maximizing the loglikelihood function ###
   print("Starting to estimate...")
   nameCol <- colnames(as.data.frame(X))
-  output <- list("X" = X, "mt_vek" = dataPrep$mt_vek, "real_vek" = dataPrep$na_catVec, "itemName" = nameCol)
+  output <- list("X" = X, "mt_vek" = dataPrep$mt_vek, "real_vek" = dataPrep$na_catVec, "itemName" = nameCol,
+                 "penalty.coeff" = list("lambda_theta" = opts$lambda_theta,"lambda_in" = opts$lambda_in,
+                                        "lambda_out" = opts$lambda_out,"lambda_deltabeta" = opts$lambda_deltabeta))
+
   if(!is.null(dotdotdot$groups_map)){
     output[["groups_map"]] <- dataPrep$groups_map
   }
-  # if(opt.method == "nlminb"){
-  #   time.v <- system.time(minRes <- nlminb(nlmPar, rasch.gpcm.dif3.ll, gradient = rasch.gpcm.dif3.grad, dset = dset, THETA.PCOEFF = THETA.PCOEFF, GAMMA.PCOEFF = GAMMA.PCOEFF, SMALLGAMMA.COEFF = SMALLGAMMA.COEFF, DELTABETA.PCOEFF = DELTABETA.PCOEFF, DELTAGAMMA.PCOEFF = DELTAGAMMA.PCOEFF, eps = eps, estPar_arr = estPar_arr, estLength_array = estLength_array, fixLength_arr = fixLength_arr, allcat = allcat, n_th = n_th, idx.1st.cat = idx.1st.cat, XN = XN, XNA = XNA, groupMap = groupMap, mt_vek = mt_vek, opts$fixed_par = opts$fixed_par, fixVal = fixValue, gamma_penalized = gamma_penalized, theta_penalized = theta_penalized, control = opt.tuner))
-  #   est <- minRes$par
-  #   obj <- minRes$objective
-  #   iter <- minRes$iterations
-  #   conv <- 0
-  #   counts <- 0
-  #   output[["loglik"]] <- -obj
-  # } else if(opt.method == "optim"){
-    time.v <- system.time(minRes <- optim(nlmPar, loglik_fun, gr = grad_fun, hessian = opts$isHessian, dset = dataPrep$dset,
-                                          lambda_theta = opts$lambda_theta, lambda_in = opts$lambda_in,lambda_out = opts$lambda_out,
-                                          lambda_deltabeta = opts$lambda_deltabeta, estPar_arr = estPar_arr, estLength_array = estLength_array,
-                                          fixLength_arr = fixLength_arr, allcat = dataPrep$allcat, n_th = dataPrep$n_th, XN = dataPrep$XN, XNA = dataPrep$XNA,
-                                          groups_map = dataPrep$groups_map, mt_vek = dataPrep$mt_vek, fixed_par = opts$fixed_par, fixValue = fixValue,
-                                          isPenalized_gamma = opts$isPenalized_gamma, isPenalized_theta = opts$isPenalized_theta,
-                                          isPenalized_deltabeta = FALSE, method = "BFGS", control = opts$optz_tuner, tracked =  opts$isTracked))
 
-    est <- minRes$par
-    obj <- minRes$value
-    iter <- minRes$iterations
-    conv <- minRes$convergence
-    counts <- minRes$counts
-    output[["loglik"]] <- -obj
-    if(opts$isHessian){
-      output[["hessian"]] <- minRes$hessian
-    }
-  # }
+  time.v <- system.time(minRes <- optim(nlmPar, loglik_fun, gr = grad_fun, hessian = opts$isHessian, dset = dataPrep$dset,
+                                        lambda_theta = opts$lambda_theta, lambda_in = opts$lambda_in,lambda_out = opts$lambda_out,
+                                        lambda_deltabeta = opts$lambda_deltabeta, estPar_arr = estPar_arr, estLength_array = estLength_array,
+                                        fixLength_arr = fixLength_arr, allcat = dataPrep$allcat, n_th = dataPrep$n_th, XN = dataPrep$XN, XNA = dataPrep$XNA, #XREAL = dataPrep$XREAL,
+                                        groups_map = dataPrep$groups_map, mt_vek = dataPrep$mt_vek, fixed_par = opts$fixed_par, fixValue = fixValue,
+                                        isPenalized_gamma = opts$isPenalized_gamma, isPenalized_theta = opts$isPenalized_theta,
+                                        isPenalized_deltabeta = opts$isPenalized_deltabeta, method = "BFGS", control = opts$optz_tuner, tracked =  opts$isTracked))
+
+  est <- minRes$par
+  obj <- minRes$value
+  iter <- minRes$iterations
+  conv <- minRes$convergence
+  counts <- minRes$counts
+  output[["loglik"]] <- -obj
+  if(opts$isHessian){
+    output[["hessian"]] <- minRes$hessian
+  }
+
   print("...done!")
 
   ### Mapping for the output
@@ -272,13 +243,13 @@ data_prep <- function(dset, fixed_par, groups_map){
   }
   xn.mat[full.idx] <- NA
   xna.mat[full.idx] <- NA
+
   XN <- as.vector(t(xn.mat))
   XNA <- as.vector(t(xna.mat))
   ### end of xn.mat and xna.mat creation
 
-  ret <- list("dset" = dset, "mt_vek" = mt_vek, "groups_map" = groups_map, "n_th" = n_th, "na_catVec" = na_catVec, "allcat" = allcat, "XN" = XN, "XNA" = XNA)
+  ret <- list("dset" = dset, "mt_vek" = mt_vek, "groups_map" = groups_map, "n_th" = n_th, "na_catVec" = na_catVec, "allcat" = allcat, "XN" = XN, "XNA" = XNA)#,"XREAL" = XREAL)
 
   return(ret)
 
 }
-

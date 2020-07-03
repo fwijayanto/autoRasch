@@ -2,7 +2,7 @@
 #'
 #' This function computes the reliability index, separation and the standard error of the models estimation.
 #'
-#' @param obj Object that resulted from any models estimation, e.g., \code{PCM} and \code{GPCM}.
+#' @param obj Object that resulted from any models estimation, e.g., \code{PCM}, \code{GPCM}, \code{PCMDIF}, and \code{GPCMDIF}.
 #'
 #' @return
 #' A list of two objects, the reliability and the standard error.
@@ -38,24 +38,30 @@
 #' @export
 checkRel <- function(obj){
 
+  if(length(which(is.na(obj$real_vek))) != 0){
+    rem.idx <- length(obj$theta)+which(is.na(obj$real_vek))
+
+    obj$hessian <- obj$hessian[-c(rem.idx),-c(rem.idx)]
+  }
+
   if(is.null(obj$hessian)){
     stop("autoRasch ERROR: the separation reliability and standard error can not be computed without Hessian matrix.")
   }
 
   rmseroor <- stdError(obj)
 
-  rmse <- rmseroor$rmse_pers
+  rmse <- rmseroor$rmsse_pers
   p_var <- var(obj$theta)
   true_pvar <- p_var - (rmse^2)
   true_psd <- sqrt(true_pvar)
   p_sep_coeff <- true_psd/rmse
   p_rel_idx <- (p_sep_coeff^2)/(1+(p_sep_coeff^2))
 
-  rmse_item <- rmseroor$rmse_item
+  rmse_item <- rmseroor$rmsse_item
   i_var <- var(obj$beta)
   true_ivar <- i_var - (rmse_item^2)
   true_isd <- sqrt(true_ivar)
-  i_sep_coeff <- true_isd/rmse
+  i_sep_coeff <- true_isd/rmse_item
   i_rel_idx <- (i_sep_coeff^2)/(1+(i_sep_coeff^2))
 
   result <- list("reliability" = list("PRI" = p_sep_coeff, "PSR" = p_rel_idx, "IRI" = i_sep_coeff, "ISR" = i_rel_idx), "stdError" = rmseroor)
@@ -69,7 +75,7 @@ stdError <- function(obj){
   varerr_p <- (diag(solve(hess_theta)))
   stderr_p <- sqrt(varerr_p)
   rmse_p <- sqrt(mean(varerr_p))
-  hess_beta <- obj$hessian[(length(obj$theta)+1):(length(obj$theta)+length(obj$beta)),(length(obj$theta)+1):(length(obj$theta)+length(obj$beta))]
+  hess_beta <- obj$hessian[(length(obj$theta)+1):(length(obj$theta)+length(which(!is.na(obj$real_vek)))),(length(obj$theta)+1):(length(obj$theta)+length(which(!is.na(obj$real_vek))))]
   varerr_i <- (diag(solve(hess_beta)))
   stderr_i <- sqrt(varerr_i)
   rmse_i <- sqrt(mean(varerr_i))

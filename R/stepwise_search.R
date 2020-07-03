@@ -82,7 +82,7 @@ stepwise_search <- function(X, criterion = c("ipoqll") , incl_set = c(), groups_
       trace[["next_step"]] <- "forward"
 
 
-      if(isLegacy & (i+1) != length(fullitem)){
+      if(isLegacy & (i+3) < length(fullitem)){
         init_par_iq <- c(na.omit(scoreMat[i,c((3+ncol(X)+1):(3+ncol(X)+n_par))]))
         init_par_oq <- c(na.omit(scoreMat[i,c((3+ncol(X)+n_par+1):(3+ncol(X)+n_par+(n_par-nrow(X))))]))
       } else {
@@ -126,7 +126,7 @@ stepwise_search <- function(X, criterion = c("ipoqll") , incl_set = c(), groups_
         write.csv(scoreMat, file = namecsv)
 
 
-        if(isLegacy & (i+1) != length(fullitem)){
+        if(isLegacy & (i+3) < length(fullitem)){
           init_par_iq <- c(na.omit(scoreMat[i,c((3+ncol(X)+1):(3+ncol(X)+n_par))]))
           init_par_oq <- c(na.omit(scoreMat[i,c((3+ncol(X)+n_par+1):(3+ncol(X)+n_par+(n_par-nrow(X))))]))
         } else {
@@ -196,7 +196,7 @@ stepwise_search <- function(X, criterion = c("ipoqll") , incl_set = c(), groups_
 
     #### Begin backward ####
 
-    if(isLegacy & (i+1) < length(fullitem)){
+    if(isLegacy & (i+3) < length(fullitem)){
       init_par_iq <- c(na.omit(scoreMat[i+1,c((3+ncol(X)+1):(3+ncol(X)+n_par))]))
       init_par_oq <- c(na.omit(scoreMat[i+1,c((3+ncol(X)+n_par+1):(3+ncol(X)+n_par+(n_par-nrow(X))))]))
     } else {
@@ -245,7 +245,7 @@ stepwise_search <- function(X, criterion = c("ipoqll") , incl_set = c(), groups_
 
         trace[["next_step"]] <- "forward"
 
-        if(isLegacy & (i+1) < length(fullitem)){
+        if(isLegacy & (i+3) < length(fullitem)){
           init_par_iq <- c(na.omit(scoreMat[i,c((3+ncol(X)+1):(3+ncol(X)+n_par))]))
           init_par_oq <- c(na.omit(scoreMat[i,c((3+ncol(X)+n_par+1):(3+ncol(X)+n_par+(n_par-nrow(X))))]))
         } else {
@@ -287,7 +287,7 @@ stepwise_search <- function(X, criterion = c("ipoqll") , incl_set = c(), groups_
             cat("\n")
           }
 
-          if(isLegacy & (i+1) < length(fullitem)){
+          if(isLegacy & (i+3) < length(fullitem)){
             init_par_iq <- c(na.omit(scoreMat[i,c((3+ncol(X)+1):(3+ncol(X)+n_par))]))
             init_par_oq <- c(na.omit(scoreMat[i,c((3+ncol(X)+n_par+1):(3+ncol(X)+n_par+(n_par-nrow(X))))]))
           } else {
@@ -350,17 +350,12 @@ stepwise_search <- function(X, criterion = c("ipoqll") , incl_set = c(), groups_
 
   # If saved in file
   if(fileOutput != FALSE & !is.null(fileOutput)){
-    save(res_search, file = fileOutput)
-    namecsv <- paste(paste(strsplit(fileOutput, "(\\.)")[[1]][1:(length(strsplit(fileOutput, "(\\.)")[[1]])-1)],collapse = "."),".csv",sep = "")
+    save(res_search, file = tempFile)
+    namecsv <- paste(paste(strsplit(tempFile, "(\\.)")[[1]][1:(length(strsplit(tempFile, "(\\.)")[[1]])-1)],collapse = "."),".csv",sep = "")
     write.csv(res_search, file = namecsv)
   }
 
 
-  if("ipoqll" %in% class(obj)){
-    dimnames(res_search) <- list(c(1:ncol(res_search)),c("IQ-LL","OQ-LL","IPOQ-LL",paste("V",c(1:ncol(res_search)),sep = '')))
-  } else if("ipoqlldif" %in% class(obj)){
-    dimnames(res_search) <- list(c(1:ncol(res_search)),c("IQ-LL-DIF","OQ-LL-DIF","IPOQ-LL-DIF",paste("V",c(1:ncol(res_search)),sep = '')))
-  }
   return(res_search)
 
 }
@@ -445,7 +440,7 @@ backward_search <- function(X, criterion = c("ipoqll") , incl_set = c(), groups_
 
     #### Begin backward ####
 
-    if(isLegacy & (i+1) < length(fullitem)){
+    if(isLegacy & (i+3) < length(fullitem)){
       init_par_iq <- c(na.omit(scoreMat[i+1,c((3+ncol(X)+1):(3+ncol(X)+n_par))]))
       init_par_oq <- c(na.omit(scoreMat[i+1,c((3+ncol(X)+n_par+1):(3+ncol(X)+n_par+(n_par-nrow(X))))]))
     } else {
@@ -526,16 +521,11 @@ backward_search <- function(X, criterion = c("ipoqll") , incl_set = c(), groups_
 
   # If saved in file
   if(fileOutput != FALSE & !is.null(fileOutput)){
-    save(res_search, file = fileOutput)
-    namecsv <- paste(paste(strsplit(fileOutput, "(\\.)")[[1]][1:(length(strsplit(fileOutput, "(\\.)")[[1]])-1)],collapse = "."),".csv",sep = "")
+    save(res_search, file = tempFile)
+    namecsv <- paste(paste(strsplit(tempFile, "(\\.)")[[1]][1:(length(strsplit(tempFile, "(\\.)")[[1]])-1)],collapse = "."),".csv",sep = "")
     write.csv(res_search, file = namecsv)
   }
 
-  if("ipoqll" %in% class(obj)){
-    dimnames(res_search) <- list(c(1:ncol(res_search)),c("IQ-LL","OQ-LL","IPOQ-LL",paste("V",c(1:ncol(res_search)),sep = '')))
-  } else if("ipoqlldif" %in% class(obj)){
-    dimnames(res_search) <- list(c(1:ncol(res_search)),c("IQ-LL-DIF","OQ-LL-DIF","IPOQ-LL-DIF",paste("V",c(1:ncol(res_search)),sep = '')))
-  }
   return(res_search)
 
 }
