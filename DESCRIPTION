@@ -2,17 +2,13 @@ Package: autoRasch
 Version: 0.1.0
 Date: 2020-05-13
 Title: Semi-Automated Rasch Analysis
-Authors@R:
-Author: 
-Maintainer: Maint Developer <Maint.Developer@some.domain.net>
+Authors@R: c(person("Wijayanto", "Feri", email = "f.wijayanto@cs.ru.nl", role = c("aut", "cre")))
 Depends: R (>= 3.1.0)
 Suggests: 
     knitr,
     rmarkdown
 Description: This package helps user to do a semi-automated Rasch analysis with a capability to perfect the analysis by a standard Rasch analysis using its common statistics.
-License: What license is it under?
-URL: 
-BugReports: 
+License:  Creative Commons CC0 1.0 Universal
 VignetteBuilder: knitr
 Type: Package
 Encoding: UTF-8
