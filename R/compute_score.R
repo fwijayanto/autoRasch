@@ -101,7 +101,7 @@ compute_scores_unparalleled <- function(X, itemsets, type = c("ipoqll"), step_di
   incl_sets <- as.matrix(incl_sets)
 
 
-  scoreList <- foreach(i=1:nrow(incl_sets), .combine = rbind, .errorhandling = "stop", .packages = c("oRm"), .export = c()) %dopar% {
+  scoreList <- foreach(i=1:nrow(incl_sets), .combine = rbind, .errorhandling = "remove", .packages = c("autoRasch"), .export = c()) %dopar% {
 
     incl_set <- incl_sets[i,]
     incl_set <- incl_set[!is.na(incl_set)]
