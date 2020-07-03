@@ -125,7 +125,7 @@ compute_scores_unparalleled <- function(X, itemsets, type = c("ipoqll"), step_di
   }
 
   res <- scoreList
-  class(res) <- c(paste(type,"s",sep = ""))
+  # class(res) <- c(paste(type,"s",sep = ""))
   return(res)
 }
 
