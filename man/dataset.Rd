@@ -1,7 +1,7 @@
 <<<<<<< HEAD
-\name{dataset}
-\alias{dataset}
-\title{The Simulated Dataset}
+\name{autoRasch_datasets}
+\alias{autoRasch_datasets}
+\title{The autoRasch's Simulated Datasets}
 \description{
   The artificial datasets used for simulation on various cases. The datasets consist of:
   \itemize{
