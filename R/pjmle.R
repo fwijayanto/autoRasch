@@ -24,7 +24,7 @@ pjmle <- function(X, init_par = c(), ...){
       opts[[i]] <- dotdotdot[[i]]
     }
   }
-  opts[["fixed_par"]] <- c(opts[["fixed_par"]], "deltabeta", "deltagamma")
+  opts[["fixed_par"]] <- c(opts[["fixed_par"]], "deltagamma")
   opts[["isPenalized_deltabeta"]] <- FALSE
 
   dataPrep <- data_prep(dset = dset, fixed_par = opts$fixed_par, groups_map = opts$groups_map)
