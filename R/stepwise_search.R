@@ -196,7 +196,7 @@ stepwise_search <- function(X, criterion = c("ipoqll") , incl_set = c(), groups_
 
     #### Begin backward ####
 
-    if(isLegacy & (i+3) < length(fullitem)){
+    if(isLegacy & (i+1) < length(fullitem)){
       init_par_iq <- c(na.omit(scoreMat[i+1,c((3+ncol(X)+1):(3+ncol(X)+n_par))]))
       init_par_oq <- c(na.omit(scoreMat[i+1,c((3+ncol(X)+n_par+1):(3+ncol(X)+n_par+(n_par-nrow(X))))]))
     } else {
@@ -245,7 +245,7 @@ stepwise_search <- function(X, criterion = c("ipoqll") , incl_set = c(), groups_
 
         trace[["next_step"]] <- "forward"
 
-        if(isLegacy & (i+3) < length(fullitem)){
+        if(isLegacy & (i+1) < length(fullitem)){
           init_par_iq <- c(na.omit(scoreMat[i,c((3+ncol(X)+1):(3+ncol(X)+n_par))]))
           init_par_oq <- c(na.omit(scoreMat[i,c((3+ncol(X)+n_par+1):(3+ncol(X)+n_par+(n_par-nrow(X))))]))
         } else {
@@ -287,7 +287,7 @@ stepwise_search <- function(X, criterion = c("ipoqll") , incl_set = c(), groups_
             cat("\n")
           }
 
-          if(isLegacy & (i+3) < length(fullitem)){
+          if(isLegacy & (i+1) < length(fullitem)){
             init_par_iq <- c(na.omit(scoreMat[i,c((3+ncol(X)+1):(3+ncol(X)+n_par))]))
             init_par_oq <- c(na.omit(scoreMat[i,c((3+ncol(X)+n_par+1):(3+ncol(X)+n_par+(n_par-nrow(X))))]))
           } else {

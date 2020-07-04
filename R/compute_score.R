@@ -100,6 +100,7 @@ compute_scores_unparalleled <- function(X, itemsets, type = c("ipoqll"), step_di
 
   incl_sets <- as.matrix(incl_sets)
 
+# print("IN")
 
   scoreList <- foreach(i=1:nrow(incl_sets), .combine = rbind, .errorhandling = "remove", .packages = c("autoRasch"), .export = c()) %dopar% {
 
@@ -114,6 +115,10 @@ compute_scores_unparalleled <- function(X, itemsets, type = c("ipoqll"), step_di
       init_iq <- c()
       init_oq <- c()
     }
+
+    # cat("incl_set : ", incl_set)
+    # cat("\n length.init_iq : ",length(init_iq))
+    # cat("\n length.init_oq : ",length(init_oq),"\n")
 
     score_res <- compute_score(dset, incl_set = incl_set, type = type, groups_map = groups_map,
                               init_par_iq = init_iq, init_par_oq = init_oq,
@@ -302,4 +307,37 @@ oqll_init <- function(dset, prev_incl_set, prev_par_iq, prev_par_oq, incl_set, d
   }
 
   return(nlmPar.new.oq)
+}
+
+insert.at <- function(a, pos, max.nlmpar){
+  addLast <- FALSE
+  pos <- (c(pos)-c(1:length(pos)))
+
+  if(pos[length(pos)] == (max.nlmpar-length(pos))){
+    pos <- pos[-c(length(pos))]
+    a <- c(a,0)
+    addLast <- TRUE
+  }
+  if(!identical(pos, integer(0))){
+    if(pos[1] == 0){
+      length.begin <- length(which(pos == 0))
+      pos <- pos[-c(1:length.begin)]
+      pos <- pos + length.begin
+      a <- c(rep.int(0,length.begin),a)
+    }
+  }
+  if(!identical(pos, integer(0)) & !identical(pos, numeric(0))){
+    pos.idx <- split(pos,pos)
+    dots <- rapply(pos.idx,function(x) x*0, how = "replace")
+    pos <- unique(pos)
+    stopifnot(length(dots)==length(pos))
+    result <- vector("list",2*length(pos)+1)
+    result[c(TRUE,FALSE)] <- split(a, cumsum(seq_along(a) %in% (pos+1)))
+    result[c(FALSE,TRUE)] <- dots
+
+    result <- unlist(result)
+  } else {
+    result <- a
+  }
+  return(result)
 }
