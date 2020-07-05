@@ -21,9 +21,9 @@ backward_search(X, criterion = c("ipoqll"), incl_set = c(),
 
 \method{summary}{search}(obj)
 
-\method{plot}{search}(obj, type = "l", xlab = NULL, ylab = NULL,
-  xlim = c(), ylim = c(), use.name = FALSE, remOrdered = TRUE,
-  isMax = TRUE, ...)
+\method{plot}{search}(obj, fileOutput = FALSE, type = "l",
+  xlab = NULL, ylab = NULL, xlim = c(), ylim = c(),
+  use.name = FALSE, remOrdered = TRUE, isMax = TRUE, ...)
 }
 \arguments{
 \item{X}{A matrix or data.frame of the observed responses (ordinal or binary response).}

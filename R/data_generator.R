@@ -76,35 +76,40 @@ generate_data <- function(responseType = "multidim.nocorrel", theta = c(-3,3), s
   }
 
 
-  D.mat <- matrix(NA, ncol = (ncat-1), nrow = length(D)) #Create a set of thersholds scores
+  if(ncat > 2){
+    D.mat <- matrix(NA, ncol = (ncat-1), nrow = length(D)) #Create a set of thersholds scores
 
-  tempCat <- 0
-  if((ncat-1)%%2 == 0){
-    j <- (ncat-1)/2+1
-    for(i in ((ncat-1)/2):1){
-      if(i == (ncat-1)/2){
-        tempCat <- (thGap/2)
-        D.mat[,i] <- D-tempCat
-        D.mat[,j] <- D+tempCat
-      } else {
-        tempCat <- tempCat + thGap
-        D.mat[,i] <- D-tempCat
-        D.mat[,j] <- D+tempCat
-      }
-      j <- j+1
-    }
-  } else {
-    j <- (ncat-1)/2+1
-    for(i in ((ncat-1)/2):1){
-      if(i == (ncat-1)/2){
-        D.mat[,i] <- D
-      } else {
-        tempCat <- tempCat + thGap
-        D.mat[,i] <- D-tempCat
-        D.mat[,j] <- D+tempCat
+    tempCat <- 0
+    if((ncat-1)%%2 == 0){
+      j <- (ncat-1)/2+1
+      for(i in ((ncat-1)/2):1){
+        if(i == (ncat-1)/2){
+          tempCat <- (thGap/2)
+          D.mat[,i] <- D-tempCat
+          D.mat[,j] <- D+tempCat
+        } else {
+          tempCat <- tempCat + thGap
+          D.mat[,i] <- D-tempCat
+          D.mat[,j] <- D+tempCat
+        }
         j <- j+1
       }
+    } else {
+      j <- (ncat-1)/2+1
+      for(i in ((ncat-1)/2):1){
+        if(i == (ncat-1)/2){
+          D.mat[,i] <- D
+        } else {
+          tempCat <- tempCat + thGap
+          D.mat[,i] <- D-tempCat
+          D.mat[,j] <- D+tempCat
+          j <- j+1
+        }
+      }
     }
+  } else {
+    D.mat <- matrix(D, ncol = (ncat-1), nrow = length(D)) #Create a set of thersholds scores
+
   }
 
   # print(dim(D.mat))
@@ -192,65 +197,101 @@ generate_data <- function(responseType = "multidim.nocorrel", theta = c(-3,3), s
     diff <- diff + mat.lambda
   }
 
+  print(mt_ind)
 
-  pmat.l <- tapply(1L:length(D.vector), mt_ind, function(xin){
+  if(ncat > 2){
+    pmat.l <- tapply(1L:length(D.vector), mt_ind, function(xin){
 
-    discr.diff <- t(diff[,xin])*(alphas[xin])
+      discr.diff <- t(diff[,xin])*(alphas[xin])
 
-    cat.0 <- rep(0, ncol(discr.diff))
-    discr.diff.0 <- rbind(cat.0, discr.diff)
+      cat.0 <- rep(0, ncol(discr.diff))
+      discr.diff.0 <- rbind(cat.0, discr.diff)
 
-    sum.discr.diff <- discr.diff.0
+      sum.discr.diff <- discr.diff.0
 
-    for(i in 2:nrow(discr.diff.0)){
-      sum.discr.diff[i,] <- colSums(discr.diff.0[1:i,], na.rm = TRUE)
-    }
-
-    sum.discr.diff.exp <- exp(sum.discr.diff)
-
-    l1 <- sum.discr.diff.exp
-
-    l2.temp <- colSums(sum.discr.diff.exp, na.rm = TRUE)
-    l2 <- matrix(rep(l2.temp, nrow(sum.discr.diff)), ncol = ncol(l1), byrow = TRUE)
-
-    pmat.part <- l1/l2
-
-    return(t(pmat.part))
-  })
-
-  # print(length(unlist(pmat.l)))
-  pmat <- matrix(unlist(pmat.l), nrow = length(B), byrow = FALSE)
-  # print(dim(pmat))
-
-  mt_ind <- rep(1:nrow(D.mat),each = (mt_vek+1))
-  # print(length(mt_ind))
-
-  datagen <- apply(pmat, 1, function(pmat.r) {                       #runs over missing structures
-    pmat.t <- pmat.r
-    p.dat <- tapply(pmat.t,mt_ind,function(indx) {     #matrices of expected prob as list (over items)
-      temp <- runif(1)
-      i <- 1
-      while(i < length(indx)){
-        if(temp < indx[1]){
-          part.data <- 0
-        } else if(temp > sum(indx[1:i])){
-          part.data <- (i)
-        }
-        i <- i + 1
+      for(i in 2:nrow(discr.diff.0)){
+        sum.discr.diff[i,] <- colSums(discr.diff.0[1:i,], na.rm = TRUE)
       }
-      return(part.data)
-    })
-    pdattemp <- p.dat
-    return(pdattemp)
-  })
 
-  temp.mx <- cbind(temp.mx,t(datagen))
-  pmat.mx <- cbind(pmat.mx,pmat)
+      sum.discr.diff.exp <- exp(sum.discr.diff)
+
+      l1 <- sum.discr.diff.exp
+
+      l2.temp <- colSums(sum.discr.diff.exp, na.rm = TRUE)
+      l2 <- matrix(rep(l2.temp, nrow(sum.discr.diff)), ncol = ncol(l1), byrow = TRUE)
+
+      pmat.part <- l1/l2
+
+      return(t(pmat.part))
+    })
+
+    # print(length(unlist(pmat.l)))
+    pmat <- matrix(unlist(pmat.l), nrow = length(B), byrow = FALSE)
+    # print(dim(pmat))
+
+
+
+    mt_ind <- rep(1:nrow(D.mat),each = (mt_vek+1))
+    # print(length(mt_ind))
+
+    datagen <- apply(pmat, 1, function(pmat.r) {                       #runs over missing structures
+      pmat.t <- pmat.r
+      p.dat <- tapply(pmat.t,mt_ind,function(indx) {     #matrices of expected prob as list (over items)
+        temp <- runif(1)
+        i <- 1
+        while(i < length(indx)){
+          if(temp < indx[1]){
+            part.data <- 0
+          } else if(temp > sum(indx[1:i])){
+            part.data <- (i)
+          }
+          i <- i + 1
+        }
+        return(part.data)
+      })
+      pdattemp <- p.dat
+      return(pdattemp)
+    })
+
+    temp.mx <- cbind(temp.mx,t(datagen))
+    pmat.mx <- cbind(pmat.mx,pmat)
+
+    mxpmat <- as.data.frame(pmat.mx)
+
+  } else {
+
+    for(i in 1:ndim){
+      idx <- c(((nitem*(i-1))+1):(nitem*i))
+      X <- c()
+
+      disc.diff <- exp(t(diff[,idx])*alphas[idx])
+      Pr <- disc.diff/(1+disc.diff)
+
+      for(i in 1:length(Pr)){
+        X <- cbind(X,rbinom(1,1,Pr[i]))
+      }
+
+      temp.mx <- cbind(temp.mx,t(matrix(X,nrow = nitem)))
+    }
+    # X <- c()
+    #
+    # disc.diff <- exp(t(diff) * alphas)
+    # Pr <- disc.diff/(1+disc.diff)
+    #
+    # for(i in 1:length(Pr)){
+    #   X <- cbind(X,rbinom(1,1,Pr[i]))
+    # }
+    #
+    # temp.mx <- t(matrix(X,nrow = (nitem*ndim)))
+    # print(dim(temp.mx))
+
+    mxpmat <- c()
+
+  }
 
   # }
 
   mxdat <- as.data.frame(temp.mx)
-  mxpmat <- as.data.frame(pmat.mx)
   colnames(mxdat) <- c(1:(nitem*ndim))
   colnames(mxdat) <- paste("I", colnames(mxdat), sep = "")
 
