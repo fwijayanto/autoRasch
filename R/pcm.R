@@ -30,7 +30,7 @@
 #' @export
 pcm <- function(X, isHessian = TRUE){
 
-  result <- pjmle(X = X, fixed_par = c("gamma"), isPenalized_gamma = FALSE, isHessian = isHessian)
+  result <- pjmle(X = X, fixed_par = c("gamma","deltabeta"), isPenalized_gamma = FALSE, isPenalized_deltabeta = FALSE, isHessian = isHessian)
   class(result) <- c("armodels","pcm","autoRasch")
   return(result)
 

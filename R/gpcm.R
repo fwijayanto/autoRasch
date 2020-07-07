@@ -31,7 +31,7 @@
 #' @export
 gpcm <- function(X, isHessian = TRUE){
 
-  result <- pjmle(X = X, isHessian = isHessian)
+  result <- pjmle(X = X, fixed_par = c("deltabeta"), isPenalized_deltabeta = FALSE, isHessian = isHessian)
   class(result) <- c("armodels","gpcm","autoRasch")
   return(result)
 }
