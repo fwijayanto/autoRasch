@@ -10,8 +10,8 @@ fitStats(obj, isAlpha = TRUE, isTraced = FALSE)
 
 \method{summary}{fit}(obj)
 
-\method{plot}{fit}(obj, type = "n", plotx, ploty, xlab = NULL,
-  ylab = NULL, use.name = FALSE, ...)
+\method{plot}{fit}(obj, plotx, ploty, type = "n", xlab = NULL,
+  ylab = NULL, use.name = FALSE, fileOutput = TRUE, ...)
 }
 \description{
 FIt statistics

@@ -38,14 +38,15 @@ summary.fit <- function(obj){
 
 #' @rdname fit
 #' @export
-plot.fit <- function(obj, type = "n", plotx, ploty, xlab = NULL, ylab = NULL, use.name = FALSE, ...){
+plot.fit <- function(obj, plotx, ploty, type = "n", xlab = NULL, ylab = NULL, use.name = FALSE, fileOutput = TRUE, ...){
 
   dotdotdot <- list(...)
-  if(!is.null(dotdotdot$main)){
-    par(mar = c(6.5, 7.5, 2.5, 1), oma = c(0, 0,0, 0))
-  } else {
-    par(mar = c(6.5, 7.5, 0.5, 1), oma = c(0, 0,0, 0))
-  }
+  # if(!is.null(dotdotdot$main)){
+  #   par(mar = c(6.5, 7.5, 2.5, 1), oma = c(0, 0,0, 0))
+  # } else {
+  #   par(mar = c(6.5, 7.5, 0.5, 1), oma = c(0, 0,0, 0))
+  # }
+
 
   if(plotx == "outfit"){
     plotx <- obj$i.fit$i.outfitMSQ
@@ -59,11 +60,11 @@ plot.fit <- function(obj, type = "n", plotx, ploty, xlab = NULL, ylab = NULL, us
   } else if(plotx == "infitz"){
     plotx <- obj$i.fit$i.infitZ
     x.lab <- "infitZ"
-  } else if(plotx == "gamma"){
+  } else if(plotx == "alpha"){
     plotx <- obj$alpha
     # x.lab <- expression(paste("alpha (",alpha,")"))
     # x.lab <- expression(paste("estimated ",alpha[i]))
-    x.lab <- expression(alpha)
+    x.lab <- expression(hat(alpha))
   }
   if(ploty == "outfit"){
     ploty <- obj$i.fit$i.outfitMSQ
@@ -77,7 +78,7 @@ plot.fit <- function(obj, type = "n", plotx, ploty, xlab = NULL, ylab = NULL, us
   } else if(ploty == "infitz"){
     ploty <- obj$i.fit$i.infitZ
     y.lab <- "infitZ"
-  } else if(ploty == "gamma"){
+  } else if(ploty == "alpha"){
     ploty <- obj$alpha
     y.lab <- expression(alpha)
   }
@@ -96,7 +97,7 @@ plot.fit <- function(obj, type = "n", plotx, ploty, xlab = NULL, ylab = NULL, us
     y.lab <- ylab
   }
 
-  suppressWarnings(plot(plotx, ploty, type = type, xlab = x.lab, ylab = y.lab, mgp =c(5,2,0), ... = ...))
+  suppressWarnings(plot(plotx, ploty, type = type, xlab = x.lab, ylab = y.lab, ... = ...))
 
   if(use.name){
     suppressWarnings(text(plotx, ploty, labels = text, ... = ...))
