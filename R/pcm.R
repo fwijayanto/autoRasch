@@ -97,10 +97,12 @@ fitStats.pcm <- function(obj, isAlpha = TRUE){
   temp.l2 <- exp(temp.prob)
   temp.l1 <- exp(temp.l2*0)
   temp.l1 <- cbind(temp.l1,temp.l2)
-  for(i in 2:n.th){
-    temp.prob <- cbind(temp.prob,(temp.prob[,i-1]+per.cat.list[i,]))
-    temp.l1 <- cbind(temp.l1,(exp(temp.prob[,i])))
-    temp.l2 <- temp.l2 + (exp(temp.prob[,i]))
+  if(n.th >= 2){
+    for(i in 2:n.th){
+      temp.prob <- cbind(temp.prob,(temp.prob[,i-1]+per.cat.list[i,]))
+      temp.l1 <- cbind(temp.l1,(exp(temp.prob[,i])))
+      temp.l2 <- temp.l2 + (exp(temp.prob[,i]))
+    }
   }
   l2 <- (temp.l2+1)
 
