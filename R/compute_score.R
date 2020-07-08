@@ -20,7 +20,7 @@
 #' and the estimated parameters of the excluded set, respectively.
 #'
 #' @examples
-#' ipoqll_score <- compute_score(pcm_data)
+#' ipoqll_score <- compute_score(pcm_data, incl_set = c(4,5,6))
 #' summary(ipoqll_score)
 #'
 #' @rdname compute_score
@@ -137,7 +137,8 @@ compute_scores_unparalleled <- function(X, itemsets, type = c("ipoqll"), step_di
   return(res)
 }
 
-#' @param incl_sets A matrix as a results of a \code{rbind} of \code{incl_set}.
+#' @param itemsets A matrix as a results of a \code{rbind} of \code{incl_set}.
+#' @param step_direct The direction of the computation; \code{fixed}, \code{forward}, or \code{backward} .
 #' @param cores Number of cores that is used in the paralellization.
 #'
 #' @return
@@ -345,14 +346,18 @@ insert.at <- function(a, pos, max.nlmpar){
   return(result)
 }
 
+#' @param object The object from the class \code{score}. The result of the score computation.
+#' @param ... further argument passed or from other method.
+#'
 #' @rdname compute_score
 #' @export
-summary.score <- function(obj){
+summary.score <- function(object, ...){
+  dotdotdot <- list(...)
   cat("\n")
   cat("Score of the itemsets: ")
   cat("\n\n")
-  cat("IQ-LL: ", obj[1])
-  cat("\nOQ-LL: ", obj[2])
-  cat("\nIPOQ-LL: ", obj[3])
+  cat("IQ-LL: ", object[1])
+  cat("\nOQ-LL: ", object[2])
+  cat("\nIPOQ-LL: ", object[3])
   cat("\n\n")
 }

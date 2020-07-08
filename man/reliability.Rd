@@ -7,10 +7,14 @@
 \usage{
 checkRel(obj)
 
-\method{summary}{seprel}(obj, ...)
+\method{summary}{seprel}(object, ...)
 }
 \arguments{
 \item{obj}{Object that resulted from any models estimation, e.g., \code{PCM}, \code{GPCM}, \code{PCMDIF}, and \code{GPCMDIF}.}
+
+\item{object}{The object of class \code{pcm} or \code{gpcm}.}
+
+\item{...}{further argument passed or from other method.}
 }
 \value{
 A list of two objects, the reliability and the standard error.

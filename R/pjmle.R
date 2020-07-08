@@ -8,7 +8,7 @@
 
 # jml.gpcm.dif3.est <- function(X, opts$fixed_par = c(), opts$fixed_theta = c(), opts$fixed_beta = c(), opts$fixed_gamma = c(), opts$fixed_deltabeta = c(), gamma_penalized = TRUE, deltabeta_penalized = TRUE, theta_penalized = TRUE, resp.info = c(), resp.th = c(0), opt.method = c("nlminb"), plot.ll = FALSE, opt.tuner = list(iter.max = 20000, eval.max = 30000, rel.tol = 1e-10, step.max = 0.000001), opt.plot = list(), psi = 0.0078, max.iter = 150, objtype = "", desc = NULL,THETA.PCOEFF = 0.05, GAMMA.PCOEFF = 50, SMALLGAMMA.COEFF = 0.000005, DELTABETA.PCOEFF = 10000, DELTAGAMMA.PCOEFF = 10000, eps = 0.0, random.init = FALSE, random.init.th = 1e-2, init.par = c(), hessian = FALSE,tracked = TRUE){
 
-#' @export
+
 pjmle <- function(X, init_par = c(), ...){
 
   dset <- as.data.frame(X)                          ### makes sure that the dataset has a matrix format

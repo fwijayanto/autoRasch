@@ -11,9 +11,9 @@ pcm(X, isHessian = TRUE)
 
 \method{fitStats}{pcm}(obj, isAlpha = TRUE)
 
-\method{summary}{pcm}(obj, par = c())
+\method{summary}{pcm}(object, par = c(), ...)
 
-\method{print}{pcm}(obj, par = c())
+\method{print}{pcm}(x, par = c(), ...)
 }
 \arguments{
 \item{X}{Input dataset as matrix or data frame with ordinal responses (starting from 0);
@@ -27,7 +27,13 @@ The Hessian matrix is needed to compute the separation reliability.}
 \item{isAlpha}{Boolean value that indicates whether the discrimination parameters is needed to be estimated or not.
 The discrimination parameters are estimated using the corresponding models (GPCM).}
 
+\item{object}{The object of class \code{'pcm'}.}
+
 \item{par}{The parameter that are wanted to be summarized.}
+
+\item{...}{further argument passed or from other method.}
+
+\item{x}{The object of class \code{'pcm'}.}
 }
 \value{
 \strong{\code{pcm()} will return a \code{\link[base:list]{list}} which contains:}

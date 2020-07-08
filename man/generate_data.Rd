@@ -36,6 +36,8 @@ generate_data(responseType = "multidim.nocorrel", theta = c(-3, 3),
 
 \item{randtype}{The randomize type. This includes \code{uniform} and \code{normal}.}
 
+\item{corLevel}{The correlation between the two dimensions.}
+
 \item{dim.members}{The list of item members in each dimension.}
 }
 \description{
@@ -43,12 +45,12 @@ This function generates simulated datasets with different attributes
 }
 \examples{
 # Generate multidimensional dataset which having correlation of 0.2 between the dimensions
-correl02_multidim <- generate_data(responseType = "multidim.withcorrel", corLevel = 0.2)
+#correl02_multidim <- generate_data(responseType = "multidim.withcorrel", corLevel = 0.2)
 
-# Generate multidimensional dataset with some items relate to more than one dimension.
-withinItem_multidim <- generate_data(responseType = "multidim.within", ndim = 3, dim.members = list(c(1:6,13),c(3,7:12),c(5,13:18)))
+#Generate multidimensional dataset with some items relate to more than one dimension.
+#withinItem_multidim <- generate_data(responseType = "multidim.within", ndim = 3, dim.members = list(c(1:6,13),c(3,7:12),c(5,13:18)))
 
 #generate dataset which consist of two bundle items with different level of local dependency effect.
-testlets_dataset <- generate_data(responseType = "testlets", ndim = 2, sdlambda = c(0,4))
+#testlets_dataset <- generate_data(responseType = "testlets", ndim = 2, sdlambda = c(0,4))
 
 }

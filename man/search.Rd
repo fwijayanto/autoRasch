@@ -21,9 +21,9 @@ backward_search(X, criterion = c("ipoqll"), incl_set = c(),
   prevData = c(), isLegacy = TRUE, fileOutput = TRUE,
   tempFile = "temp_backSearch.RData", isConvert = FALSE)
 
-\method{summary}{search}(obj)
+\method{summary}{search}(object, ...)
 
-\method{plot}{search}(obj, use.name = FALSE, remOrdered = TRUE,
+\method{plot}{search}(x, use.name = FALSE, remOrdered = TRUE,
   isMax = TRUE, ylab = "IPOQ-LL", xlab = expression("|S"["in"] *
   "|"), xlim = c(), type = "l", ...)
 }
@@ -55,6 +55,26 @@ backward_search(X, criterion = c("ipoqll"), incl_set = c(),
 \item{tempFile}{The filename of the temporary file to track the search progress. The default is \code{"temp_stepSearch.RData"} which also automatically produces \code{"temp_stepSearch.csv"}.}
 
 \item{isConvert}{A logical value whether it is wanted to recompute the score of the search results using IPOQ-LL-DIF criterion.}
+
+\item{object}{The object of class \code{'search'}.}
+
+\item{...}{further argument passed or from other method.}
+
+\item{x}{The object of class \code{search}.}
+
+\item{use.name}{Boolean value whether the plot will use variable name or not.}
+
+\item{remOrdered}{Boolean value whether the plot will show the removal order of the items or not.}
+
+\item{isMax}{Boolean value whether there is a line mark of the highest IPOQ-LL or not.}
+
+\item{ylab}{The label of the y axis.}
+
+\item{xlab}{The label of the x axis.}
+
+\item{xlim}{The range value of the x axis plot.}
+
+\item{type}{The type of the plot.}
 }
 \value{
 A matrix of the itemsets that obtain the highest scores for each number of items in the included set and it scores (IQ-LL,OQ-LL, and IPOQ-LL).
@@ -66,8 +86,8 @@ To search itemset that give maximum value of the criterion
 To search the itemset that give the maximum score.
 }
 \examples{
-pcmdata_search <- stepwise_search(X = pcm_data, incl_set = c(1:ncol(pcm_data)))
-plot(pcmdata_search)
+#pcmdata_search <- stepwise_search(X = pcm_data, incl_set = c(1:ncol(pcm_data)), cores = 2)
+#plot(pcmdata_search)
 
 #To search only using backward search
 #pcmdata_search <- backward_search(X = pcm_data, incl_set = c(1:ncol(pcm_data)))

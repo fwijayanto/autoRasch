@@ -12,6 +12,9 @@
 #' see \code{\link[graphics:plot.default]{plot.default()}}
 #' @param col a vector of plotting colors
 #' @param lty a vector of line types.
+#' @param ... further argument passed or from other method.
+#'
+#' @import graphics
 #'
 #' @examples
 #' res <- pcm(pcm_data)
@@ -83,7 +86,7 @@ plot_EVC <- function(obj = c(), itemno = 5, xlab = NULL, ylab = NULL, xlim = c(-
 #' see \code{\link[graphics:plot.default]{plot.default()}}
 #' @param col a vector of plotting colors
 #' @param lty a vector of line types.
-#'
+#' @param ... further argument passed or from other method.
 #'
 #' @export
 plot_ICC <- function(obj, itemno = 5, xlab = NULL, ylab = NULL, xlim = c(-10,10),
@@ -243,7 +246,7 @@ emat_compute <- function(obj, theta.lim = c(-10,10)){
 #' see \code{\link[graphics:par]{par()}}.
 #'
 #' @examples
-#' res <- pcm(poly_inh_dset)
+#' res <- pcm(pcm_data)
 #' plot_PImap(res)
 #'
 #' @export

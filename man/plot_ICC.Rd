@@ -23,6 +23,8 @@ see \code{\link[graphics:plot.default]{plot.default()}}}
 \item{col}{a vector of plotting colors}
 
 \item{lty}{a vector of line types.}
+
+\item{...}{further argument passed or from other method.}
 }
 \description{
 This function plots the curve(s) of the estimated ability parameters against the probabilities of responses.

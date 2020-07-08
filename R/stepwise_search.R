@@ -25,11 +25,16 @@
 #' To search the itemset that give the maximum score.
 #'
 #' @examples
-#' pcmdata_search <- stepwise_search(X = pcm_data, incl_set = c(1:ncol(pcm_data)))
-#' plot(pcmdata_search)
+#' #pcmdata_search <- stepwise_search(X = pcm_data, incl_set = c(1:ncol(pcm_data)), cores = 2)
+#' #plot(pcmdata_search)
 #'
 #' #To search only using backward search
 #' #pcmdata_search <- backward_search(X = pcm_data, incl_set = c(1:ncol(pcm_data)))
+#'
+#' @import parallel
+#' @import doParallel
+#' @import foreach
+#' @import utils
 #'
 #' @rdname search
 #' @export
@@ -545,30 +550,43 @@ backward_search <- function(X, criterion = c("ipoqll") , incl_set = c(), groups_
 
 }
 
+#' @param object The object of class \code{'search'}.
+#'
 #' @rdname search
 #' @export
-summary.search <- function(obj){
-  idx_max <- which(obj[,3] == max(obj[,3], na.rm = TRUE))
+summary.search <- function(object, ...){
+  idx_max <- which(object[,3] == max(object[,3], na.rm = TRUE))
 
   cat("\n")
   cat("Maximum IPOQ-LL score is obtained with ",idx_max," items in the included set.")
   cat("\n")
-  cat("Items no.: ",paste(na.omit(obj[idx_max,4:ncol(obj)]),collapse = ","))
+  cat("Items no.: ",paste(na.omit(object[idx_max,4:ncol(object)]),collapse = ","))
   cat("\n\n")
-  print(matrix(obj[idx_max,1:3],ncol = 3,byrow = TRUE,dimnames = list(c(""),c("IQ-LL","OQ-LL","IPOQ-LL"))))
+  print(matrix(object[idx_max,1:3],ncol = 3,byrow = TRUE,dimnames = list(c(""),c("IQ-LL","OQ-LL","IPOQ-LL"))), ... = ...)
   cat("\n\n")
 }
 
-print.search <- function(obj,...){
+print.search <- function(obj, ...){
   class(obj) <- c("matrix")
-  print(obj)
+  print(obj, ... = ...)
 }
 
+#' @param x The object of class \code{search}.
+#' @param use.name Boolean value whether the plot will use variable name or not.
+#' @param remOrdered Boolean value whether the plot will show the removal order of the items or not.
+#' @param isMax Boolean value whether there is a line mark of the highest IPOQ-LL or not.
+#' @param ... further argument passed or from other method.
+#' @param type The type of the plot.
+#' @param xlab The label of the x axis.
+#' @param ylab The label of the y axis.
+#' @param xlim The range value of the x axis plot.
+#'
 #' @rdname search
 #' @export
-plot.search <- function(obj, use.name = FALSE, remOrdered = TRUE, isMax = TRUE, ylab = "IPOQ-LL", xlab = expression('|S'['in']*'|'),
+plot.search <- function(x, use.name = FALSE, remOrdered = TRUE, isMax = TRUE, ylab = "IPOQ-LL", xlab = expression('|S'['in']*'|'),
                         xlim = c(), type = "l", ...){
 
+  obj <- x
   dotdotdot <- list(...)
 
   ygap <- (max(obj[,3],na.rm = TRUE)-min(obj[,3],na.rm = TRUE))

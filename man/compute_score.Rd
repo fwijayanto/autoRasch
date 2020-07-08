@@ -15,7 +15,7 @@ compute_scores(X, itemsets, type = c("ipoqll"),
   init_par_iq = c(), init_par_oq = c(), optz_tuner_iq = c(),
   optz_tuner_oq = c(), cores = NULL)
 
-\method{summary}{score}(obj)
+\method{summary}{score}(object, ...)
 }
 \arguments{
 \item{X}{A matrix or data.frame of the observed responses (ordinal or binary response).}
@@ -36,9 +36,15 @@ compute_scores(X, itemsets, type = c("ipoqll"),
 
 \item{isTracked}{A logical value whether the computation will be tracked or not.}
 
+\item{itemsets}{A matrix as a results of a \code{rbind} of \code{incl_set}.}
+
+\item{step_direct}{The direction of the computation; \code{fixed}, \code{forward}, or \code{backward} .}
+
 \item{cores}{Number of cores that is used in the paralellization.}
 
-\item{incl_sets}{A matrix as a results of a \code{rbind} of \code{incl_set}.}
+\item{object}{The object from the class \code{score}. The result of the score computation.}
+
+\item{...}{further argument passed or from other method.}
 }
 \value{
 \code{compute_score} will return a vector which contains in-questionnaire log likelihood (iqll), out-of-questionnaire log likelihood(oqll),
@@ -53,7 +59,7 @@ While \code{compute_scores} computes the IPOQ-LL score of many (more than one) i
 the given initial survey simultanously.
 }
 \examples{
-ipoqll_score <- compute_score(pcm_data)
+ipoqll_score <- compute_score(pcm_data, incl_set = c(4,5,6))
 summary(ipoqll_score)
 
 }

@@ -5,6 +5,9 @@ Title: Semi-Automated Rasch Analysis
 Authors@R: person("Wijayanto", "Feri", email = "f.wijayanto@cs.ru.nl", role = c("aut", "cre"))
 Author: Feri Wijayanto [cre, aut], Perry Groot [aut], Tom Heskes [aut]
 Depends: R (>= 3.1.0)
+Imports:
+    doParallel,
+    foreach
 Suggests: 
     knitr,
     rmarkdown

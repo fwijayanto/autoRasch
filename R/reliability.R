@@ -84,11 +84,15 @@ stdError <- function(obj){
               "std_err_item" = stderr_i, "rmsse_item" = rmse_i, "hessian_theta" = hess_theta, "hessian_beta" = hess_beta))
 }
 
+
+#' @param object The object of class \code{pcm} or \code{gpcm}.
+#' @param ... further argument passed or from other method.
+#'
 #' @rdname reliability
 #' @export
-summary.seprel <- function(obj,...){
+summary.seprel <- function(object,...){
 
-  res_table <- cbind(c(obj$reliability$PRI,obj$reliability$PSR,obj$stdError$rmsse_pers),c(obj$reliability$IRI,obj$reliability$ISR,obj$stdError$rmsse_item))
+  res_table <- cbind(c(object$reliability$PRI,object$reliability$PSR,object$stdError$rmsse_pers),c(object$reliability$IRI,object$reliability$ISR,object$stdError$rmsse_item))
   class(res_table) <- "matrix"
   dimnames(res_table) <- list(c("Reliability Index","Separation Reliability","RMSSE"),c("Person","Item"))
   cat("\n")

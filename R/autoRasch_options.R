@@ -46,7 +46,6 @@ autoRaschOptions <- function(x = NULL){
 
       # return requested option(s)
       if(length(x) == 0L) {
-        return(default)
       } else {
         aRoptions[x]
       }

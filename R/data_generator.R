@@ -16,16 +16,19 @@
 #' @param randtype The randomize type. This includes \code{uniform} and \code{normal}.
 #' @param ndim The number of subgroups (dimensions/testlets) created.
 #' @param dim.members The list of item members in each dimension.
+#' @param corLevel The correlation between the two dimensions.
+#'
+#' @import stats
 #'
 #' @examples
 #' # Generate multidimensional dataset which having correlation of 0.2 between the dimensions
-#' correl02_multidim <- generate_data(responseType = "multidim.withcorrel", corLevel = 0.2)
+#' #correl02_multidim <- generate_data(responseType = "multidim.withcorrel", corLevel = 0.2)
 #'
-#' # Generate multidimensional dataset with some items relate to more than one dimension.
-#' withinItem_multidim <- generate_data(responseType = "multidim.within", ndim = 3, dim.members = list(c(1:6,13),c(3,7:12),c(5,13:18)))
+#' #Generate multidimensional dataset with some items relate to more than one dimension.
+#' #withinItem_multidim <- generate_data(responseType = "multidim.within", ndim = 3, dim.members = list(c(1:6,13),c(3,7:12),c(5,13:18)))
 #'
 #' #generate dataset which consist of two bundle items with different level of local dependency effect.
-#' testlets_dataset <- generate_data(responseType = "testlets", ndim = 2, sdlambda = c(0,4))
+#' #testlets_dataset <- generate_data(responseType = "testlets", ndim = 2, sdlambda = c(0,4))
 #'
 #' @export
 generate_data <- function(responseType = "multidim.nocorrel", theta = c(-3,3), sdtheta = 6, ntheta = 301, beta = c(-2.5,2.5), sdbeta = 4, nitem = 6,

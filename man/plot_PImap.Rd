@@ -33,7 +33,7 @@ see \code{\link[graphics:par]{par()}}.}
 This function maps the distribution of the persons' abilities and the items difficulties along the latent continuum.
 }
 \examples{
-res <- pcm(poly_inh_dset)
+res <- pcm(pcm_data)
 plot_PImap(res)
 
 }

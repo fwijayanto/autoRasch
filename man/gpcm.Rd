@@ -8,9 +8,9 @@
 \usage{
 gpcm(X, isHessian = TRUE)
 
-\method{summary}{gpcm}(obj, par = c())
+\method{summary}{gpcm}(object, par = c(), ...)
 
-\method{print}{gpcm}(obj, par = c())
+\method{print}{gpcm}(x, par = c(), ...)
 }
 \arguments{
 \item{X}{Input dataset as matrix or data frame with ordinal responses (starting from 0);
@@ -19,9 +19,13 @@ rows represent individuals, columns represent items.}
 \item{isHessian}{a logical parameter setting whether or not the Hessian matrix is needed to be computed.
 The Hessian matrix is needed to compute the separation reliability.}
 
-\item{obj}{The object of class \code{'gpcm'}.}
+\item{object}{The object of class \code{'gpcm'}.}
 
 \item{par}{The parameter that are wanted to be summarized.}
+
+\item{...}{The object of class \code{gpcm}.}
+
+\item{x}{The object of class \code{gpcm}.}
 }
 \value{
 \item{X}{   The dataset that is used for estimation.}

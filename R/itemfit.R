@@ -1,5 +1,8 @@
 #' FIt statistics
 #'
+#' @param obj The object from class \code{pcm}. The result of the parameter estimation using the PCM.
+#' @param isAlpha Boolean value whether discrimination parameter is needed or not.
+#'
 #' @examples
 #' res <- pcm(pcm_data)
 #' fit_res <- fitStats(res)
@@ -8,43 +11,56 @@
 #'
 #' @rdname fit
 #' @export
-fitStats <- function (obj, isAlpha = TRUE, isTraced = FALSE) {
+fitStats <- function (obj, isAlpha = TRUE) {
   if(!("pcm" %in% class(obj)) & !("pcmdif" %in% class(obj))){
     stop("autoRasch ERROR: itemfit is only for rasch and pcm object.")
   }
   UseMethod("fitStats", obj)
 }
 
-
+#' @param object The object from class \code{fit}. The item fit statistics results.
+#' @param ... further argument passed or from other method.
+#'
 #' @rdname fit
 #' @export
-summary.fit <- function(obj){
+summary.fit <- function(object, ...){
 
-  i.mat <- cbind(obj$i.fit$i.outfitMSQ, obj$i.fit$i.infitMSQ, obj$i.fit$i.outfitZ, obj$i.fit$i.infitZ)
-  if(!is.null(obj$alpha)){
-    i.mat <- cbind(i.mat, obj$alpha)
-    dimnames(i.mat) <- list(c(names(obj$i.fit$i.outfitMSQ)),c("OutfitMSQ","InfitMSQ","OutfitZ","InfitZ","Discrimination"))
+  dotdotdot <- list(...)
+
+  i.mat <- cbind(object$i.fit$i.outfitMSQ, object$i.fit$i.infitMSQ, object$i.fit$i.outfitZ, object$i.fit$i.infitZ)
+  if(!is.null(object$alpha)){
+    i.mat <- cbind(i.mat, object$alpha)
+    dimnames(i.mat) <- list(c(names(object$i.fit$i.outfitMSQ)),c("OutfitMSQ","InfitMSQ","OutfitZ","InfitZ","Discrimination"))
   } else {
-    dimnames(i.mat) <- list(c(names(obj$i.fit$i.outfitMSQ)),c("OutfitMSQ","InfitMSQ","OutfitZ","InfitZ"))
+    dimnames(i.mat) <- list(c(names(object$i.fit$i.outfitMSQ)),c("OutfitMSQ","InfitMSQ","OutfitZ","InfitZ"))
   }
   cat("\n")
   cat("Item Fit Statistics:")
   cat("\n\n")
-  print(i.mat)
+  print(i.mat, ... = ...)
   cat("\n\n")
 
-  p.mat <- cbind(obj$p.fit$p.outfitMSQ, obj$p.fit$p.infitMSQ, obj$p.fit$p.outfitZ, obj$p.fit$p.infitZ)
-  dimnames(p.mat) <- list(c(paste("P",c(1:length(obj$p.fit$p.outfitMSQ)),sep = "")), c("OutfitMSQ","InfitMSQ","OutfitZ","InfitZ"))
+  p.mat <- cbind(object$p.fit$p.outfitMSQ, object$p.fit$p.infitMSQ, object$p.fit$p.outfitZ, object$p.fit$p.infitZ)
+  dimnames(p.mat) <- list(c(paste("P",c(1:length(object$p.fit$p.outfitMSQ)),sep = "")), c("OutfitMSQ","InfitMSQ","OutfitZ","InfitZ"))
   cat("Person Fit Statistics:")
   cat("\n\n")
-  print(p.mat)
+  print(p.mat, ... = ...)
   cat("\n")
 
 }
 
+#' @param x The object which is needed to be plot.
+#' @param plotx The statistics that is wanted to be plot in the x axis.
+#' @param ploty The statistics that is wanted to be plot in the y axis.
+#' @param type The type of the plot.
+#' @param xlab Thelabel of the x axis.
+#' @param ylab Thelabel of the y axis.
+#' @param use.name Boolean value whether the plot using the variable names or not.
+#' @param fileOutput Boolean value whether the plot is saved to a file or not.
+#'
 #' @rdname fit
 #' @export
-plot.fit <- function(obj, plotx = "alpha", ploty = "outfit", type = "n", xlab = NULL, ylab = NULL, use.name = FALSE, fileOutput = TRUE, ...){
+plot.fit <- function(x, plotx = "alpha", ploty = "outfit", type = "n", xlab = NULL, ylab = NULL, use.name = FALSE, fileOutput = TRUE, ...){
 
   dotdotdot <- list(...)
   # if(!is.null(dotdotdot$main)){
@@ -55,43 +71,43 @@ plot.fit <- function(obj, plotx = "alpha", ploty = "outfit", type = "n", xlab = 
 
 
   if(plotx == "outfit"){
-    plotx <- obj$i.fit$i.outfitMSQ
+    plotx <- x$i.fit$i.outfitMSQ
     x.lab <- "Outfit"
   } else if(plotx == "infit"){
-    plotx <- obj$i.fit$i.infitMSQ
+    plotx <- x$i.fit$i.infitMSQ
     x.lab <- "Infit"
   } else if(plotx == "outfitz"){
-    plotx <- obj$i.fit$i.outfitZ
+    plotx <- x$i.fit$i.outfitZ
     x.lab <- "outfitZ"
   } else if(plotx == "infitz"){
-    plotx <- obj$i.fit$i.infitZ
+    plotx <- x$i.fit$i.infitZ
     x.lab <- "infitZ"
   } else if(plotx == "alpha"){
-    plotx <- obj$alpha
+    plotx <- x$alpha
     # x.lab <- expression(paste("alpha (",alpha,")"))
     # x.lab <- expression(paste("estimated ",alpha[i]))
     x.lab <- expression(hat(alpha))
   }
   if(ploty == "outfit"){
-    ploty <- obj$i.fit$i.outfitMSQ
+    ploty <- x$i.fit$i.outfitMSQ
     y.lab <- "Outfit"
   } else if(ploty == "infit"){
-    ploty <- obj$i.fit$i.infitMSQ
+    ploty <- x$i.fit$i.infitMSQ
     y.lab <- "Infit"
   } else if(ploty == "outfitz"){
-    ploty <- obj$i.fit$i.outfitZ
+    ploty <- x$i.fit$i.outfitZ
     y.lab <- "outfitZ"
   } else if(ploty == "infitz"){
-    ploty <- obj$i.fit$i.infitZ
+    ploty <- x$i.fit$i.infitZ
     y.lab <- "infitZ"
   } else if(ploty == "alpha"){
-    ploty <- obj$alpha
+    ploty <- x$alpha
     y.lab <- expression(alpha)
   }
 
 
   if(use.name){
-    text <- names(obj$i.fit$i.outfitMSQ)
+    text <- names(x$i.fit$i.outfitMSQ)
   }
 
 
