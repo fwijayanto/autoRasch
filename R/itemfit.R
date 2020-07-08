@@ -1,5 +1,11 @@
 #' FIt statistics
-
+#'
+#' @examples
+#' res <- pcm(pcm_data)
+#' fit_res <- fitStats(res)
+#' summary(fit_res)
+#' plot(fit_res, plot.x = "gamma", plot.y = "outfit")
+#'
 #' @rdname fit
 #' @export
 fitStats <- function (obj, isAlpha = TRUE, isTraced = FALSE) {
@@ -38,7 +44,7 @@ summary.fit <- function(obj){
 
 #' @rdname fit
 #' @export
-plot.fit <- function(obj, plotx, ploty, type = "n", xlab = NULL, ylab = NULL, use.name = FALSE, fileOutput = TRUE, ...){
+plot.fit <- function(obj, plotx = "alpha", ploty = "outfit", type = "n", xlab = NULL, ylab = NULL, use.name = FALSE, fileOutput = TRUE, ...){
 
   dotdotdot <- list(...)
   # if(!is.null(dotdotdot$main)){

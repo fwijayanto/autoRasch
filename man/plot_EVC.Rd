@@ -29,7 +29,8 @@ see \code{\link[graphics:plot.default]{plot.default()}}}
 This function plots the curve(s) of the estimated ability parameters against its expected responses.
 }
 \examples{
-res <- pcm(poly_inh_dset)
+res <- pcm(pcm_data)
 plot_EVC(res, itemno = 4)
+plot_ICC(res, itemno = 4)
 
 }

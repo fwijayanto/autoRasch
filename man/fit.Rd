@@ -10,9 +10,17 @@ fitStats(obj, isAlpha = TRUE, isTraced = FALSE)
 
 \method{summary}{fit}(obj)
 
-\method{plot}{fit}(obj, plotx, ploty, type = "n", xlab = NULL,
-  ylab = NULL, use.name = FALSE, fileOutput = TRUE, ...)
+\method{plot}{fit}(obj, plotx = "alpha", ploty = "outfit",
+  type = "n", xlab = NULL, ylab = NULL, use.name = FALSE,
+  fileOutput = TRUE, ...)
 }
 \description{
 FIt statistics
+}
+\examples{
+res <- pcm(pcm_data)
+fit_res <- fitStats(res)
+summary(fit_res)
+plot(fit_res, plot.x = "gamma", plot.y = "outfit")
+
 }

@@ -2,9 +2,12 @@
 % Please edit documentation in R/reliability.R
 \name{checkRel}
 \alias{checkRel}
+\alias{summary.seprel}
 \title{Compute Reliability and Standard Error}
 \usage{
 checkRel(obj)
+
+\method{summary}{seprel}(obj, ...)
 }
 \arguments{
 \item{obj}{Object that resulted from any models estimation, e.g., \code{PCM}, \code{GPCM}, \code{PCMDIF}, and \code{GPCMDIF}.}
@@ -38,9 +41,8 @@ This function computes the reliability index, separation and the standard error 
 Person reliability index
 }
 \examples{
-pcmObject <- pcm(poly_inh_dset)
-rel <- checkRel(pcmObject)
+res <- pcm(pcm_data, isHessian = TRUE)
+rel <- checkRel(res)
 summary(rel)
-
 
 }

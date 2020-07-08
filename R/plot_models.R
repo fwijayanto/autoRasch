@@ -14,8 +14,9 @@
 #' @param lty a vector of line types.
 #'
 #' @examples
-#' res <- pcm(poly_inh_dset)
+#' res <- pcm(pcm_data)
 #' plot_EVC(res, itemno = 4)
+#' plot_ICC(res, itemno = 4)
 #'
 #' @export
 plot_EVC <- function(obj = c(), itemno = 5, xlab = NULL, ylab = NULL, xlim = c(-10,10),
@@ -83,9 +84,6 @@ plot_EVC <- function(obj = c(), itemno = 5, xlab = NULL, ylab = NULL, xlim = c(-
 #' @param col a vector of plotting colors
 #' @param lty a vector of line types.
 #'
-#' @examples
-#' res <- pcm(poly_inh_dset)
-#' plot_EVC(res, itemno = 4)
 #'
 #' @export
 plot_ICC <- function(obj, itemno = 5, xlab = NULL, ylab = NULL, xlim = c(-10,10),
@@ -331,4 +329,6 @@ plot_PImap <- function(obj, main = NULL, xlab = NULL, cex = NULL, cex.lab = NULL
     }
     text(1, i, labels = rownames(beta_mat)[i], adj = c(0,NA), col = col, cex = cex)
   }
+
+  par(mfrow = c(1,1))
 }

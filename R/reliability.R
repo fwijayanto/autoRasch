@@ -30,11 +30,11 @@
 #' Person reliability index
 #'
 #' @examples
-#' pcmObject <- pcm(poly_inh_dset)
-#' rel <- checkRel(pcmObject)
+#' res <- pcm(pcm_data, isHessian = TRUE)
+#' rel <- checkRel(res)
 #' summary(rel)
 #'
-#'
+#' @rdname reliability
 #' @export
 checkRel <- function(obj){
 
@@ -84,9 +84,12 @@ stdError <- function(obj){
               "std_err_item" = stderr_i, "rmsse_item" = rmse_i, "hessian_theta" = hess_theta, "hessian_beta" = hess_beta))
 }
 
+#' @rdname reliability
+#' @export
 summary.seprel <- function(obj,...){
 
-  res_table <- cbind(c(obj$sepRel$PRI,obj$sepRel$PSR,obj$stdErr$rmse_pers),c(obj$sepRel$IRI,obj$sepRel$ISR,obj$stdErr$rmse_item))
+  res_table <- cbind(c(obj$reliability$PRI,obj$reliability$PSR,obj$stdError$rmsse_pers),c(obj$reliability$IRI,obj$reliability$ISR,obj$stdError$rmsse_item))
+  class(res_table) <- "matrix"
   dimnames(res_table) <- list(c("Reliability Index","Separation Reliability","RMSSE"),c("Person","Item"))
   cat("\n")
   print(res_table)

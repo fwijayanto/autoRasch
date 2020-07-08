@@ -107,7 +107,6 @@ pjmle <- function(X, init_par = c(), ...){
   }
 
   ### Maximizing the loglikelihood function ###
-  print("Starting to estimate...")
   nameCol <- colnames(as.data.frame(X))
   output <- list("X" = X, "mt_vek" = dataPrep$mt_vek, "real_vek" = dataPrep$na_catVec, "itemName" = nameCol,
                  "penalty.coeff" = list("lambda_theta" = opts$lambda_theta,"lambda_in" = opts$lambda_in,
@@ -134,8 +133,6 @@ pjmle <- function(X, init_par = c(), ...){
   if(opts$isHessian){
     output[["hessian"]] <- minRes$hessian
   }
-
-  print("...done!")
 
   ### Mapping for the output
   if(!identical(grep("deltagamma",estPar_arr), integer(0))){

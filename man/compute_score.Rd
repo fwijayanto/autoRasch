@@ -3,6 +3,7 @@
 \name{compute_score}
 \alias{compute_score}
 \alias{compute_scores}
+\alias{summary.score}
 \title{Compute the In-plus-out-of-questionnaire log likelihood (IPOQ-LL)}
 \usage{
 compute_score(X, incl_set, type = c("ipoqll"), groups_map = c(),
@@ -13,6 +14,8 @@ compute_scores(X, itemsets, type = c("ipoqll"),
   step_direct = c("fixed", "forward", "backward"), groups_map = c(),
   init_par_iq = c(), init_par_oq = c(), optz_tuner_iq = c(),
   optz_tuner_oq = c(), cores = NULL)
+
+\method{summary}{score}(obj)
 }
 \arguments{
 \item{X}{A matrix or data.frame of the observed responses (ordinal or binary response).}
@@ -48,4 +51,9 @@ and the estimated parameters of the excluded set, respectively.
 \code{compute_score} computes the the IPOQ-LL score of an instrument (included set) of the given initial survey.
 While \code{compute_scores} computes the IPOQ-LL score of many (more than one) instruments (included sets) of
 the given initial survey simultanously.
+}
+\examples{
+ipoqll_score <- compute_score(pcm_data)
+summary(ipoqll_score)
+
 }

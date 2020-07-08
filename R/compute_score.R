@@ -19,6 +19,9 @@
 #' ipoqll, included set's items' number of the given initial survey, the estimated parameters of the included set,
 #' and the estimated parameters of the excluded set, respectively.
 #'
+#' @examples
+#' ipoqll_score <- compute_score(pcm_data)
+#' summary(ipoqll_score)
 #'
 #' @rdname compute_score
 #' @export
@@ -71,7 +74,7 @@ compute_score <- function(X, incl_set, type = c("ipoqll"), groups_map = c(),
 
   length(incl_set) <- ncol(dset)
   res <- c(res, incl_set, iqll_params, oqll_params)
-  class(res) <- c(type[1])
+  class(res) <- c("score",type[1])
   return(res)
 }
 
@@ -340,4 +343,16 @@ insert.at <- function(a, pos, max.nlmpar){
     result <- a
   }
   return(result)
+}
+
+#' @rdname compute_score
+#' @export
+summary.score <- function(obj){
+  cat("\n")
+  cat("Score of the itemsets: ")
+  cat("\n\n")
+  cat("IQ-LL: ", obj[1])
+  cat("\nOQ-LL: ", obj[2])
+  cat("\nIPOQ-LL: ", obj[3])
+  cat("\n\n")
 }
