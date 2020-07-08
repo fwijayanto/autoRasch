@@ -18,18 +18,26 @@
 #' @param isConvert A logical value whether it is wanted to recompute the score of the search results using IPOQ-LL-DIF criterion.
 #'
 #' @return
-#' A matrix of the itemsets that obtain the highest scores for each number of items in the included set.
+#' A matrix of the itemsets that obtain the highest scores for each number of items in the included set and it scores (IQ-LL,OQ-LL, and IPOQ-LL).
 #'
 #'
 #' @details
 #' To search the itemset that give the maximum score.
 #'
+#' @examples
+#' pcmdata_search <- stepwise_search(X = pcm_data, incl_set = c(1:ncol(pcm_data)))
+#' plot(pcmdata_search)
+#'
+#' #To search only using backward search
+#' #pcmdata_search <- backward_search(X = pcm_data, incl_set = c(1:ncol(pcm_data)))
+#'
 #' @rdname search
 #' @export
-stepwise_search <- function(X, criterion = c("ipoqll") , incl_set = c(), groups_map = c(), cores = NULL,
-                            optz_tuner_iq = c(), optz_tuner_oq = c(), isTracked = TRUE, isContinued = FALSE,
-                            prevData = c(), isLegacy = FALSE, fileOutput = FALSE, tempFile = "temp_stepSearch.RData",
-                            isConvert = FALSE){
+stepwise_search <- function(X, criterion = c("ipoqll") , incl_set = c(), groups_map = c(), cores = 20,
+                            optz_tuner_iq = list(maxit=5e+2, reltol=1e-21, fnscale = 10),
+                            optz_tuner_oq = list(maxit=5e+2, reltol=1e-21, fnscale = 10), isTracked = TRUE,
+                            isContinued = FALSE, prevData = c(), isLegacy = TRUE, fileOutput = FALSE,
+                            tempFile = "temp_stepSearch.RData", isConvert = FALSE){
 
   namecsv <- paste(paste(strsplit(tempFile, "(\\.)")[[1]][1:(length(strsplit(tempFile, "(\\.)")[[1]])-1)],collapse = "."),".csv",sep = "")
   fullitem <- c(1:ncol(X))
@@ -355,19 +363,22 @@ stepwise_search <- function(X, criterion = c("ipoqll") , incl_set = c(), groups_
     write.csv(res_search, file = namecsv)
   }
 
+  colnames(res_search) <- c("IQ-LL","OQ-LL","IPOQ-LL",paste("Item",c(1:nrow(res_search)),sep = ""))
+
+  class(res_search) <- c("search", class(res_search))
 
   return(res_search)
 
 }
 
-#' @examples
-#' search_res <- backward_search(poly_inh_dset,criterion = "ipoqll", incl_set = c(1:18), cores = 2, isLegacy = TRUE)
+
 #' @rdname search
 #' @export
-backward_search <- function(X, criterion = c("ipoqll") , incl_set = c(), groups_map = c(), cores = NULL,
-                            optz_tuner_iq = c(), optz_tuner_oq = c(), isTracked = TRUE, isContinued = FALSE,
-                            prevData = c(), isLegacy = FALSE, fileOutput = FALSE, tempFile = "temp_backSearch.RData",
-                            isConvert = FALSE){
+backward_search <- function(X, criterion = c("ipoqll") , incl_set = c(), groups_map = c(), cores = 20,
+                            optz_tuner_iq = list(maxit=5e+2, reltol=1e-21, fnscale = 10),
+                            optz_tuner_oq = list(maxit=5e+2, reltol=1e-21, fnscale = 10), isTracked = TRUE,
+                            isContinued = FALSE, prevData = c(), isLegacy = TRUE, fileOutput = TRUE,
+                            tempFile = "temp_backSearch.RData", isConvert = FALSE){
 
 
   namecsv <- paste(paste(strsplit(tempFile, "(\\.)")[[1]][1:(length(strsplit(tempFile, "(\\.)")[[1]])-1)],collapse = "."),".csv",sep = "")
@@ -440,7 +451,7 @@ backward_search <- function(X, criterion = c("ipoqll") , incl_set = c(), groups_
 
     #### Begin backward ####
 
-    if(isLegacy & (i+3) < length(fullitem)){
+    if(isLegacy & (i+1) < length(fullitem)){
       init_par_iq <- c(na.omit(scoreMat[i+1,c((3+ncol(X)+1):(3+ncol(X)+n_par))]))
       init_par_oq <- c(na.omit(scoreMat[i+1,c((3+ncol(X)+n_par+1):(3+ncol(X)+n_par+(n_par-nrow(X))))]))
     } else {
@@ -526,6 +537,10 @@ backward_search <- function(X, criterion = c("ipoqll") , incl_set = c(), groups_
     write.csv(res_search, file = namecsv)
   }
 
+  colnames(res_search) <- c("IQ-LL","OQ-LL","IPOQ-LL",paste("Item",c(1:nrow(res_search)),sep = ""))
+
+  class(res_search) <- c("search",class(res_search))
+
   return(res_search)
 
 }
@@ -536,19 +551,11 @@ summary.search <- function(obj){
   idx_max <- which(obj[,3] == max(obj[,3], na.rm = TRUE))
 
   cat("\n")
-  if("ipoqll" %in% class(obj)){
-    cat("Maximum IPOQ-LL score is obtained with ",idx_max," items in the included set.")
-  } else if("ipoqlldif" %in% class(obj)){
-    cat("Maximum IPOQ-LL-DIF score is obtained with ",idx_max," items in the included set.")
-  }
+  cat("Maximum IPOQ-LL score is obtained with ",idx_max," items in the included set.")
   cat("\n")
   cat("Items no.: ",paste(na.omit(obj[idx_max,4:ncol(obj)]),collapse = ","))
   cat("\n\n")
-  if("ipoqll" %in% class(obj)){
-    print(matrix(obj[idx_max,1:3],ncol = 3,byrow = TRUE,dimnames = list(c(""),c("IQ-LL","OQ-LL","IPOQ-LL"))))
-  } else if("ipoqlldif" %in% class(obj)){
-    print(matrix(obj[idx_max,1:3],ncol = 3,byrow = TRUE,dimnames = list(c(""),c("IQ-LL-DIF","OQ-LL-DIF","IPOQ-LL-DIF"))))
-  }
+  print(matrix(obj[idx_max,1:3],ncol = 3,byrow = TRUE,dimnames = list(c(""),c("IQ-LL","OQ-LL","IPOQ-LL"))))
   cat("\n\n")
 }
 
@@ -559,66 +566,107 @@ print.search <- function(obj,...){
 
 #' @rdname search
 #' @export
-# plot.search <- function(obj, type = "l", xlab = NULL, ylab = NULL, xlim = c(), ylim = c(), use.name = FALSE, remOrdered = TRUE, isMax = TRUE, ...){
+plot.search <- function(obj, use.name = FALSE, remOrdered = TRUE, isMax = TRUE, ylab = "IPOQ-LL", xlab = expression('|S'['in']*'|'),
+                        xlim = c(), type = "l", ...){
+
+  dotdotdot <- list(...)
+
+  ygap <- (max(obj[,3],na.rm = TRUE)-min(obj[,3],na.rm = TRUE))
+
+  if(!is.null(xlim)){
+    if(xlim[2] >= xlim[1]){
+      xlim <- xlim[c(2,1)]
+    } else {
+      xlim <- xlim
+    }
+  } else {
+    xlim <- c(nrow(obj),1)
+  }
+
+  suppressWarnings(plot(x = c(1:nrow(obj)), y = obj[,3], ylab = ylab, xlab = xlab, xlim = xlim, type = type, ... = ...))
+
+  if(remOrdered){
+    for(i in (length(obj[,3])-1):1){
+      prev.item <- obj[i+1,4:(length(obj[,3])+3)]
+      next.item <- obj[i,4:(length(obj[,3])+3)]
+      labels.rem.idx <- which(!(prev.item %in% next.item))
+      labels.add.idx <- which(!(next.item %in% prev.item))
+      labels.rem <- paste(prev.item[labels.rem.idx],collapse="\n")
+      if(length(labels.rem.idx) > 1){
+        labels.add <- paste("+",next.item[labels.add.idx],collapse="\n",sep="")
+        labels <- paste(labels.rem,"\n",labels.add,sep="")
+      } else {
+        labels <- labels.rem
+      }
+      text(i,obj[i,3], pos = 1, labels = labels, ... = ...)
+    }
+  }
+
+  if(isMax){
+    maxPos <- which(obj[,3] == max(obj[,3],na.rm = TRUE))
+    lines(c(maxPos,maxPos),c(-100000,obj[maxPos,3]), col = 3, lty = 2, ... = ...)
+  }
+
+}
+
+# plot.search <- function(obj, fileOutput = FALSE, use.name = FALSE, remOrdered = TRUE, isMax = TRUE, ...){
 #
-#   dotdotdot <- list(...)
-#   if(!is.null(dotdotdot$main)){
-#     par(mar = c(6.5, 7.5, 2.5, 1), oma = c(0, 0,0, 0))
+#   if(fileOutput){
+#     cairo_pdf("test.pdf", width = 2, height = 1.43, bg = "transparent")
+#     cex.axis <- 0.5
+#     cex.lab <- 0.6
+#     cex <- 0.4
+#     mar = c(1.4, 1.45, 0.05, 0.05)
+#     mgp = c(0.8,0.1,0)
+#     par(mar = mar, oma = c(0, 0,0, 0))
+#     line.x <- 0.5
+#     line.y <- 0.7
+#     tcl <- -0.2
+#     lwd.line <- 0.5
+#     lwd.axis <- 0.4
+#     mgp.x <- c(0.5,-0.1,0)
+#     mgp.y <- c(0.5,0.1,0)
 #   } else {
-#     par(mar = c(6.5, 7.5, 0.5, 1), oma = c(0, 0,0, 0))
+#     cex.axis <- 1.3
+#     cex.lab <- 1.5
+#     cex <- 1
+#     mar = c(4, 4.5, 0.5, 0.5)
+#     mgp = c(1,0.1,0)
+#     par(mar = mar, oma = c(0, 0,0, 0))
+#     line.x <- 3
+#     line.y <- 3
+#     tcl <- -0.5
+#     lwd.line <- 2
+#     lwd.axis <- 2
+#     mgp.x <- c(1,1,0)
+#     mgp.y <- c(1,1,0)
 #   }
+#   is_title <- FALSE
 #
-#   if(!is.null(xlab)){
-#     x.lab <- xlab
-#   } else {
-#     x.lab <- "Number of included items"
-#   }
+#   diff_y <- max(obj[,3])-min(obj[,3])
+#   ymax <- max(obj[,3]) + (0.1*diff_y)
+#   ymin <- min(obj[,3]) - (0.2*diff_y)
 #
-#   if(!is.null(ylab)){
-#     y.lab <- ylab
-#   } else {
-#     if("ipoqll" %in% class(obj)){
-#       y.lab <- "IPOQ-LL"
+#   plot(c(1:length(obj[,3])),obj[,3], main = ifelse(is_title,"Stepwise Search",""), xlim = c(length(obj[,3]),1), xlab = "", ylab = "",
+#        cex.main = cex, cex = 0.1, cex.axis = cex.axis, cex.lab = cex.lab, mgp =mgp, lwd = lwd.line, tcl = tcl, xaxt = "n", yaxt = "n",
+#        type = "l")
+#   axis(1, lwd = lwd.axis, tcl = tcl,cex.axis = cex.axis, cex = cex, cex.lab = cex.lab, mgp = mgp.x)
+#   axis(2, lwd = lwd.axis, tcl = tcl,cex.axis = cex.axis, cex = cex, cex.lab = cex.lab, mgp = mgp.y)
+#   box(lwd=lwd.axis)
+#
+#   for(i in (length(obj[,3])-1):1){
+#     prev.item <- obj[i+1,4:(length(obj[,3])+3)]
+#     next.item <- obj[i,4:(length(obj[,3])+3)]
+#     labels.rem.idx <- which(!(prev.item %in% next.item))
+#     labels.add.idx <- which(!(next.item %in% prev.item))
+#     labels.rem <- paste(prev.item[labels.rem.idx],collapse="\n")
+#     if(length(labels.rem.idx) > 1){
+#       labels.add <- paste("+",next.item[labels.add.idx],collapse="\n",sep="")
+#       labels <- paste(labels.rem,"\n",labels.add,sep="")
 #     } else {
-#       y.lab <- "IPOQ-LL-DIF"
+#       labels <- labels.rem
 #     }
-#   }
-#
-#   ygap <- (max(obj[,3],na.rm = TRUE)-min(obj[,3],na.rm = TRUE))
-#
-#   if(!is.null(xlim)){
-#     xlim <- xlim
-#   } else {
-#     xlim <- c(nrow(obj),1)
-#   }
-#
-#   if(!is.null(ylim)){
-#     ylim <- ylim
-#   } else {
-#     ylim <- c(min(obj[,3],na.rm = TRUE)-(ygap/12),max(obj[,3],na.rm = TRUE)+(ygap/12))
-#   }
-#
-#   print(c(1:nrow(obj)))
-#   print(obj[,3])
-#
-#   suppressWarnings(plot(x = c(1:nrow(obj)), y = obj[,3], xlim = xlim, ylim = ylim, type = type, xlab = x.lab, ylab = y.lab, mgp =c(5,2,0), ... = ...))
-#
-#   if(remOrdered){
-#     remList <- list()
-#     k <- 1
-#     for(i in c((nrow(obj)-1):(1))){
-#       j <- i+1
-#       remList[[k]] <- c(obj[j,4:(j+3)][-c(which(obj[j,4:(j+3)] %in% obj[i,4:(i+3)]))])
-#       k <- k+1
-#     }
-#
-#     for(i in c((nrow(obj)-1):(1))){
-#         if(i%%2==0){
-#           text(x = i, y = (obj[i,3]+(ygap/20)), adj = c(0.5,0), labels = paste(remList[[nrow(obj)-i]],collapse = ",\n"), col = c(), ... = ...)
-#         } else {
-#           text(x = i, y = (obj[i,3]-(ygap/20)), adj = c(0.5,1), labels = paste(remList[[nrow(obj)-i]],collapse = ",\n"), col = c(), ... = ...)
-#         }
-#     }
+#     text(i,obj[i,3], pos = 1, labels = labels, cex = cex)
 #   }
 #
 #   if(isMax){
@@ -626,70 +674,10 @@ print.search <- function(obj,...){
 #     lines(c(maxPos,maxPos),c(-100000,obj[maxPos,3]), col = 3, lty = 2, ... = ...)
 #   }
 #
+#   title(xlab = "|Sin|", line = line.x, cex.lab = cex.lab)
+#   title(ylab = "IPOQ-LL", line = line.y, cex.lab = cex.lab)
+#
+#   if(fileOutput){
+#     dev.off()
+#   }
 # }
-
-plot.search <- function(obj, fileOutput = FALSE,type = "l", xlab = NULL, ylab = NULL, xlim = c(), ylim = c(), use.name = FALSE, remOrdered = TRUE, isMax = TRUE, ...){
-
-  if(fileOutput){
-    cairo_pdf("test.pdf", width = 2, height = 1.43, bg = "transparent")
-    cex.axis <- 0.5
-    cex.lab <- 0.6
-    cex <- 0.4
-    mar = c(1.4, 1.45, 0.05, 0.05)
-    mgp = c(0.8,0.1,0)
-    par(mar = mar, oma = c(0, 0,0, 0))
-    line.x <- 0.5
-    line.y <- 0.7
-    tcl <- -0.2
-    lwd.line <- 0.5
-    lwd.axis <- 0.4
-    mgp.x <- c(0.5,-0.1,0)
-    mgp.y <- c(0.5,0.1,0)
-  } else {
-    cex.axis <- 1.3
-    cex.lab <- 1.5
-    cex <- 1
-    mar = c(4, 4.5, 0.5, 0.5)
-    mgp = c(1,0.1,0)
-    par(mar = mar, oma = c(0, 0,0, 0))
-    line.x <- 3
-    line.y <- 3
-    tcl <- -0.5
-    lwd.line <- 2
-    lwd.axis <- 2
-    mgp.x <- c(1,1,0)
-    mgp.y <- c(1,1,0)
-  }
-  is_title <- FALSE
-
-  diff_y <- max(obj[,3])-min(obj[,3])
-  ymax <- max(obj[,3]) + (0.1*diff_y)
-  ymin <- min(obj[,3]) - (0.2*diff_y)
-
-  plot(c(1:length(obj[,3])),obj[,3], main = ifelse(is_title,"Stepwise Search",""), xlim = c(length(obj[,3]),1), xlab = "", ylab = "", cex.main = cex, cex = 0.1, cex.axis = cex.axis, cex.lab = cex.lab, mgp =mgp, lwd = lwd.line, tcl = tcl, xaxt = "n", yaxt = "n", type = "l")
-  axis(1, lwd = lwd.axis, tcl = tcl,cex.axis = cex.axis, cex = cex, cex.lab = cex.lab, mgp = mgp.x)
-  axis(2, lwd = lwd.axis, tcl = tcl,cex.axis = cex.axis, cex = cex, cex.lab = cex.lab, mgp = mgp.y)
-  box(lwd=lwd.axis)
-
-  for(i in (length(obj[,3])-1):1){
-    prev.item <- obj[i+1,4:(length(obj[,3])+3)]
-    next.item <- obj[i,4:(length(obj[,3])+3)]
-    labels.rem.idx <- which(!(prev.item %in% next.item))
-    labels.add.idx <- which(!(next.item %in% prev.item))
-    labels.rem <- paste(prev.item[labels.rem.idx],collapse="\n")
-    if(length(labels.rem.idx) > 1){
-      labels.add <- paste("+",next.item[labels.add.idx],collapse="\n",sep="")
-      labels <- paste(labels.rem,"\n",labels.add,sep="")
-    } else {
-      labels <- labels.rem
-    }
-    text(i,obj[i,3], pos = 1, labels = labels, cex = cex)
-  }
-
-  title(xlab = "|Sin|", line = line.x, cex.lab = cex.lab)
-  title(ylab = "IPOQ-LL", line = line.y, cex.lab = cex.lab)
-
-  if(fileOutput){
-    dev.off()
-  }
-}

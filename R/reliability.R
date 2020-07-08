@@ -65,7 +65,7 @@ checkRel <- function(obj){
   i_rel_idx <- (i_sep_coeff^2)/(1+(i_sep_coeff^2))
 
   result <- list("reliability" = list("PRI" = p_sep_coeff, "PSR" = p_rel_idx, "IRI" = i_sep_coeff, "ISR" = i_rel_idx), "stdError" = rmseroor)
-  class(result) <- c("seprel","autoRasch")
+  class(result) <- c("seprel","autoRasch",class(result))
   return(result)
 }
 

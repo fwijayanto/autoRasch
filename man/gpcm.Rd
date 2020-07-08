@@ -44,7 +44,7 @@ In the discrimination parameters estimation, instead of estimating the discrimin
 we are estimating the natural logarithm of the parameters to avoid negative values, \eqn{\alpha = exp(\gamma)}.
 }
 \examples{
-res <- gpcm(poly_inh_dset)
+res <- gpcm(pcm_data)
 res
 summary(res)
 

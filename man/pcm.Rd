@@ -64,13 +64,11 @@ by using penalized JML estimation.
 \code{fitStats} compute the fit statistics (e.g., Outfit and Infit) of the PCM model estimation (items and persons).
 }
 \examples{
-res <- pcm(poly_inh_dset)
+res <- pcm(pcm_data)
 res
 summary(res)
 
-pcmdif_res <- pcm_dif(polydif_inh_dset, groups_map = c(rep(1,245),rep(0,245)))
-fit_res <- fitStats(pcmdif_res)
-summary(fit_res)
+fit_res <- fitStats(res)
 plot(fit_res, plot.x = "gamma", plot.y = "outfit")
 
 }

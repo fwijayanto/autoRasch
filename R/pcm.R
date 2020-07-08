@@ -22,7 +22,7 @@
 #' @seealso \code{\link{pcm}}, \code{\link{gpcm}}
 #'
 #' @examples
-#' res <- pcm(poly_inh_dset)
+#' res <- pcm(pcm_data)
 #' res
 #' summary(res)
 #'
@@ -31,7 +31,7 @@
 pcm <- function(X, isHessian = TRUE){
 
   result <- pjmle(X = X, fixed_par = c("gamma","deltabeta"), isPenalized_gamma = FALSE, isPenalized_deltabeta = FALSE, isHessian = isHessian)
-  class(result) <- c("armodels","pcm","autoRasch")
+  class(result) <- c("pcm","armodels","autoRasch",class(result))
   return(result)
 
 }
@@ -65,9 +65,7 @@ pcm <- function(X, isHessian = TRUE){
 #'
 #'
 #' @examples
-#' pcmdif_res <- pcm_dif(polydif_inh_dset, groups_map = c(rep(1,245),rep(0,245)))
-#' fit_res <- fitStats(pcmdif_res)
-#' summary(fit_res)
+#' fit_res <- fitStats(res)
 #' plot(fit_res, plot.x = "gamma", plot.y = "outfit")
 #'
 #' @rdname pcm
@@ -171,7 +169,7 @@ fitStats.pcm <- function(obj, isAlpha = TRUE){
     res_fit[["alpha"]] <- exp(gpcm_res$gamma)
   }
 
-  class(res_fit) <- c("fit","autoRasch")
+  class(res_fit) <- c("fit","autoRasch",class(res_fit))
   return(res_fit)
 }
 

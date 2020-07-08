@@ -24,7 +24,7 @@
 #' @seealso \code{\link{pcm}}, \code{\link{gpcm}}
 #'
 #' @examples
-#' res <- gpcm(poly_inh_dset)
+#' res <- gpcm(pcm_data)
 #' res
 #' summary(res)
 #'
@@ -32,7 +32,7 @@
 gpcm <- function(X, isHessian = TRUE){
 
   result <- pjmle(X = X, fixed_par = c("deltabeta"), isPenalized_deltabeta = FALSE, isHessian = isHessian)
-  class(result) <- c("armodels","gpcm","autoRasch")
+  class(result) <- c("gpcm","armodels","autoRasch",class(result))
   return(result)
 }
 

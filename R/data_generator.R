@@ -197,8 +197,6 @@ generate_data <- function(responseType = "multidim.nocorrel", theta = c(-3,3), s
     diff <- diff + mat.lambda
   }
 
-  print(mt_ind)
-
   if(ncat > 2){
     pmat.l <- tapply(1L:length(D.vector), mt_ind, function(xin){
 
@@ -295,7 +293,8 @@ generate_data <- function(responseType = "multidim.nocorrel", theta = c(-3,3), s
   colnames(mxdat) <- c(1:(nitem*ndim))
   colnames(mxdat) <- paste("I", colnames(mxdat), sep = "")
 
-  return(list(mxdat,mxpmat,list("theta" = B.mat, "beta" = D.mat)))
+  # return(list(mxdat,mxpmat,list("theta" = B.mat, "beta" = D.mat)))
+  return(mxdat)
 
 }
 

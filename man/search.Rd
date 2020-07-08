@@ -8,22 +8,24 @@
 \title{Stepwise Selection Search}
 \usage{
 stepwise_search(X, criterion = c("ipoqll"), incl_set = c(),
-  groups_map = c(), cores = NULL, optz_tuner_iq = c(),
-  optz_tuner_oq = c(), isTracked = TRUE, isContinued = FALSE,
-  prevData = c(), isLegacy = FALSE, fileOutput = FALSE,
+  groups_map = c(), cores = 20, optz_tuner_iq = list(maxit = 500,
+  reltol = 1e-21, fnscale = 10), optz_tuner_oq = list(maxit = 500, reltol
+  = 1e-21, fnscale = 10), isTracked = TRUE, isContinued = FALSE,
+  prevData = c(), isLegacy = TRUE, fileOutput = FALSE,
   tempFile = "temp_stepSearch.RData", isConvert = FALSE)
 
 backward_search(X, criterion = c("ipoqll"), incl_set = c(),
-  groups_map = c(), cores = NULL, optz_tuner_iq = c(),
-  optz_tuner_oq = c(), isTracked = TRUE, isContinued = FALSE,
-  prevData = c(), isLegacy = FALSE, fileOutput = FALSE,
+  groups_map = c(), cores = 20, optz_tuner_iq = list(maxit = 500,
+  reltol = 1e-21, fnscale = 10), optz_tuner_oq = list(maxit = 500, reltol
+  = 1e-21, fnscale = 10), isTracked = TRUE, isContinued = FALSE,
+  prevData = c(), isLegacy = TRUE, fileOutput = TRUE,
   tempFile = "temp_backSearch.RData", isConvert = FALSE)
 
 \method{summary}{search}(obj)
 
-\method{plot}{search}(obj, fileOutput = FALSE, type = "l",
-  xlab = NULL, ylab = NULL, xlim = c(), ylim = c(),
-  use.name = FALSE, remOrdered = TRUE, isMax = TRUE, ...)
+\method{plot}{search}(obj, use.name = FALSE, remOrdered = TRUE,
+  isMax = TRUE, ylab = "IPOQ-LL", xlab = expression("|S"["in"] *
+  "|"), xlim = c(), type = "l", ...)
 }
 \arguments{
 \item{X}{A matrix or data.frame of the observed responses (ordinal or binary response).}
@@ -55,7 +57,7 @@ backward_search(X, criterion = c("ipoqll"), incl_set = c(),
 \item{isConvert}{A logical value whether it is wanted to recompute the score of the search results using IPOQ-LL-DIF criterion.}
 }
 \value{
-A matrix of the itemsets that obtain the highest scores for each number of items in the included set.
+A matrix of the itemsets that obtain the highest scores for each number of items in the included set and it scores (IQ-LL,OQ-LL, and IPOQ-LL).
 }
 \description{
 To search itemset that give maximum value of the criterion
@@ -64,5 +66,10 @@ To search itemset that give maximum value of the criterion
 To search the itemset that give the maximum score.
 }
 \examples{
-search_res <- backward_search(poly_inh_dset,criterion = "ipoqll", incl_set = c(1:18), cores = 2, isLegacy = TRUE)
+pcmdata_search <- stepwise_search(X = pcm_data, incl_set = c(1:ncol(pcm_data)))
+plot(pcmdata_search)
+
+#To search only using backward search
+#pcmdata_search <- backward_search(X = pcm_data, incl_set = c(1:ncol(pcm_data)))
+
 }
