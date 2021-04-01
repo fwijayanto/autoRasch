@@ -1,30 +1,55 @@
-#' autoRasch Options
+#' autoRasch Optimization Parameters Setting
 #'
-#' Show the default settings used by the functions in \strong{autoRasch} package. These settings can be changed by passing values through the "..." argument.
+#' Returns and updates the default settings used by the functions in \strong{autoRasch} package.
 #'
-#' @param x \emph{Character}. A name of single parameter setting that is wanted to be shown.
+#' @param x A name of single parameter setting that is wanted to be shown. \code{NULL} means returns all parameters.
+#'
+#' @details
+#' \code{cd_control} lists the parameters used to control the coordinate descent optimization procedure. The paramaters are:
+#' \itemize{
+#'     \item{\code{init.step}}{   Initial value of the delta parameters updating step. The default is \code{1}.}
+#'     \item{\code{scale.down}}{   A constant value to scale down the updating step. The default is \code{0.5}.}
+#'     \item{\code{maxit.cd.higher}}{   Maximum iteration in the higher level coordinate descent. The default is \code{500}.}
+#'     \item{\code{maxit.cd.lower}}{   Maximum iteration for every coordinate optimization in the lower level coordinate descent. The default is \code{500}.}
+#'     \item{\code{abs.tol}}{   The convergence tolerance. The algorithm stops if it is unable to reduce the negative log likelihood value by the given tolerance. The default is \code{1e-12}.}
+#'     \item{\code{max.dif.par}}{   The convergence tolerance. The algorithm stops if it is unable to update all of the parameters' value by the given tolerance. The default is \code{1e-8}.}
+#' }
+#'
 #'
 #' @return
-#' \item{fixed_par}{   A vector of parameter types that are set to be fix. It means that these parameters are not estimated.}
-#' \item{fixed_theta}{   A vector of \code{theta} values when \code{theta} are set to be fix at the \code{fixed_par}. If it is not set, it will be set to zero.}
-#' \item{fixed_beta}{   A vector of \code{theta} values when \code{beta} are set to be fix at the \code{fixed_par}. If it is not set, it will be set to zero.}
-#' \item{fixed_gamma}{   A vector of \code{gamma} (natural logarithm of discrimination parameters, \eqn{\alpha = exp(\gamma)}) values when \code{gamma} are set to be fix at the \code{fixed_par}. If it is not set, it will be set to zero.}
-#' \item{fixed_deltabeta}{   A vector of \code{deltabeta} values when \code{deltabeta} are set to be fix at the \code{fixed_par}. If it is not set, it will be set to zero.}
+#' \item{fixed_par}{   A vector of names of the parameter types that are set to be fixed. It means that these parameters are not going to be estimated.}
+#' \item{fixed_theta}{   A vector of \code{theta} values when \code{theta} are listed in the \code{fixed_par}. If it is not set, it will be set to zero.}
+#' \item{fixed_beta}{   A vector of \code{beta} values when \code{beta} are listed in the \code{fixed_par}. If it is not set, it will be set to zero.}
+#' \item{fixed_gamma}{   A vector of \code{gamma} (natural logarithm of discrimination parameters, \eqn{\alpha = exp(\gamma)}) values when \code{gamma} are listed in the \code{fixed_par}. If it is not set, it will be set to zero.}
+#' \item{fixed_delta}{   A vector of \code{delta} values when \code{delta} are listed in the \code{fixed_par}. If it is not set, it will be set to zero.}
 #' \item{isPenalized_theta}{   It is a logical parameter whether, in the estimation procedure, \code{theta} is penalized or not.}
 #' \item{isPenalized_gamma}{   It is a logical parameter whether, in the estimation procedure, \code{gamma} is penalized or not.}
-#' \item{isPenalized_deltabeta}{   It is a logical parameter whether, in the estimation procedure, \code{deltabeta} is penalized or not.}
+#' \item{isPenalized_delta}{   It is a logical parameter whether, in the estimation procedure, \code{delta} is penalized or not.}
 #' \item{groups_map}{   A matrix \eqn{n x f} to map the subject into DIF groups, where \eqn{n} is number of subjects and \eqn{f} is number of focal groups.}
-#' \item{optz_tuner}{   A list of optimization function settings. For complete settings can be seen in \code{\link[stats:optim]{stats::optim()}}.}
-#' \item{lambda_theta}{   An integer value to set the regularization parameter to the \code{theta}.}
-#' \item{lambda_in}{   An integer value to set the regularization parameter to the \code{gamma} in the included itemset.}
-#' \item{lambda_out}{   An integer value to set the regularization parameter to the \code{gamma} in the excluded itemset.}
-#' \item{lambda_deltabeta}{   An integer value to set the regularization parameter to the \code{deltabeta}.}
-#' \item{isHessian}{   It is a logical parameter whether, in the estimation procedure, need to return the Hessian matrix or not.}
-#' \item{isTracked}{   It is a logical parameter whether need to track the process or not.}
+#' \item{optz_method}{    Options of the optimization method used. The default is \code{optim} which implies on applying the PJMLE which is implemented using \code{optim()}.
+#' When it is set to \code{mixed} means that it applies the coordinate descent.}
+#' \item{optim_control}{   A list of setting parameters of the \code{optim()}. For complete settings can be seen in \code{\link[stats:optim]{stats::optim()}}.}
+#' \item{lambda_theta}{   The regularization parameter to the \code{theta}. The default value is \code{0.05}}
+#' \item{lambda_in}{   The regularization parameter to the \code{gamma} in the included itemset. The default value is \code{50}.}
+#' \item{lambda_out}{   The regularization parameter to the \code{gamma} in the excluded itemset. The default value is \code{1}.}
+#' \item{lambda_delta}{   The regularization parameter to the \code{delta}. The default value is \code{10}.}
+#' \item{randomized}{    A logical parameter whether the initial values of the estimated parameters are randomized or not.}
+#' \item{random.init.th}{   A threshold value to limit the range of the initial values. The default value is \code{1e-2}, means that the initial values range between \code{[-0.01,0.01]}}
+#' \item{isHessian}{   A logical parameter whether, in the estimation procedure, need to return the Hessian matrix or not. The default value is \code{TRUE}, which means the Hessian matrix will be computed.}
+#' \item{cd_control}{   A list of coordinate descent optimization setting.}
+#'
 #'
 #' @examples
+#' ### To show the default values
 #' autoRaschOptions()
-#' autoRaschOptions(x = "isTracked")
+#' autoRaschOptions(x = "isHessian")
+#'
+#' ### To change the default values
+#' adj_setting <- autoRaschOptions()
+#' adj_setting$isHessian <- FALSE
+#'
+#' @importFrom graphics hist layout legend lines matlines matplot par plot points text
+#' @importFrom utils combn write.csv
 #'
 #' @export
 autoRaschOptions <- function(x = NULL){
@@ -33,8 +58,6 @@ autoRaschOptions <- function(x = NULL){
 
   if(!is.null(x)) {
     if(is.character(x)) {
-      # lower case only
-      #x <- tolower(x)
 
       # check if x is in names(aRoptions)
       not.ok <- which(!x %in% names(aRoptions))
@@ -47,17 +70,14 @@ autoRaschOptions <- function(x = NULL){
         x <- x[ -not.ok ]
       }
 
-      # return requested option(s)
-      if(length(x) == 0L) {
-        return(default)
-      } else {
-        aRoptions[x]
-      }
+
+      return(aRoptions[x])
     } else {
       stop("autoRasch ERROR: `x' must be a character string")
     }
   } else {
-    aRoptions
+    class(aRoptions) <- c(class(aRoptions),"aR_opt")
+    return(aRoptions)
   }
 }
 
@@ -68,36 +88,25 @@ autoRasch_options_default <- function(){
     fixed_theta = c(),
     fixed_beta = c(),
     fixed_gamma = c(),
-    fixed_deltabeta = c(),
+    fixed_delta = c(),
     isPenalized_gamma = TRUE,
-    isPenalized_deltabeta = TRUE,
+    isPenalized_delta = TRUE,
     isPenalized_theta = TRUE,
     groups_map = c(),
-    # resp.th = c()
-    # optz_method = c("optim","nlminb"),
-    optz_tuner = list(maxit = 2e+4, reltol = 1e-12, fnscale = 10),
-    # objtype = "",
-    # desc = NULL,
+    optz_method = "mixed",
+    optim_control = list(maxit = 2e+4, reltol = 1e-12, fnscale = 10),
     lambda_theta = 0.05,
     lambda_in = 50,
-    lambda_out = 5e-3,
-    lambda_deltabeta = 15,
-    # lambda_deltagamma = 10000,
-    # eps = 0.0,
-    # random.init = FALSE,
-    # random.init.th = 1e-2,
+    lambda_out = 1,
+    lambda_delta = 10,
+    eps = 0.0,
+    randomized = FALSE,
+    random.init.th = 1e-2,
     isHessian = TRUE,
-    isTracked = TRUE
+    cd_control = list("init.step" = 1, scale.down = 0.5, maxit.cd.higher = 500, maxit.cd.lower = 500, maxit.optim = 1e+4,
+                      abs.tol = 1e-12, max.diff.par = 1e-8)
   )
 
   return(opt)
 
-}
-
-
-testFUnction <- function(X,...){
-
-  dotdotdot <- list(...)
-  temp <- list(x,dotdotdot)
-  return(temp)
 }

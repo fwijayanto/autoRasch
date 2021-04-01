@@ -3,16 +3,18 @@
 \name{compute_score}
 \alias{compute_score}
 \alias{compute_scores}
-\title{Compute the In-plus-out-of-questionnaire log likelihood (IPOQ-LL)}
+\title{Compute the In-plus-out-of-questionnaire log likelihood (with DIF) (IPOQ-LL(-DIF))}
 \usage{
 compute_score(X, incl_set, type = c("ipoqll", "ipoqlldif"),
   groups_map = c(), init_par_iq = c(), init_par_oq = c(),
-  optz_tuner_iq = c(), optz_tuner_oq = c(), isTracked = FALSE)
+  optim_control_iq = c(), optim_control_oq = c(),
+  setting_par_iq = c(), setting_par_oq = c())
 
-compute_scores(X, itemsets, type = c("ipoqll", "ipoqlldif"),
+compute_scores(X, incl_sets, type = c("ipoqll", "ipoqlldif"),
   step_direct = c("fixed", "forward", "backward"), groups_map = c(),
-  init_par_iq = c(), init_par_oq = c(), optz_tuner_iq = c(),
-  optz_tuner_oq = c(), cores = NULL)
+  init_par_iq = c(), init_par_oq = c(), optim_control_iq = c(),
+  optim_control_oq = c(), setting_par_iq = c(), setting_par_oq = c(),
+  cores = NULL)
 }
 \arguments{
 \item{X}{A matrix or data.frame of the observed responses (ordinal or binary response).}
@@ -27,25 +29,38 @@ compute_scores(X, itemsets, type = c("ipoqll", "ipoqlldif"),
 
 \item{init_par_oq}{Initial values of the parameters in the excluded set before the estimation begin.}
 
-\item{optz_tuner_iq}{The optimisation setting of the included set. See \code{\link[stats:optim]{stats::optim()}} \code{control} parameter.}
+\item{optim_control_iq}{The optimisation setting of the included set. See \code{\link[stats:optim]{stats::optim()}} \code{control} parameter.}
 
-\item{optz_tuner_oq}{The optimisation setting of the excluded set. See \code{\link[stats:optim]{stats::optim()}} \code{control} parameter.}
+\item{optim_control_oq}{The optimisation setting of the excluded set. See \code{\link[stats:optim]{stats::optim()}} \code{control} parameter.}
 
-\item{isTracked}{A logical value whether the computation will be tracked or not.}
+\item{setting_par_iq}{The coordinate descent optimisation setting of the included set. See \code{\link[autoRasch:autoRaschOptions]{autoRasch::autoRaschOptions()}} \code{cd_control} parameter.}
 
-\item{cores}{Number of cores that is used in the paralellization.}
+\item{setting_par_oq}{The coordinate descent optimisation setting of the excluded set. See \code{\link[autoRasch:autoRaschOptions]{autoRasch::autoRaschOptions()}} \code{cd_control} parameter.}
 
 \item{incl_sets}{A matrix as a results of a \code{rbind} of \code{incl_set}.}
+
+\item{step_direct}{How will you compute the criterion score. \code{fixed} for the given itemset,
+\code{forward} computes all the scores of the possible combination of items if an item is added to the given set,
+\code{backward}  computes all the scores of the possible combination of items if an item is removed to the given set.}
+
+\item{cores}{Number of cores that is used in the paralellization.}
 }
 \value{
-\code{compute_score} will return a vector which contains in-questionnaire log likelihood (iqll), out-of-questionnaire log likelihood(oqll),
-ipoqll, included set's items' number of the given initial survey, the estimated parameters of the included set,
-and the estimated parameters of the excluded set, respectively.
+\code{compute_score} will return a vector which contains in-questionnaire log likelihood (IQ-LL(-DIF)), out-of-questionnaire log likelihood(OQ-LL(-DIF)),
+IPOQ-LL(-DIF), included set's items' number in the given initial survey, the estimated theta parameters, the estimated items' parameters in the included set,
+and the estimated items' parameters in the excluded set, sequentially.
 
 \code{compute_scores} will return a matrix as a result of the \code{rbind} operation of the \code{compute_score}'s result.
 }
 \description{
-\code{compute_score} computes the the IPOQ-LL score of an instrument (included set) of the given initial survey.
-While \code{compute_scores} computes the IPOQ-LL score of many (more than one) instruments (included sets) of
+\code{compute_score} computes the the IPOQ-LL/IPOQ-LL-DIF score of an instrument (included set) of the given initial survey.
+While \code{compute_scores} computes the IPOQ-LL/IPOQ-LL-DIF score of many (more than one) instruments (included sets) of
 the given initial survey simultanously.
+}
+\examples{
+ipoqll_score <- compute_score(short_poly_data,incl_set = c(1:3),type = "ipoqll")
+
+ipoqll_scores <- compute_scores(short_poly_data,incl_set = rbind(c(1:3),c(4:6)),
+                                type = "ipoqll", cores = 2)
+
 }

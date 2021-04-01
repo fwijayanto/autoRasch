@@ -6,7 +6,7 @@
 \usage{
 plot_PImap(obj, th_dif = 0.01, main = NULL, xlab = NULL,
   cex = NULL, cex.lab = NULL, cex.axis = NULL, cex.main = NULL,
-  lwd = NULL)
+  lwd = NULL, v = NULL)
 }
 \arguments{
 \item{obj}{The object of class \code{'pcm'} or \code{'pcmdif'}.}
@@ -32,6 +32,8 @@ see \code{\link[graphics:par]{par()}}.}
 
 \item{lwd}{The line width, a positive number, defaulting to 1;
 see \code{\link[graphics:par]{par()}}.}
+
+\item{v}{Variable names used}
 }
 \description{
 This function maps the distribution of the persons' abilities and the items difficulties along the latent continuum.

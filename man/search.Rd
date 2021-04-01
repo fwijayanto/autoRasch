@@ -4,28 +4,29 @@
 \alias{stepwise_search}
 \alias{backward_search}
 \alias{summary.search}
-\alias{plot.search}
+\alias{print.search}
+\alias{plot_search}
 \title{Stepwise Selection Search}
 \usage{
 stepwise_search(X, criterion = c("ipoqll", "ipoqlldif"),
   incl_set = c(), groups_map = c(), cores = NULL,
-  optz_tuner_iq = c(), optz_tuner_oq = c(), isTracked = TRUE,
+  optim_control_iq = c(), optim_control_oq = c(), isTracked = TRUE,
   isContinued = FALSE, prevData = c(), isLegacy = FALSE,
   fileOutput = FALSE, tempFile = "temp_stepSearch.RData",
-  isConvert = FALSE)
+  isConvert = FALSE, setting_par_iq = c(), setting_par_oq = c())
 
 backward_search(X, criterion = c("ipoqll", "ipoqlldif"),
   incl_set = c(), groups_map = c(), cores = NULL,
-  optz_tuner_iq = c(), optz_tuner_oq = c(), isTracked = TRUE,
+  optim_control_iq = c(), optim_control_oq = c(), isTracked = TRUE,
   isContinued = FALSE, prevData = c(), isLegacy = FALSE,
   fileOutput = FALSE, tempFile = "temp_backSearch.RData",
-  isConvert = FALSE)
+  isConvert = FALSE, setting_par_iq = c(), setting_par_oq = c())
 
-\method{summary}{search}(obj)
+\method{summary}{search}(object, ...)
 
-\method{plot}{search}(obj, type = "l", xlab = NULL, ylab = NULL,
-  xlim = c(), ylim = c(), use.name = FALSE, remOrdered = TRUE,
-  isMax = TRUE, ...)
+\method{print}{search}(x, ...)
+
+plot_search(obj, remOrdered = TRUE, locateMax = TRUE, ...)
 }
 \arguments{
 \item{X}{A matrix or data.frame of the observed responses (ordinal or binary response).}
@@ -38,9 +39,9 @@ backward_search(X, criterion = c("ipoqll", "ipoqlldif"),
 
 \item{cores}{An integer value of number of cores should be used for computation. The default is 2.}
 
-\item{optz_tuner_iq}{The optimisation setting of the included set. See \code{\link[stats:optim]{stats::optim()}} \code{control} parameter.}
+\item{optim_control_iq}{The optimisation setting of the included set. See \code{\link[stats:optim]{stats::optim()}} \code{control} parameter.}
 
-\item{optz_tuner_oq}{The optimisation setting of the excluded set. See \code{\link[stats:optim]{stats::optim()}} \code{control} parameter.}
+\item{optim_control_oq}{The optimisation setting of the excluded set. See \code{\link[stats:optim]{stats::optim()}} \code{control} parameter.}
 
 \item{isTracked}{A logical value whether the progress need to be tracked or not.}
 
@@ -55,6 +56,22 @@ backward_search(X, criterion = c("ipoqll", "ipoqlldif"),
 \item{tempFile}{The filename of the temporary file to track the search progress. The default is \code{"temp_stepSearch.RData"} which also automatically produces \code{"temp_stepSearch.csv"}.}
 
 \item{isConvert}{A logical value whether it is wanted to recompute the score of the search results using IPOQ-LL-DIF criterion.}
+
+\item{setting_par_iq}{a list of the optimization control setting parameters for the included set. See \code{setting} parameter in \code{\link[autoRasch:autoRaschOptions]{autoRaschOptions()}}.}
+
+\item{setting_par_oq}{a list of the optimization control setting parameters for the included set. See \code{setting} parameter in \code{\link[autoRasch:autoRaschOptions]{autoRaschOptions()}}.}
+
+\item{object}{The object of class \code{'search'}.}
+
+\item{...}{Further arguments to be passed.}
+
+\item{x}{The object of class \code{'search'}.}
+
+\item{obj}{An object of class "search".}
+
+\item{remOrdered}{A logical statement whether show the order of the items removal or not.}
+
+\item{locateMax}{A logical statement whether the location of the maximum score is needed to be marked or not.}
 }
 \value{
 A matrix of the itemsets that obtain the highest scores for each number of items in the included set.
@@ -66,5 +83,7 @@ To search itemset that give maximum value of the criterion
 To search the itemset that give the maximum score.
 }
 \examples{
-search_res <- backward_search(poly_inh_dset,criterion = "ipoqll", incl_set = c(1:18), cores = 2, isLegacy = TRUE)
+#search_res <- backward_search(short_poly_data,criterion = "ipoqll", incl_set = c(1:9), cores = 2)
+#plot_search(search_res,type="l")
+
 }

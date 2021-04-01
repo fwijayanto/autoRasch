@@ -7,33 +7,39 @@
 \alias{print.pcm}
 \title{Estimation of The Partial Credit Model (PCM)}
 \usage{
-pcm(X, isHessian = TRUE)
+pcm(X, init_par = c(), setting = c())
 
-\method{fitStats}{pcm}(obj, isAlpha = TRUE)
+\method{fitStats}{pcm}(obj, isAlpha = TRUE, isTraced = FALSE)
 
-\method{summary}{pcm}(obj, par = c())
+\method{summary}{pcm}(object, ...)
 
-\method{print}{pcm}(obj, par = c())
+\method{print}{pcm}(x, ...)
 }
 \arguments{
 \item{X}{Input dataset as matrix or data frame with ordinal responses (starting from 0);
 rows represent individuals, columns represent items.}
 
-\item{isHessian}{a logical parameter setting whether or not the Hessian matrix is needed to be computed.
-The Hessian matrix is needed to compute the separation reliability.}
+\item{init_par}{a vector of initial values of the estimated parameters.}
+
+\item{setting}{a list of the optimization control setting parameters. See \code{\link[autoRasch:autoRaschOptions]{autoRaschOptions()}.}}
 
 \item{obj}{The object of class \code{'pcm'}.}
 
 \item{isAlpha}{Boolean value that indicates whether the discrimination parameters is needed to be estimated or not.
 The discrimination parameters are estimated using the corresponding models (GPCM or GPCM-DIF).}
 
-\item{par}{The parameter that are wanted to be summarized.}
+\item{isTraced}{A list of some matrices, i.e., the expected values, the variances, the curtosis, and the standardized residual matrix.}
+
+\item{object}{The object of class \code{'pcm'}.}
+
+\item{...}{Further arguments to be passed.}
+
+\item{x}{The object of class \code{'pcm'}.}
 }
 \value{
 \strong{\code{pcm()} will return a \code{\link[base:list]{list}} which contains:}
 \item{X}{   The dataset that is used for estimation.}
-\item{mt_vek}{   A vector of the highest response category as many as the number of items.}
-\item{real_vek}{   A vector of the presence of thresholds in the items-thresholds order: \code{1} if the threshold is present and \code{NA} if unavailable.}
+\item{mt_vek}{   A vector of the highest response given to items.}
 \item{itemName}{   The vector of names of items (columns) in the dataset.}
 \item{loglik}{   The log likelihood of the estimation.}
 \item{hessian}{   The hessian matrix. Only when the \code{isHessian = TRUE}.}
@@ -56,23 +62,38 @@ The discrimination parameters are estimated using the corresponding models (GPCM
    \item{p.outfitZ}{   A vector of OutfitZ values for each persons.}
    \item{p.infitZ}{   A vector of InfitZ values for each persons.}
 }
+\emph{traceMat}{   Some computed matrices in the process. Only if \code{isTraced = TRUE}}
+\itemize{
+   \item{emat}{   The expected values matrix.}
+   \item{vmat}{   The variance matrix.}
+   \item{cmat}{   The curtosis matrix.}
+   \item{std.res}{   The standardized residual.}
+}
 }
 \description{
 This function computes the parameter estimates of a partial credit model for dichotomous and polytomous responses
-by using penalized JML estimation.
+by using penalized joint maximum likelihood estimation (PJMLE). Inputting a dichotomous responses to this model,
+will automatically transforms the PCM to the Rasch model.
 
 \code{fitStats} compute the fit statistics (e.g., Outfit and Infit) of the PCM model estimation (items and persons).
 }
 \examples{
-res <- pcm(poly_inh_dset)
-res
-summary(res)
+pcm_res <- pcm(polydif_inh_dset[,c(14:17,19)])
+summary(pcm_res)
 
-pcmdif_res <- pcm_dif(polydif_inh_dset, groups_map = c(rep(1,245),rep(0,245)))
-fit_res <- fitStats(pcmdif_res)
-summary(fit_res)
-plot(fit_res, plotx = "gamma", ploty = "outfit")
+#To summarize only for beta parameters
+summary(pcm_res, par="beta")
+fit_res <- fitStats(pcm_res, isTraced = TRUE)
+itemfit(fit_res)
+personfit(fit_res)
+plot_fitStats(fit_res, toPlot = c("alpha","outfit"), useName = TRUE, type = "n")
 
+}
+\references{
+Wright, B. D., & Masters, G. N. (1982). Rating Scale Analysis. Chicago: MESA Press.
+
+Masters, G. N. (1982). A rasch model for partial credit scoring. Psychometrika, 47(2), 149–174. https://doi.org/10.1007/BF02296272. \cr\cr
+Wright, B. D., & Masters, G. N. (1990). Computation of outfit and infit statistics. Rasch Measurement Transactions, 3(4), 84–85. Retrieved from https://www.rasch.org/rmt/rmt34e.htm
 }
 \seealso{
 \code{\link{pcm}}, \code{\link{pcm_dif}}, \code{\link{gpcm}}, \code{\link{gpcm_dif}}

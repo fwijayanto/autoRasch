@@ -6,28 +6,29 @@
 \alias{print.gpcm}
 \title{Estimation of The Generalized Partial Credit Model}
 \usage{
-gpcm(X, isHessian = TRUE)
+gpcm(X, init_par = c(), setting = c())
 
-\method{summary}{gpcm}(obj, par = c())
+\method{summary}{gpcm}(object, ...)
 
-\method{print}{gpcm}(obj, par = c())
+\method{print}{gpcm}(x, ...)
 }
 \arguments{
 \item{X}{Input dataset as matrix or data frame with ordinal responses (starting from 0);
 rows represent individuals, columns represent items.}
 
-\item{isHessian}{a logical parameter setting whether or not the Hessian matrix is needed to be computed.
-The Hessian matrix is needed to compute the separation reliability.}
+\item{init_par}{a vector of initial values of the estimated parameters.}
 
-\item{obj}{The object of class \code{'gpcm'}.}
+\item{setting}{a list of the optimization control setting parameters. See \code{\link[autoRasch:autoRaschOptions]{autoRaschOptions()}.}}
 
-\item{par}{The parameter that are wanted to be summarized.}
+\item{object}{The object of class \code{'gpcm'}.}
+
+\item{...}{Further arguments to be passed.}
+
+\item{x}{The object of class \code{'gpcm'}.}
 }
 \value{
 \item{X}{   The dataset that is used for estimation.}
-\item{mt_vek}{   A vector of the highest response category as many as the number of items.}
-\item{real_vek}{   A vector of the presence of thresholds in the items-thresholds order: \code{1}
-if the threshold is present and \code{NA} if unavailable.}
+\item{mt_vek}{   A vector of the highest response given to items.}
 \item{itemName}{   The vector of names of items (columns) in the dataset.}
 \item{loglik}{   The log likelihood of the estimation.}
 \item{hessian}{   The hessian matrix. Only when the \code{isHessian = TRUE}.}
@@ -36,18 +37,21 @@ if the threshold is present and \code{NA} if unavailable.}
 \item{theta}{   A vector of the ability parameters of each individuals.}
 }
 \description{
-\code{gpcm()} computes the parameter estimates of a generalized partial credit model for polytomous responses
-by using penalized JML estimation.
+This function computes the parameter estimates of a generalized partial credit model for polytomous responses
+by using penalized JML estimation. Inputting a dichotomous responses to this model,
+will automatically transforms the GPCM to the 2-PL model.
 }
 \details{
-In the discrimination parameters estimation, instead of estimating the discrimination parameters,
-we are estimating the natural logarithm of the parameters to avoid negative values, \eqn{\alpha = exp(\gamma)}.
+In the discrimination parameters estimation, instead of estimating the discrimination parameters (\eqn{\alpha}),
+we are estimating its natural logarithm to avoid negative values, \eqn{\alpha = exp(\gamma)}.
 }
 \examples{
-res <- gpcm(poly_inh_dset)
-res
-summary(res)
+gpcm_res <- gpcm(short_poly_data)
+summary(gpcm_res, par = "alpha")
 
+}
+\references{
+Muraki, E. (1992). A generalized partial credit model: Application of an EM algorithm. Applied Psychological Measurement, 16(2). https://doi.org/10.1177/014662169201600206
 }
 \seealso{
 \code{\link{pcm}}, \code{\link{pcm_dif}}, \code{\link{gpcm}}, \code{\link{gpcm_dif}}

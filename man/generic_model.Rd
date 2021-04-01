@@ -4,20 +4,22 @@
 \alias{generic_model}
 \title{Estimation of the generic form of the models}
 \usage{
-generic_model(X, ...)
+generic_model(X, init_par = c(), setting = c())
 }
 \arguments{
 \item{X}{Input dataset as matrix or data frame with ordinal responses (starting from 0); rows represent individuals, column represent items.}
 
-\item{...}{Parameter settings which are listed in \code{\link[autoRaschOptions]{autoRaschOptions()}}.}
+\item{init_par}{Initial values of the estimated parameters.}
+
+\item{setting}{Parameter settings which are listed in \code{\link[autoRasch:autoRaschOptions]{autoRaschOptions()}}.}
 }
 \value{
 \item{X}{   The dataset that is used for estimation.}
 \item{name}{   The name of each items in the dataset.}
-\item{mt_vek}{   }
+\item{mt_vek}{   A vector of the highest response category as many as the number of items.}
 \item{loglik}{   The log likelihood of the estimation.}
 \item{objtype}{   Type of the model that is used.}
-\item{deltabeta}{   A vector of the DIF parameters of each items on each groups.}
+\item{delta}{   A vector of the DIF parameters of each items on each groups.}
 \item{gamma}{   A vector of the natural logarithm of discrimination parameters of each items.}
 \item{beta}{   A vector of the difficulty parameter of each items' categories (thresholds).}
 \item{theta}{   A vector of the ability parameters of each individuals.}

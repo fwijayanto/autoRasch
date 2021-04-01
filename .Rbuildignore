@@ -1,2 +1,8 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^\.RData$
+^.*osteo.*\.RData$
+^.*ieps.*\.RData$
+^.*ipoqlldif.*\.RData$
+^.*_random3\.RData$
+^.*.pdf$

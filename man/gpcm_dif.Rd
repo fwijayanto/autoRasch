@@ -2,39 +2,39 @@
 % Please edit documentation in R/gpcmdif.R
 \name{gpcm_dif}
 \alias{gpcm_dif}
-\alias{summary.gpcm_dif}
-\alias{print.gpcm_dif}
+\alias{summary.gpcmdif}
+\alias{print.gpcmdif}
 \title{Estimation of The Generalized Partial Credit Model with DIF}
 \usage{
-gpcm_dif(X, groups_map, isHessian = TRUE)
+gpcm_dif(X, init_par = c(), groups_map = c(), setting = c())
 
-\method{summary}{gpcm_dif}(obj, par = c(), th_dif = NULL)
+\method{summary}{gpcmdif}(object, ...)
 
-\method{print}{gpcm_dif}(obj, par = c())
+\method{print}{gpcmdif}(x, ...)
 }
 \arguments{
-\item{X}{Input dataset as matrix or data frame with ordinal responses (starting from 0);
+\item{X}{A matrix or data frame as an input with ordinal responses (starting from 0);
 rows represent individuals, columns represent items.}
+
+\item{init_par}{a vector of initial values of the estimated parameters.}
 
 \item{groups_map}{Binary matrix. Respondents membership to DIF groups; rows represent individuals, column represent group partitions.}
 
-\item{isHessian}{a logical parameter setting whether or not the Hessian matrix is needed to be computed.
-The Hessian matrix is needed to compute the separation reliability.}
+\item{setting}{a list of the optimization control setting parameters.See \code{\link[autoRasch:autoRaschOptions]{autoRaschOptions()}}}
 
-\item{obj}{The object of class \code{'gpcm_dif'}.}
+\item{object}{The object of class \code{'gpcmdif'}.}
 
-\item{par}{The parameter that are wanted to be summarized.}
+\item{...}{Further arguments to be passed.}
 
-\item{th_dif}{The threshold of a recognizable estimated DIF parameters.}
+\item{x}{The object of class \code{'gpcmdif'}.}
 }
 \value{
 \item{X}{   The dataset that is used for estimation.}
-\item{mt_vek}{   A vector of the highest response category as many as the number of items.}
-\item{real_vek}{   A vector of the presence of thresholds in the items-thresholds order: \code{1} if the threshold is present and \code{NA} if unavailable.}
+\item{mt_vek}{   A vector of the highest responses given to items.}
 \item{itemName}{   The vector of names of items (columns) in the dataset.}
 \item{loglik}{   The log likelihood of the estimation.}
 \item{hessian}{   The hessian matrix. Only when the \code{isHessian = TRUE}.}
-\item{deltabeta}{   A vector of the DIF parameters of each items on each groups.}
+\item{delta}{   A vector of the DIF parameters of each items on each groups.}
 \item{gamma}{   A vector of the natural logarithm of discrimination parameters of each items.}
 \item{beta}{   A vector of the difficulty parameter of each items' categories (thresholds).}
 \item{theta}{   A vector of the ability parameters of each individuals.}
@@ -48,9 +48,8 @@ In the discrimination parameters estimation, instead of estimating the discrimin
 we are estimating the natural logarithm of the parameters to avoid negative values, \eqn{\alpha = exp(\gamma)}.
 }
 \examples{
-res <- gpcm_dif(polydif_inh_dset, groups_map = c(rep(1,245),rep(0,245)))
-res
-summary(res)
+gpcmdif_res <- gpcm_dif(polydif_inh_dset[,c(14:17,19)], groups_map = c(rep(1,245),rep(0,245)))
+summary(gpcmdif_res, par="delta")
 
 
 }

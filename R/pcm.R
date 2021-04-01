@@ -1,18 +1,18 @@
 #' Estimation of The Partial Credit Model (PCM)
 #'
 #' This function computes the parameter estimates of a partial credit model for dichotomous and polytomous responses
-#' by using penalized JML estimation.
+#' by using penalized joint maximum likelihood estimation (PJMLE). Inputting a dichotomous responses to this model,
+#' will automatically transforms the PCM to the Rasch model.
 #'
 #' @param X Input dataset as matrix or data frame with ordinal responses (starting from 0);
 #' rows represent individuals, columns represent items.
-#' @param isHessian a logical parameter setting whether or not the Hessian matrix is needed to be computed.
-#' The Hessian matrix is needed to compute the separation reliability.
+#' @param init_par a vector of initial values of the estimated parameters.
+#' @param setting a list of the optimization control setting parameters. See \code{\link[autoRasch:autoRaschOptions]{autoRaschOptions()}.}
 #'
 #' @return
 #' \strong{\code{pcm()} will return a \code{\link[base:list]{list}} which contains:}
 #' \item{X}{   The dataset that is used for estimation.}
-#' \item{mt_vek}{   A vector of the highest response category as many as the number of items.}
-#' \item{real_vek}{   A vector of the presence of thresholds in the items-thresholds order: \code{1} if the threshold is present and \code{NA} if unavailable.}
+#' \item{mt_vek}{   A vector of the highest response given to items.}
 #' \item{itemName}{   The vector of names of items (columns) in the dataset.}
 #' \item{loglik}{   The log likelihood of the estimation.}
 #' \item{hessian}{   The hessian matrix. Only when the \code{isHessian = TRUE}.}
@@ -21,17 +21,41 @@
 #'
 #' @seealso \code{\link{pcm}}, \code{\link{pcm_dif}}, \code{\link{gpcm}}, \code{\link{gpcm_dif}}
 #'
+#' @references
+#' Wright, B. D., & Masters, G. N. (1982). Rating Scale Analysis. Chicago: MESA Press.
+#'
 #' @examples
-#' res <- pcm(poly_inh_dset)
-#' res
-#' summary(res)
+#' pcm_res <- pcm(polydif_inh_dset[,c(14:17,19)])
+#' summary(pcm_res)
+#'
+#' #To summarize only for beta parameters
+#' summary(pcm_res, par="beta")
+#' fit_res <- fitStats(pcm_res, isTraced = TRUE)
+#' itemfit(fit_res)
+#' personfit(fit_res)
+#' plot_fitStats(fit_res, toPlot = c("alpha","outfit"), useName = TRUE, type = "n")
 #'
 #' @rdname pcm
 #' @export
-pcm <- function(X, isHessian = TRUE){
+pcm <- function(X, init_par = c(), setting = c()){
 
-  result <- pjmle(X = X, fixed_par = c("gamma","deltabeta"), isPenalized_gamma = FALSE, isPenalized_deltabeta = FALSE, isHessian = isHessian)
-  class(result) <- c("armodels","pcm","autoRasch")
+  if(is.null(setting)){
+    setting <- autoRaschOptions()
+  } else {
+    if("aR_opt" %in% class(setting)){
+    } else {
+      stop("The setting used should be a class of aR_opt!")
+    }
+  }
+
+  setting$fixed_par <- c("gamma","delta")
+  setting$isPenalized_gamma <- FALSE
+  setting$isPenalized_delta <- FALSE
+  setting$optz_method <- "optim"
+
+  result <- pjmle(X = X, init_par = init_par, setting = setting)
+
+  class(result) <- c(class(result),"armodels","pcm","autoRasch")
   return(result)
 
 }
@@ -44,6 +68,7 @@ pcm <- function(X, isHessian = TRUE){
 #' @param obj The object of class \code{'pcm'}.
 #' @param isAlpha Boolean value that indicates whether the discrimination parameters is needed to be estimated or not.
 #' The discrimination parameters are estimated using the corresponding models (GPCM or GPCM-DIF).
+#' @param isTraced A list of some matrices, i.e., the expected values, the variances, the curtosis, and the standardized residual matrix.
 #'
 #' @return
 #' \strong{\code{fitStats()} will return a \code{\link[base:list]{list}} which contains:}
@@ -62,50 +87,77 @@ pcm <- function(X, isHessian = TRUE){
 #'    \item{p.outfitZ}{   A vector of OutfitZ values for each persons.}
 #'    \item{p.infitZ}{   A vector of InfitZ values for each persons.}
 #' }
+#' \emph{traceMat}{   Some computed matrices in the process. Only if \code{isTraced = TRUE}}
+#' \itemize{
+#'    \item{emat}{   The expected values matrix.}
+#'    \item{vmat}{   The variance matrix.}
+#'    \item{cmat}{   The curtosis matrix.}
+#'    \item{std.res}{   The standardized residual.}
+#' }
 #'
 #'
-#' @examples
-#' pcmdif_res <- pcm_dif(polydif_inh_dset, groups_map = c(rep(1,245),rep(0,245)))
-#' fit_res <- fitStats(pcmdif_res)
-#' summary(fit_res)
-#' plot(fit_res, plotx = "gamma", ploty = "outfit")
+#' @references
+#' Masters, G. N. (1982). A rasch model for partial credit scoring. Psychometrika, 47(2), 149–174. https://doi.org/10.1007/BF02296272. \cr\cr
+#' Wright, B. D., & Masters, G. N. (1990). Computation of outfit and infit statistics. Rasch Measurement Transactions, 3(4), 84–85. Retrieved from https://www.rasch.org/rmt/rmt34e.htm
 #'
 #' @rdname pcm
 #' @export
-fitStats.pcm <- function(obj, isAlpha = TRUE){
+fitStats.pcm <- function(obj, isAlpha = TRUE, isTraced = FALSE){
 
-  X <- obj$X
+  min.x <- min(obj$X, na.rm = TRUE)
+  X <- obj$X - min.x
 
   # Map the parameters
-  theta <- obj$theta
-  beta <- obj$beta
+
   mt_vek <- obj$mt_vek
+  theta <- obj$theta
+  beta <- obj$beta #* obj$real_vek
+  beta <- as.vector(unlist(tapply(beta, rep(1:length(mt_vek),mt_vek), function(x){
+      y <- x[which(!is.na(x))]
+      return(y)
+    })))
   n.th <- max(mt_vek)
 
-  xna.mat <- matrix(1,nrow = nrow(X), ncol = ncol(X))
+  # mt_vek <- as.vector(tapply(obj$real_vek, rep(1:length(mt_vek),mt_vek), sum, na.rm = TRUE))
+  mt_idx <- rep(1:length(mt_vek), mt_vek)
 
+  mult_mt_vek <- rep(mt_vek, nrow(X))
+  mult_mt_idx <- rep(1:length(mult_mt_vek), mult_mt_vek)
+
+  xna.mat <- matrix(1,nrow = nrow(X), ncol = ncol(X))
   idx <- which(is.na(X))
   xna.mat[idx] <- NA
   XNA <- xna.mat
 
+
   t.diff <- outer((-beta), theta, "+")
   disc.diff <- t.diff
 
-  per.cat.list <- matrix(disc.diff, nrow = n.th)
+  temp.prob <- matrix(as.vector(unlist(apply(disc.diff, 2, function(x){
+    res.temp <- tapply(x, mt_idx, function(y){
+      temp <- cumsum((y))
+      temp
+    })
+    res.temp
+  }))), nrow = length(beta))
 
-  temp.prob <- as.matrix(per.cat.list[1,])
-  temp.l2 <- exp(temp.prob)
-  temp.l1 <- exp(temp.l2*0)
-  temp.l1 <- cbind(temp.l1,temp.l2)
-  for(i in 2:n.th){
-    temp.prob <- cbind(temp.prob,(temp.prob[,i-1]+per.cat.list[i,]))
-    temp.l1 <- cbind(temp.l1,(exp(temp.prob[,i])))
-    temp.l2 <- temp.l2 + (exp(temp.prob[,i]))
-  }
+
+  expTempProb <- exp(temp.prob)
+
+  temp.l2 <- as.vector(tapply(as.vector(expTempProb), mult_mt_idx, function(y){
+    temp <- sum((y),na.rm = TRUE)
+    temp
+  }))
+
+  temp.l1 <- as.vector(unlist(tapply(as.vector(expTempProb), mult_mt_idx, function(y){
+    temp <- c(1,y)
+    temp
+  })))
+
   l2 <- (temp.l2+1)
 
-  l1 <- as.vector(t(temp.l1))
-  l2 <- rep(l2, each = (n.th+1))
+  l2 <- rep(l2,mult_mt_vek+1)
+  l1 <- temp.l1
 
   pmat <- l1/l2
 
@@ -113,18 +165,30 @@ fitStats.pcm <- function(obj, isAlpha = TRUE){
   mt_seq <- sequence(mt_vek0)-1
 
   Emat <- pmat * mt_seq
-  Emat <- matrix(Emat, nrow = (n.th+1))
-  Emat <- colSums(Emat)
 
-  Emat.cat <- rep(Emat, each = (n.th+1))
+  mult_mt_vek0 <- rep(mt_vek0, nrow(X))
+  mult_mt_idx0 <- rep(1:length(mult_mt_vek0), mult_mt_vek0)
+
+  Emat <- as.vector(tapply(as.vector(Emat), mult_mt_idx0, function(y){
+    temp <- sum((y),na.rm = TRUE)
+    temp
+  }))
+
+  Emat.cat <- rep(Emat, mult_mt_vek0)
 
   Vvect.cat <- ((mt_seq - Emat.cat)^2)*pmat
-  Vmat.cat <- matrix(Vvect.cat, nrow = (n.th+1))
-  Vmat <- colSums(Vmat.cat)
+
+  Vmat <- as.vector(tapply((Vvect.cat), mult_mt_idx0, function(y){
+    temp <- sum((y),na.rm = TRUE)
+    temp
+  }))
 
   Cvect.cat <- ((mt_seq - Emat.cat)^4)*pmat
-  Cmat.cat <- matrix(Cvect.cat, nrow = (n.th+1))
-  Cmat <- colSums(Cmat.cat)
+
+  Cmat <- as.vector(tapply((Cvect.cat), mult_mt_idx0, function(y){
+    temp <- sum((y),na.rm = TRUE)
+    temp
+  }))
 
   Emat <- t(matrix(Emat, nrow = ncol(X)))
   Vmat <- t(matrix(Vmat, nrow = ncol(X)))
@@ -165,20 +229,37 @@ fitStats.pcm <- function(obj, isAlpha = TRUE){
   res_fit <- list("i.fit" = list("i.outfitMSQ" = i.outfitMSQ, "i.infitMSQ" = i.infitMSQ, "i.outfitZ" = i.outfitZ, "i.infitZ" = i.infitZ), "p.fit" = list("p.outfitMSQ" = p.outfitMSQ, "p.infitMSQ" = p.infitMSQ, "p.outfitZ" = p.outfitZ, "p.infitZ" = p.infitZ))
 
   if(isAlpha){
-    gpcm_res <- gpcm(X = X, isHessian = FALSE)
+    setting_par <- autoRaschOptions()
+    setting_par$isHessian <- FALSE
+    gpcm_res <- gpcm(X = X, setting = setting_par)
     res_fit[["alpha"]] <- exp(gpcm_res$gamma)
   }
 
-  class(res_fit) <- c("fit","autoRasch")
+  if(isTraced){
+    res_fit[["traceMat"]] <- list("emat" = Emat, "vmat" = Vmat, "cmat" = Cmat, "std.res" = st.res)
+  }
+
+  class(res_fit) <- c(class(res_fit),"fit","autoRasch")
   return(res_fit)
 }
 
 
-#' @param par The parameter that are wanted to be summarized.
-#'
+#' @param object The object of class \code{'pcm'}.
+#' @param ... Further arguments to be passed.
+##'
 #' @rdname pcm
 #' @export
-summary.pcm <- function(obj, par = c()){
+summary.pcm <- function(object, ...){
+
+  obj <- object
+
+  dotdotdot <- list(...)
+
+  if(!is.null(dotdotdot$par)){
+    par <- dotdotdot$par
+  } else {
+    par <- NULL
+  }
 
   if(is.null(par) | "theta" %in% par){
     cat("\n\n")
@@ -195,17 +276,25 @@ summary.pcm <- function(obj, par = c()){
     cat("\n\n")
     cat("The estimated difficulty scores:")
     cat("\n")
-    reported_beta <- obj$beta * obj$real_vek
+    # reported_beta <- obj$beta #* obj$real_vek
+    reported_beta <- unlist(tapply(obj$beta,rep(1:length(obj$mt_vek),obj$mt_vek),function(x){
+      if(length(x) < max(obj$mt_vek)){
+        x <- c(x,rep(NA,(max(obj$mt_vek)-length(x))))
+        x
+      } else {
+        x
+      }
+    }))
     beta_mat <- matrix(reported_beta, nrow = length(obj$mt_vek), byrow = TRUE)
-    beta_mat <- as.data.frame(round(beta_mat,4), row.names = obj$itemName)
+    beta_mat <- as.data.frame(round(beta_mat,2), row.names = obj$itemName)
     colnames(beta_mat) <- paste("Th_",c(1:max(obj$mt_vek)),sep = "")
-    beta_mat[["Item Loc."]] <- round(apply(beta_mat,1,mean,na.rm=TRUE),4)
+    beta_mat[["Item Loc."]] <- temp <- round(apply(beta_mat,1,mean,na.rm=TRUE),2)
     beta_mat$` ` <- apply(beta_mat[,1:max(obj$mt_vek)],1,function(x){if(is.unsorted(na.omit(x))){return("*")}else{return("")}})
     print(beta_mat, quote = FALSE)
     cat("\n")
-    cat("The most difficult item: ",obj$itemName[which(beta_mat[,5] == max(beta_mat[,5],na.rm = TRUE))])
+    cat("The most difficult item: ",obj$itemName[which(temp == max(temp,na.rm = TRUE))])
     cat("\n")
-    cat("The easiest item: ",obj$itemName[which(beta_mat[,5] == min(beta_mat[,5],na.rm = TRUE))])
+    cat("The easiest item: ",obj$itemName[which(temp == min(temp,na.rm = TRUE))])
     cat("\n")
     ntd_items <- length(which(beta_mat[,ncol(beta_mat)] == "*"))
     cat("There are",ntd_items,"items which have disordered thresholds.")
@@ -214,11 +303,21 @@ summary.pcm <- function(obj, par = c()){
   }
 }
 
+#' @param x The object of class \code{'pcm'}.
+#'
 #' @rdname pcm
 #' @export
-print.pcm <- function(obj, par = c()){
-  cls <- class(obj)
-  class(obj) <- "list"
+print.pcm <- function(x, ...){
+
+  obj <- x
+
+  dotdotdot <- list(...)
+
+  if(!is.null(dotdotdot$par)){
+    par <- dotdotdot$par
+  } else {
+    par <- NULL
+  }
 
   if(is.null(par) | "theta" %in% par){
     cat("\n")

@@ -3,42 +3,45 @@
 \name{pcm_dif}
 \alias{pcm_dif}
 \alias{fitStats.pcmdif}
-\alias{summary.pcm_dif}
-\alias{print.pcm_dif}
+\alias{summary.pcmdif}
+\alias{print.pcmdif}
 \title{Estimation of The Partial Credit Model with DIF}
 \usage{
-pcm_dif(X, groups_map, isHessian = TRUE)
+pcm_dif(X, init_par = c(), groups_map = c(), setting = c())
 
-\method{fitStats}{pcmdif}(obj, isAlpha = TRUE)
+\method{fitStats}{pcmdif}(obj, isAlpha = TRUE, isTraced = FALSE)
 
-\method{summary}{pcm_dif}(obj, par = c(), th_dif = NULL)
+\method{summary}{pcmdif}(object, ...)
 
-\method{print}{pcm_dif}(obj, par = c())
+\method{print}{pcmdif}(x, ...)
 }
 \arguments{
-\item{X}{Input dataset as matrix or data frame with ordinal responses (starting from 0);
+\item{X}{A matrix or data frame as an input with ordinal responses (starting from 0);
 rows represent individuals, columns represent items.}
+
+\item{init_par}{a vector of initial values of the estimated parameters.}
 
 \item{groups_map}{Binary matrix. Respondents membership to DIF groups; rows represent individuals, column represent group partitions.}
 
-\item{isHessian}{a logical parameter setting whether or not the Hessian matrix is needed to be computed.
-The Hessian matrix is needed to compute the separation reliability.}
+\item{setting}{a list of the optimization control setting parameters.See \code{\link[autoRasch:autoRaschOptions]{autoRaschOptions()}}}
 
-\item{obj}{The object of class \code{'pcm_dif'}.}
+\item{obj}{The object of class \code{'pcmdif'}.}
 
 \item{isAlpha}{Boolean value that indicates whether the discrimination parameters is needed to be estimated or not.
 The discrimination parameters are estimated using the corresponding models (GPCM or GPCM-DIF).}
 
-\item{par}{The parameter that are wanted to be summarized.}
+\item{isTraced}{Logical statement whether returns some computed matrices, i.e., the expected values, the variances, the curtosis, and the standardized residual matrix.}
 
-\item{th_dif}{The threshold of a recognizable estimated DIF parameters.}
+\item{object}{The object of class \code{'pcmdif'}.}
+
+\item{...}{Further arguments to be passed.}
+
+\item{x}{The object of class \code{'pcmdif'}.}
 }
 \value{
 \strong{\code{pcm_dif()} will return a \code{\link[base:list]{list}} which contains:}
 \item{X}{   The dataset that is used for estimation.}
-\item{mt_vek}{   A vector of the highest response category as many as the number of items.}
-\item{real_vek}{   A vector of the presence of thresholds in the items-thresholds order:
-\code{1} if the threshold is present and \code{NA} if unavailable.}
+\item{mt_vek}{   A vector of the highest response given to items.}
 \item{itemName}{   The vector of names of items (columns) in the dataset.}
 \item{loglik}{   The log likelihood of the estimation.}
 \item{hessian}{   The hessian matrix. Only when the \code{isHessian = TRUE}.}
@@ -61,22 +64,26 @@ The discrimination parameters are estimated using the corresponding models (GPCM
    \item{p.outfitZ}{   A vector of OutfitZ values for each persons.}
    \item{p.infitZ}{   A vector of InfitZ values for each persons.}
 }
+\emph{traceMat}{   Some computed matrices in the process. Only if \code{isTraced = TRUE}}
+\itemize{
+   \item{emat}{   The expected values matrix.}
+   \item{vmat}{   The variance matrix.}
+   \item{cmat}{   The curtosis matrix.}
+   \item{std.res}{   The standardized residual.}
+}
 }
 \description{
 This function computes the parameter estimates of a partial credit model with DIF for dichotomous and polytomous responses
-by using penalized JML estimation.
+by implementing the coordinate descent.
 
-\code{fitStats} compute the fit statistics (e.g., Outfit and Infit) of the PCM-DIF model estimation (items and persons).
+\code{fitStats} compute the fit statistics (i.e., Outfit and Infit) of the PCM-DIF model estimation (items and persons).
 }
 \examples{
-res <- pcm_dif(polydif_inh_dset, groups_map = c(rep(1,245),rep(0,245)))
-res
-summary(res)
-
-pcmdif_res <- pcm_dif(polydif_inh_dset, groups_map = c(rep(1,245),rep(0,245)))
+pcmdif_res <- pcm_dif(polydif_inh_dset[,c(14:17,19)], groups_map = c(rep(1,245),rep(0,245)))
 fit_res <- fitStats(pcmdif_res)
-summary(fit_res)
-plot(fit_res, plotx = "gamma", ploty = "outfit")
+itemfit(fit_res)
+personfit(fit_res)
+plot_fitStats(fit_res, toPlot = c("alpha","outfit"), useName = FALSE, type = "n")
 
 }
 \seealso{

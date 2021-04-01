@@ -12,7 +12,8 @@
 #' see \code{\link[graphics:plot.default]{plot.default()}}
 #' @param col a vector of plotting colors
 #' @param lty a vector of line types.
-#'
+#' @param ... Further arguments to be passed.
+##'
 #' @examples
 #' res <- pcm(poly_inh_dset)
 #' plot_EVC(res, itemno = 4)
@@ -25,12 +26,12 @@ plot_EVC <- function(obj = c(), itemno = 5, xlab = NULL, ylab = NULL, xlim = c(-
     stop("autoRasch ERROR: itemno exceed the number of items.")
   }
 
-  dotdotdot <- list(...)
-  if(!is.null(dotdotdot$main)){
-    par(mar = c(6.5, 7.5, 2.5, 1), oma = c(0, 0,0, 0))
-  } else {
-    par(mar = c(6.5, 7.5, 0.5, 1), oma = c(0, 0,0, 0))
-  }
+  # dotdotdot <- list(...)
+  # if(!is.null(dotdotdot$main)){
+  #   par(mar = c(6.5, 7.5, 2.5, 1), oma = c(0, 0,0, 0))
+  # } else {
+  #   par(mar = c(6.5, 7.5, 0.5, 1), oma = c(0, 0,0, 0))
+  # }
 
   if(!is.null(xlab)){
     x.lab <- xlab
@@ -62,9 +63,10 @@ plot_EVC <- function(obj = c(), itemno = 5, xlab = NULL, ylab = NULL, xlim = c(-
 
   plot(emat_list[[1]], emat_list$emat[[1]][,itemno], col = col[1], type = "l", lty = lty[1],
        mgp = c(5,2,0), xlab = x.lab, ylab = y.lab, xlim = xlim, ...)
+  print(length(emat_list$emat))
   if(length(emat_list$emat) > 1){
     for(i in 2:length(emat_list$emat)){
-      lines(emat_list[[1]], emat_list$emat[[i]][,itemno], col = col[i-1], lty = lty[i-1], ...)
+      lines(emat_list[[1]], emat_list$emat[[i]][,itemno], col = col[i], lty = lty[i], ...)
     }
   }
 }
@@ -82,6 +84,7 @@ plot_EVC <- function(obj = c(), itemno = 5, xlab = NULL, ylab = NULL, xlim = c(-
 #' see \code{\link[graphics:plot.default]{plot.default()}}
 #' @param col a vector of plotting colors
 #' @param lty a vector of line types.
+#' @param ... Further arguments to be passed.
 #'
 #' @examples
 #' res <- pcm(poly_inh_dset)
@@ -146,16 +149,16 @@ emat_compute <- function(obj, theta.lim = c(-10,10)){
   X <- as.matrix(obj$X)
   RM.res <- obj
   if(!is.null(obj$groups_map)){
-    n_groups <- ncol(obj$groups_map)+1
+    n_groups <- ncol(obj$groups_map)
   } else {
     n_groups <- 1
   }
 
-  if(!is.null(obj$deltabeta)){
-    deltabeta_mat <- matrix(obj$deltabeta, ncol = (n_groups-1))
-    deltabeta_mat <- cbind(rep(0,nrow(deltabeta_mat)),deltabeta_mat)
+  if(!is.null(obj$delta)){
+    delta_mat <- matrix(obj$delta, ncol = (n_groups))
+    delta_mat <- cbind(rep(0,nrow(delta_mat)),delta_mat)
   } else {
-    deltabeta_mat <- matrix(rep(0,length(obj$mt_vek)),ncol = 1)
+    delta_mat <- matrix(rep(0,length(obj$mt_vek)),ncol = 1)
   }
 
   if(!is.null(obj$gamma)){
@@ -164,19 +167,37 @@ emat_compute <- function(obj, theta.lim = c(-10,10)){
     gamma <- rep(0,length(obj$mt_vek))
   }
 
+  beta.init <- unlist(tapply(obj$beta,rep(1:length(obj$mt_vek),obj$mt_vek),function(x){
+    if(length(x) < max(obj$mt_vek)){
+      x <- c(x,rep(NA,(max(obj$mt_vek)-length(x))))
+      x
+    } else {
+      x
+    }
+  }))
+
+  if("pcm" %in% class(obj) | "gpcm" %in% class(obj)){
+    n.iter <- n_groups
+  } else if("pcmdif" %in% class(obj) | "gpcmdif" %in% class(obj)){
+    n.iter <- n_groups + 1
+  }
+
+
   res <- list("theta" = c(seq(theta.lim[1],theta.lim[2],0.01)))
-  for(z in 1:n_groups){
+  for(z in 1:(n.iter)){
+    beta <- beta.init
     theta <- seq(theta.lim[1],theta.lim[2],0.01)
     if(z > 1){
-      beta <- RM.res$beta + rep(rowSums(deltabeta_mat[,1:z]) ,each = max(obj$mt_vek,na.rm = TRUE))
+      # beta <- beta + rep(rowSums(delta_mat[,1:z]) ,each = max(obj$mt_vek,na.rm = TRUE))
+      beta <- beta + rep((delta_mat[,z]) ,each = max(obj$mt_vek,na.rm = TRUE))
     } else {
-      beta <- RM.res$beta + rep((deltabeta_mat[,1]) ,each = max(obj$mt_vek,na.rm = TRUE))
+      beta <- beta + rep((delta_mat[,1]) ,each = max(obj$mt_vek,na.rm = TRUE))
     }
     exp.gamma <- exp(gamma)
 
     mt_vek <- RM.res$mt_vek
 
-    exp.gamma <- rep(exp.gamma, mt_vek)
+    exp.gamma <- rep(exp.gamma, each = max(obj$mt_vek,na.rm = TRUE))
 
     n.th <- max(mt_vek)
 
@@ -199,7 +220,13 @@ emat_compute <- function(obj, theta.lim = c(-10,10)){
       for(i in 2:n.th){
         temp.prob <- cbind(temp.prob,(temp.prob[,i-1]+per.cat.list[i,]))
         temp.l1 <- cbind(temp.l1,(exp(temp.prob[,i])))
-        temp.l2 <- temp.l2 + (exp(temp.prob[,i]))
+        temp.l2 <- rowSums(cbind(temp.l2,exp(temp.prob[,i])), na.rm = TRUE)
+
+        # if(is.na(temp.prob[,i])){
+        #   temp.l2 <- temp.l2
+        # } else {
+        #   temp.l2 <- temp.l2 + (exp(temp.prob[,i]))
+        # }
       }
     }
     l2 <- (temp.l2+1)
@@ -209,12 +236,12 @@ emat_compute <- function(obj, theta.lim = c(-10,10)){
 
     pmat <- l1/l2
 
-    mt_vek0 <- mt_vek + 1
+    mt_vek0 <- rep(n.th,length(mt_vek)) + 1
     mt_seq <- sequence(mt_vek0)-1
 
     Emat <- pmat * mt_seq
     Emat <- matrix(Emat, nrow = (n.th+1))
-    Emat <- colSums(Emat)
+    Emat <- colSums(Emat,na.rm = TRUE)
 
     Emat <- t(matrix(Emat, nrow = ncol(X)))
     Pmat <- t(matrix(pmat, nrow = ((n.th+1)*length(mt_vek))))
@@ -245,6 +272,7 @@ emat_compute <- function(obj, theta.lim = c(-10,10)){
 #' see \code{\link[graphics:par]{par()}}.
 #' @param lwd The line width, a positive number, defaulting to 1;
 #' see \code{\link[graphics:par]{par()}}.
+#' @param v Variable names used
 #'
 #' @examples
 #' res <- pcm(poly_inh_dset)
@@ -252,7 +280,7 @@ emat_compute <- function(obj, theta.lim = c(-10,10)){
 #'
 #' @export
 plot_PImap <- function(obj, th_dif = 1e-2, main = NULL, xlab = NULL, cex = NULL, cex.lab = NULL,
-                       cex.axis = NULL, cex.main = NULL, lwd = NULL){
+                       cex.axis = NULL, cex.main = NULL, lwd = NULL, v = NULL){
 
   if(!("pcmdif" %in% class(obj)) & !("pcm" %in% class(obj))){
     stop("autoRasch ERROR: person-item map only for \"pcm\" and \"pcmdif\" object.")
@@ -264,18 +292,30 @@ plot_PImap <- function(obj, th_dif = 1e-2, main = NULL, xlab = NULL, cex = NULL,
   par(mar = c(0, 1, 3, 0), oma = c(0, 0,0, 0))
   layout(matrix(c(1,2,3,4), 2, 2, byrow = TRUE), widths=c(9,1), heights=c(1,3))
 
-  reported_beta <- obj$beta * obj$real_vek
+  # reported_beta <- obj$beta * obj$real_vek
+  reported_beta <- unlist(tapply(obj$beta,rep(1:length(obj$mt_vek),obj$mt_vek),function(x){
+    if(length(x) < max(obj$mt_vek)){
+      x <- c(x,rep(NA,(max(obj$mt_vek)-length(x))))
+      x
+    } else {
+      x
+    }
+  }))
   beta_mat <- matrix(reported_beta, nrow = length(obj$mt_vek), byrow = TRUE)
-  beta_mat <- as.data.frame(round(beta_mat,4), row.names = obj$itemName)
+  if(!is.null(v)){
+    beta_mat <- as.data.frame(round(beta_mat,4), row.names = as.character(v))
+  } else {
+    beta_mat <- as.data.frame(round(beta_mat,4), row.names = obj$itemName)
+  }
   colnames(beta_mat) <- paste("Th_",c(1:max(obj$mt_vek)),sep = "")
 
   if("pcmdif" %in% class(obj)){
-    deltabeta_mat <- matrix(obj$deltabeta, ncol = ncol(obj$groups_map))
+    delta_mat <- matrix(obj$delta, ncol = ncol(obj$groups_map))
     for(i in 1:ncol(obj$groups_map)){
-      idx <- which(deltabeta_mat[,i] > th_dif)
+      idx <- which(abs(delta_mat[,i]) > th_dif)
       for(j in idx){
         tempName <- paste(rownames(beta_mat)[j],"_",letters[i],sep = "")
-        tempItem <- beta_mat[j,] + deltabeta_mat[j,i]
+        tempItem <- beta_mat[j,] + delta_mat[j,i]
         beta_mat[nrow(beta_mat)+1,] <- tempItem
         rownames(beta_mat)[nrow(beta_mat)] <- tempName
       }
@@ -283,7 +323,9 @@ plot_PImap <- function(obj, th_dif = 1e-2, main = NULL, xlab = NULL, cex = NULL,
   }
 
   beta_mat[["Item Loc."]] <- round(apply(beta_mat,1,mean,na.rm=TRUE),4)
-  beta_mat$` ` <- apply(beta_mat[,1:max(obj$mt_vek)],1,function(x){if(is.unsorted(na.omit(x))){return("*")}else{return("")}})
+  if(max(obj$mt_vek) > 1){
+    beta_mat$` ` <- apply(beta_mat[,1:max(obj$mt_vek)],1,function(x){if(is.unsorted(na.omit(x))){return("*")}else{return("")}})
+  }
   beta_mat <- beta_mat[order(as.numeric(beta_mat[,(max(obj$mt_vek,na.rm = TRUE)+1)]),decreasing = TRUE),]
 
   x_minbound <- ceiling(min(c(as.vector(obj$theta),as.vector(reported_beta)),na.rm = TRUE) - 1)
@@ -295,7 +337,7 @@ plot_PImap <- function(obj, th_dif = 1e-2, main = NULL, xlab = NULL, cex = NULL,
   if(is.null(cex.main)){
     cex.main <- 1
   }
-  breaks <- length(obj$theta)/4
+  breaks <- length(obj$theta)/1
   hist(obj$theta, breaks = breaks, mgp = c(5,1,0), yaxt = "n", xlim = c(x_minbound,x_maxbound), mgp = c(100,100,0), main = main, cex.main = cex.main)
   plot(c(1:1),c(1:1),type = "n", yaxt='n', xaxt = 'n', main = "", xlab = "", ylab = "", bty = "n")
 
@@ -319,20 +361,28 @@ plot_PImap <- function(obj, th_dif = 1e-2, main = NULL, xlab = NULL, cex = NULL,
   par(mar = c(5, 1, 0, 0))
   plot(c(1:1),c(1:1),xlim = c(x_minbound,x_maxbound) ,ylim = c(0,nrow(beta_mat)+1), type = "n", yaxt='n', main = "", xlab = xlab, ylab = "", cex.lab = cex.lab, cex.axis = cex.axis)
   for(i in 1:nrow(beta_mat)){
-    if(beta_mat[i,(max(obj$mt_vek,na.rm = TRUE)+2)] == "*"){
-      col <- "red"
+    if(max(obj$mt_vek) > 1){
+      if(beta_mat[i,(max(obj$mt_vek,na.rm = TRUE)+2)] == "*"){
+        col <- "red"
+      } else {
+        col <- "black"
+      }
     } else {
       col <- "black"
     }
-    points(c(beta_mat[i,1:max(obj$mt_vek,na.rm = TRUE)]), rep(i,4),type = "b", bg = col, col = col, fg = col, pch = 16, lwd = lwd)
+    points(c(beta_mat[i,1:max(obj$mt_vek,na.rm = TRUE)]), rep(i,max(obj$mt_vek,na.rm = TRUE)),type = "b", bg = col, col = col, fg = col, pch = 16, lwd = lwd)
     points(beta_mat[i,(max(obj$mt_vek,na.rm = TRUE)+1)], c(i), type = "p", pch=22, bg = col, col = col, fg = col)
     text(c(beta_mat[i,1:max(obj$mt_vek,na.rm = TRUE)]), rep(i-0.5,4), labels = c(1:max(obj$mt_vek,na.rm = TRUE)), adj = c(0.5,NA), col = col, cex = (0.7*cex))
   }
   par(mar = c(5, 0, 0, 1))
   plot(c(1:1),c(1:1),xlim = c(0,10),ylim = c(0,nrow(beta_mat)+1), type = "n", yaxt='n', xaxt = 'n', main = "", xlab = "", ylab = "", bty = "n")
   for(i in 1:nrow(beta_mat)){
-    if(beta_mat[i,(max(obj$mt_vek,na.rm = TRUE)+2)] == "*"){
+    if(max(obj$mt_vek) > 1){
+      if(beta_mat[i,(max(obj$mt_vek,na.rm = TRUE)+2)] == "*"){
       col <- "red"
+      } else {
+        col <- "black"
+      }
     } else {
       col <- "black"
     }
