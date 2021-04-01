@@ -12,9 +12,15 @@ checkRel(obj)
 \arguments{
 \item{obj}{Object that resulted from any models estimation, e.g., \code{PCM}, \code{GPCM}, \code{PCMDIF}, and \code{GPCMDIF}.}
 
+<<<<<<< HEAD:man/checkRel.Rd
 \item{object}{The object of class \code{'seprel'}.}
 
 \item{...}{Further arguments to be passed.}
+=======
+\item{object}{The object of class \code{pcm} or \code{gpcm}.}
+
+\item{...}{further argument passed or from other method.}
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5:man/reliability.Rd
 }
 \value{
 A list of two objects, the reliability and the standard error.
@@ -45,9 +51,14 @@ This function computes the reliability index, separation and the standard error 
 Person reliability index
 }
 \examples{
+<<<<<<< HEAD:man/checkRel.Rd
 #pcmObject <- pcm(poly_inh_dset)
 #rel <- checkRel(pcmObject)
 #summary(rel)
-
+=======
+res <- pcm(pcm_data, isHessian = TRUE)
+rel <- checkRel(res)
+summary(rel)
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5:man/reliability.Rd
 
 }

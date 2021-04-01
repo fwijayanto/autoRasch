@@ -17,6 +17,7 @@
 #'
 #'
 #' @return
+<<<<<<< HEAD
 #' \item{fixed_par}{   A vector of names of the parameter types that are set to be fixed. It means that these parameters are not going to be estimated.}
 #' \item{fixed_theta}{   A vector of \code{theta} values when \code{theta} are listed in the \code{fixed_par}. If it is not set, it will be set to zero.}
 #' \item{fixed_beta}{   A vector of \code{beta} values when \code{beta} are listed in the \code{fixed_par}. If it is not set, it will be set to zero.}
@@ -38,6 +39,21 @@
 #' \item{isHessian}{   A logical parameter whether, in the estimation procedure, need to return the Hessian matrix or not. The default value is \code{TRUE}, which means the Hessian matrix will be computed.}
 #' \item{cd_control}{   A list of coordinate descent optimization setting.}
 #'
+=======
+#' \item{fixed_par}{   A vector of parameter types that are set to be fix. It means that these parameters are not estimated.}
+#' \item{fixed_theta}{   A vector of \code{theta} values when \code{theta} are set to be fix at the \code{fixed_par}. If it is not set, it will be set to zero.}
+#' \item{fixed_beta}{   A vector of \code{theta} values when \code{beta} are set to be fix at the \code{fixed_par}. If it is not set, it will be set to zero.}
+#' \item{fixed_gamma}{   A vector of \code{gamma} (natural logarithm of discrimination parameters, \eqn{\alpha = exp(\gamma)}) values when \code{gamma} are set to be fix at the \code{fixed_par}. If it is not set, it will be set to zero.}
+#' \item{isPenalized_theta}{   It is a logical parameter whether, in the estimation procedure, \code{theta} is penalized or not.}
+#' \item{isPenalized_gamma}{   It is a logical parameter whether, in the estimation procedure, \code{gamma} is penalized or not.}
+#' \item{groups_map}{   A matrix \eqn{n x f} to map the subject into DIF groups, where \eqn{n} is number of subjects and \eqn{f} is number of focal groups.}
+#' \item{optz_tuner}{   A list of optimization function settings. For complete settings can be seen in \code{\link[stats:optim]{stats::optim()}}.}
+#' \item{lambda_theta}{   An integer value to set the regularization parameter to the \code{theta}.}
+#' \item{lambda_in}{   An integer value to set the regularization parameter to the \code{gamma} in the included itemset.}
+#' \item{lambda_out}{   An integer value to set the regularization parameter to the \code{gamma} in the excluded itemset.}
+#' \item{isHessian}{   It is a logical parameter whether, in the estimation procedure, need to return the Hessian matrix or not.}
+#' \item{isTracked}{   It is a logical parameter whether need to track the process or not.}
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 #'
 #' @examples
 #' ### To show the default values
@@ -70,8 +86,16 @@ autoRaschOptions <- function(x = NULL){
         x <- x[ -not.ok ]
       }
 
+<<<<<<< HEAD
 
       return(aRoptions[x])
+=======
+      # return requested option(s)
+      if(length(x) == 0L) {
+      } else {
+        aRoptions[x]
+      }
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
     } else {
       stop("autoRasch ERROR: `x' must be a character string")
     }
@@ -88,6 +112,7 @@ autoRasch_options_default <- function(){
     fixed_theta = c(),
     fixed_beta = c(),
     fixed_gamma = c(),
+<<<<<<< HEAD
     fixed_delta = c(),
     isPenalized_gamma = TRUE,
     isPenalized_delta = TRUE,
@@ -102,6 +127,15 @@ autoRasch_options_default <- function(){
     eps = 0.0,
     randomized = FALSE,
     random.init.th = 1e-2,
+=======
+    isPenalized_gamma = TRUE,
+    isPenalized_theta = TRUE,
+    groups_map = c(),
+    optz_tuner = list(maxit = 2e+4, reltol = 1e-12, fnscale = 10),
+    lambda_theta = 0.05,
+    lambda_in = 50,
+    lambda_out = 5e-3,
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
     isHessian = TRUE,
     cd_control = list("init.step" = 1, scale.down = 0.5, maxit.cd.higher = 500, maxit.cd.lower = 500, maxit.optim = 1e+4,
                       abs.tol = 1e-12, max.diff.par = 1e-8)

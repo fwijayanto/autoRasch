@@ -3,6 +3,7 @@
 \name{fitStats}
 \alias{fitStats}
 \alias{summary.fit}
+<<<<<<< HEAD
 \alias{itemfit}
 \alias{personfit}
 \alias{plot_fitStats}
@@ -40,4 +41,51 @@ The discrimination parameters are estimated using the corresponding models (GPCM
 \description{
 The goodness-of-fit statistics of Rasch analysis for items and persons. It consists of Outfit (Unweighted) Mean Square,
 Infit (Weighted) Mean Square, Outfit ZSTD (Standardized Unweighted Mean Square), and Outfit ZSTD (Standardized Weighted Mean Square)
+=======
+\alias{plot.fit}
+\title{FIt statistics}
+\usage{
+fitStats(obj, isAlpha = TRUE)
+
+\method{summary}{fit}(object, ...)
+
+\method{plot}{fit}(x, plotx = "alpha", ploty = "outfit", type = "n",
+  xlab = NULL, ylab = NULL, use.name = FALSE, fileOutput = TRUE,
+  ...)
+}
+\arguments{
+\item{obj}{The object from class \code{pcm}. The result of the parameter estimation using the PCM.}
+
+\item{isAlpha}{Boolean value whether discrimination parameter is needed or not.}
+
+\item{object}{The object from class \code{fit}. The item fit statistics results.}
+
+\item{...}{further argument passed or from other method.}
+
+\item{x}{The object which is needed to be plot.}
+
+\item{plotx}{The statistics that is wanted to be plot in the x axis.}
+
+\item{ploty}{The statistics that is wanted to be plot in the y axis.}
+
+\item{type}{The type of the plot.}
+
+\item{xlab}{Thelabel of the x axis.}
+
+\item{ylab}{Thelabel of the y axis.}
+
+\item{use.name}{Boolean value whether the plot using the variable names or not.}
+
+\item{fileOutput}{Boolean value whether the plot is saved to a file or not.}
+}
+\description{
+FIt statistics
+}
+\examples{
+res <- pcm(pcm_data)
+fit_res <- fitStats(res)
+summary(fit_res)
+plot(fit_res, plot.x = "gamma", plot.y = "outfit")
+
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 }

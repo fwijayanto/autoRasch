@@ -12,11 +12,19 @@
 #' see \code{\link[graphics:plot.default]{plot.default()}}
 #' @param col a vector of plotting colors
 #' @param lty a vector of line types.
+<<<<<<< HEAD
 #' @param ... Further arguments to be passed.
 ##'
+=======
+#' @param ... further argument passed or from other method.
+#'
+#' @import graphics
+#'
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 #' @examples
-#' res <- pcm(poly_inh_dset)
+#' res <- pcm(pcm_data)
 #' plot_EVC(res, itemno = 4)
+#' plot_ICC(res, itemno = 4)
 #'
 #' @export
 plot_EVC <- function(obj = c(), itemno = 5, xlab = NULL, ylab = NULL, xlim = c(-10,10),
@@ -84,11 +92,15 @@ plot_EVC <- function(obj = c(), itemno = 5, xlab = NULL, ylab = NULL, xlim = c(-
 #' see \code{\link[graphics:plot.default]{plot.default()}}
 #' @param col a vector of plotting colors
 #' @param lty a vector of line types.
+<<<<<<< HEAD
 #' @param ... Further arguments to be passed.
 #'
 #' @examples
 #' res <- pcm(poly_inh_dset)
 #' plot_EVC(res, itemno = 4)
+=======
+#' @param ... further argument passed or from other method.
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 #'
 #' @export
 plot_ICC <- function(obj, itemno = 5, xlab = NULL, ylab = NULL, xlim = c(-10,10),
@@ -257,9 +269,7 @@ emat_compute <- function(obj, theta.lim = c(-10,10)){
 #'
 #' This function maps the distribution of the persons' abilities and the items difficulties along the latent continuum.
 #'
-#' @param obj The object of class \code{'pcm'} or \code{'pcmdif'}.
-#' @param th_dif The threshold of DIF parameters value that considered as a DIF.
-#' Items with DIF parameter Value higher than threshold will be split.
+#' @param obj The object of class \code{'pcm'}.
 #' @param main main title of the plot; see \code{\link[graphics:plot.default]{plot.default()}}.
 #' @param xlab Label for the x-axis; see \code{\link[graphics:plot.default]{plot.default()}}.
 #' @param cex A numerical value giving the amount by which plotting text and symbols should be magnified relative to the default;
@@ -275,20 +285,23 @@ emat_compute <- function(obj, theta.lim = c(-10,10)){
 #' @param v Variable names used
 #'
 #' @examples
-#' res <- pcm(poly_inh_dset)
+#' res <- pcm(pcm_data)
 #' plot_PImap(res)
 #'
 #' @export
+<<<<<<< HEAD
 plot_PImap <- function(obj, th_dif = 1e-2, main = NULL, xlab = NULL, cex = NULL, cex.lab = NULL,
                        cex.axis = NULL, cex.main = NULL, lwd = NULL, v = NULL){
+=======
+plot_PImap <- function(obj, main = NULL, xlab = NULL, cex = NULL, cex.lab = NULL,
+                       cex.axis = NULL, cex.main = NULL, lwd = NULL){
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 
-  if(!("pcmdif" %in% class(obj)) & !("pcm" %in% class(obj))){
-    stop("autoRasch ERROR: person-item map only for \"pcm\" and \"pcmdif\" object.")
+  if(!("pcm" %in% class(obj))){
+    stop("autoRasch ERROR: person-item map only for \"pcm\" object.")
   }
 
-  if(is.null(th_dif)){
-    th_dif <- 1e-2
-  }
+
   par(mar = c(0, 1, 3, 0), oma = c(0, 0,0, 0))
   layout(matrix(c(1,2,3,4), 2, 2, byrow = TRUE), widths=c(9,1), heights=c(1,3))
 
@@ -309,6 +322,7 @@ plot_PImap <- function(obj, th_dif = 1e-2, main = NULL, xlab = NULL, cex = NULL,
   }
   colnames(beta_mat) <- paste("Th_",c(1:max(obj$mt_vek)),sep = "")
 
+<<<<<<< HEAD
   if("pcmdif" %in% class(obj)){
     delta_mat <- matrix(obj$delta, ncol = ncol(obj$groups_map))
     for(i in 1:ncol(obj$groups_map)){
@@ -322,6 +336,8 @@ plot_PImap <- function(obj, th_dif = 1e-2, main = NULL, xlab = NULL, cex = NULL,
     }
   }
 
+=======
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
   beta_mat[["Item Loc."]] <- round(apply(beta_mat,1,mean,na.rm=TRUE),4)
   if(max(obj$mt_vek) > 1){
     beta_mat$` ` <- apply(beta_mat[,1:max(obj$mt_vek)],1,function(x){if(is.unsorted(na.omit(x))){return("*")}else{return("")}})
@@ -379,7 +395,11 @@ plot_PImap <- function(obj, th_dif = 1e-2, main = NULL, xlab = NULL, cex = NULL,
   for(i in 1:nrow(beta_mat)){
     if(max(obj$mt_vek) > 1){
       if(beta_mat[i,(max(obj$mt_vek,na.rm = TRUE)+2)] == "*"){
+<<<<<<< HEAD
       col <- "red"
+=======
+        col <- "red"
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
       } else {
         col <- "black"
       }
@@ -388,4 +408,6 @@ plot_PImap <- function(obj, th_dif = 1e-2, main = NULL, xlab = NULL, cex = NULL,
     }
     text(1, i, labels = rownames(beta_mat)[i], adj = c(0,NA), col = col, cex = cex)
   }
+
+  par(mfrow = c(1,1))
 }

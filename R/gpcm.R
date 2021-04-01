@@ -20,14 +20,20 @@
 #' In the discrimination parameters estimation, instead of estimating the discrimination parameters (\eqn{\alpha}),
 #' we are estimating its natural logarithm to avoid negative values, \eqn{\alpha = exp(\gamma)}.
 #'
-#' @seealso \code{\link{pcm}}, \code{\link{pcm_dif}}, \code{\link{gpcm}}, \code{\link{gpcm_dif}}
+#' @seealso \code{\link{pcm}}, \code{\link{gpcm}}
 #'
 #' @references
 #' Muraki, E. (1992). A generalized partial credit model: Application of an EM algorithm. Applied Psychological Measurement, 16(2). https://doi.org/10.1177/014662169201600206
 #'
 #' @examples
+<<<<<<< HEAD
 #' gpcm_res <- gpcm(short_poly_data)
 #' summary(gpcm_res, par = "alpha")
+=======
+#' res <- gpcm(pcm_data)
+#' res
+#' summary(res)
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 #'
 #' @export
 gpcm <- function(X, init_par = c(), setting = c()){
@@ -44,14 +50,20 @@ gpcm <- function(X, init_par = c(), setting = c()){
   setting$isPenalized_delta <- FALSE
   setting$optz_method <- "optim"
 
+<<<<<<< HEAD
   result <- pjmle(X = X, init_par = init_par, setting = setting)
 
   class(result) <- c(class(result),"armodels","gpcm","autoRasch")
+=======
+  result <- pjmle(X = X, fixed_par = c("deltabeta"), isPenalized_deltabeta = FALSE, isHessian = isHessian)
+  class(result) <- c("gpcm","armodels","autoRasch",class(result))
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
   return(result)
 }
 
 
 #' @param object The object of class \code{'gpcm'}.
+<<<<<<< HEAD
 #' @param ... Further arguments to be passed.
 ##'
 #' @rdname gpcm
@@ -67,22 +79,31 @@ summary.gpcm <- function(object, ...){
   } else {
     par <- NULL
   }
+=======
+#' @param par The parameter that are wanted to be summarized.
+#' @param ... The object of class \code{gpcm}.
+#'
+#' @rdname gpcm
+#' @export
+summary.gpcm <- function(object, par = c(), ...){
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 
   if(is.null(par) | "theta" %in% par){
     cat("\n\n")
     cat("The estimated ability scores:")
     cat("\n")
-    print(obj$theta)
+    print(object$theta, ... = ...)
     cat("\n")
-    cat("The highest ability score: ",round(max(obj$theta,na.rm = TRUE),4))
+    cat("The highest ability score: ",round(max(object$theta,na.rm = TRUE),4))
     cat("\n")
-    cat("The lowest ability score: ",round(min(obj$theta,na.rm = TRUE),4))
+    cat("The lowest ability score: ",round(min(object$theta,na.rm = TRUE),4))
   }
 
   if(is.null(par) | "beta" %in% par){
     cat("\n\n")
     cat("The estimated difficulty scores:")
     cat("\n")
+<<<<<<< HEAD
     # reported_beta <- obj$beta * obj$real_vek
     reported_beta <- unlist(tapply(obj$beta,rep(1:length(obj$mt_vek),obj$mt_vek),function(x){
       if(length(x) < max(obj$mt_vek)){
@@ -102,6 +123,19 @@ summary.gpcm <- function(object, ...){
     cat("The most difficult item: ",obj$itemName[which(temp == max(temp,na.rm = TRUE))])
     cat("\n")
     cat("The easiest item: ",obj$itemName[which(temp == min(temp,na.rm = TRUE))])
+=======
+    reported_beta <- object$beta * object$real_vek
+    beta_mat <- matrix(reported_beta, nrow = length(object$mt_vek), byrow = TRUE)
+    beta_mat <- as.data.frame(round(beta_mat,4), row.names = object$itemName)
+    colnames(beta_mat) <- paste("Th_",c(1:max(object$mt_vek)),sep = "")
+    beta_mat[["Item Loc."]] <- temp <- round(apply(beta_mat,1,mean,na.rm=TRUE),4)
+    beta_mat$` ` <- apply(beta_mat[,1:max(object$mt_vek)],1,function(x){if(is.unsorted(na.omit(x))){return("*")}else{return("")}})
+    print(beta_mat, quote = FALSE, ... = ...)
+    cat("\n")
+    cat("The most difficult item: ",object$itemName[which(temp == max(temp,na.rm = TRUE))])
+    cat("\n")
+    cat("The easiest item: ",object$itemName[which(temp == min(temp,na.rm = TRUE))])
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
     cat("\n")
     ntd_items <- length(which(beta_mat[,ncol(beta_mat)] == "*"))
     cat("There are",ntd_items,"items which have disordered thresholds.")
@@ -113,8 +147,8 @@ summary.gpcm <- function(object, ...){
     cat("\n\n")
     cat("The estimated discrimination parameters:")
     cat("\n")
-    alpha_mat <- matrix(exp(obj$gamma), ncol = 1, dimnames = list(c(obj$itemName),c("alpha")))
-    print(alpha_mat, quote = FALSE)
+    alpha_mat <- matrix(exp(object$gamma), ncol = 1, dimnames = list(c(object$itemName),c("alpha")))
+    print(alpha_mat, quote = FALSE, ... = ...)
   }
 
   if(is.null(par) | "gamma" %in% par){
@@ -126,6 +160,7 @@ summary.gpcm <- function(object, ...){
   }
 }
 
+<<<<<<< HEAD
 
 #' @param x The object of class \code{'gpcm'}.
 #'
@@ -142,12 +177,20 @@ print.gpcm <- function(x, ...){
   } else {
     par <- NULL
   }
+=======
+#' @param x The object of class \code{gpcm}.
+#'
+#' @rdname gpcm
+#' @export
+print.gpcm <- function(x, par = c(), ...){
+  class(x) <- "list"
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 
   if(is.null(par) | "theta" %in% par){
     cat("\n")
     cat("$theta")
     cat("\n")
-    print(obj$theta)
+    print(x$theta, ... = ...)
     cat("\n")
   }
 
@@ -155,7 +198,7 @@ print.gpcm <- function(x, ...){
     cat("\n")
     cat("$beta")
     cat("\n")
-    print(obj$beta)
+    print(x$beta, ... = ...)
     cat("\n")
   }
 
@@ -163,7 +206,7 @@ print.gpcm <- function(x, ...){
     cat("\n")
     cat("$gamma")
     cat("\n")
-    print(obj$gamma)
+    print(x$gamma, ... = ...)
     cat("\n")
   }
 

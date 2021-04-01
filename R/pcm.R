@@ -19,12 +19,13 @@
 #' \item{beta}{   A vector of the difficulty parameter of each categories of items (thresholds).}
 #' \item{theta}{   A vector of the ability parameters of each individuals.}
 #'
-#' @seealso \code{\link{pcm}}, \code{\link{pcm_dif}}, \code{\link{gpcm}}, \code{\link{gpcm_dif}}
+#' @seealso \code{\link{pcm}}, \code{\link{gpcm}}
 #'
 #' @references
 #' Wright, B. D., & Masters, G. N. (1982). Rating Scale Analysis. Chicago: MESA Press.
 #'
 #' @examples
+<<<<<<< HEAD
 #' pcm_res <- pcm(polydif_inh_dset[,c(14:17,19)])
 #' summary(pcm_res)
 #'
@@ -34,6 +35,11 @@
 #' itemfit(fit_res)
 #' personfit(fit_res)
 #' plot_fitStats(fit_res, toPlot = c("alpha","outfit"), useName = TRUE, type = "n")
+=======
+#' res <- pcm(pcm_data)
+#' res
+#' summary(res)
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 #'
 #' @rdname pcm
 #' @export
@@ -55,7 +61,12 @@ pcm <- function(X, init_par = c(), setting = c()){
 
   result <- pjmle(X = X, init_par = init_par, setting = setting)
 
+<<<<<<< HEAD
   class(result) <- c(class(result),"armodels","pcm","autoRasch")
+=======
+  result <- pjmle(X = X, fixed_par = c("gamma","deltabeta"), isPenalized_gamma = FALSE, isPenalized_deltabeta = FALSE, isHessian = isHessian)
+  class(result) <- c("pcm","armodels","autoRasch",class(result))
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
   return(result)
 
 }
@@ -67,8 +78,12 @@ pcm <- function(X, init_par = c(), setting = c()){
 #'
 #' @param obj The object of class \code{'pcm'}.
 #' @param isAlpha Boolean value that indicates whether the discrimination parameters is needed to be estimated or not.
+<<<<<<< HEAD
 #' The discrimination parameters are estimated using the corresponding models (GPCM or GPCM-DIF).
 #' @param isTraced A list of some matrices, i.e., the expected values, the variances, the curtosis, and the standardized residual matrix.
+=======
+#' The discrimination parameters are estimated using the corresponding models (GPCM).
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 #'
 #' @return
 #' \strong{\code{fitStats()} will return a \code{\link[base:list]{list}} which contains:}
@@ -96,9 +111,15 @@ pcm <- function(X, init_par = c(), setting = c()){
 #' }
 #'
 #'
+<<<<<<< HEAD
 #' @references
 #' Masters, G. N. (1982). A rasch model for partial credit scoring. Psychometrika, 47(2), 149–174. https://doi.org/10.1007/BF02296272. \cr\cr
 #' Wright, B. D., & Masters, G. N. (1990). Computation of outfit and infit statistics. Rasch Measurement Transactions, 3(4), 84–85. Retrieved from https://www.rasch.org/rmt/rmt34e.htm
+=======
+#' @examples
+#' fit_res <- fitStats(res)
+#' plot(fit_res, plot.x = "gamma", plot.y = "outfit")
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 #'
 #' @rdname pcm
 #' @export
@@ -154,6 +175,20 @@ fitStats.pcm <- function(obj, isAlpha = TRUE, isTraced = FALSE){
     temp
   })))
 
+<<<<<<< HEAD
+=======
+  temp.prob <- as.matrix(per.cat.list[1,])
+  temp.l2 <- exp(temp.prob)
+  temp.l1 <- exp(temp.l2*0)
+  temp.l1 <- cbind(temp.l1,temp.l2)
+  if(n.th >= 2){
+    for(i in 2:n.th){
+      temp.prob <- cbind(temp.prob,(temp.prob[,i-1]+per.cat.list[i,]))
+      temp.l1 <- cbind(temp.l1,(exp(temp.prob[,i])))
+      temp.l2 <- temp.l2 + (exp(temp.prob[,i]))
+    }
+  }
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
   l2 <- (temp.l2+1)
 
   l2 <- rep(l2,mult_mt_vek+1)
@@ -235,16 +270,21 @@ fitStats.pcm <- function(obj, isAlpha = TRUE, isTraced = FALSE){
     res_fit[["alpha"]] <- exp(gpcm_res$gamma)
   }
 
+<<<<<<< HEAD
   if(isTraced){
     res_fit[["traceMat"]] <- list("emat" = Emat, "vmat" = Vmat, "cmat" = Cmat, "std.res" = st.res)
   }
 
   class(res_fit) <- c(class(res_fit),"fit","autoRasch")
+=======
+  class(res_fit) <- c("fit","autoRasch",class(res_fit))
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
   return(res_fit)
 }
 
 
 #' @param object The object of class \code{'pcm'}.
+<<<<<<< HEAD
 #' @param ... Further arguments to be passed.
 ##'
 #' @rdname pcm
@@ -260,22 +300,31 @@ summary.pcm <- function(object, ...){
   } else {
     par <- NULL
   }
+=======
+#' @param par The parameter that are wanted to be summarized.
+#' @param ... further argument passed or from other method.
+#'
+#' @rdname pcm
+#' @export
+summary.pcm <- function(object, par = c(), ...){
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 
   if(is.null(par) | "theta" %in% par){
     cat("\n\n")
     cat("The estimated ability scores:")
     cat("\n")
-    print(obj$theta)
+    print(object$theta, ... = ...)
     cat("\n")
-    cat("The highest ability score: ",round(max(obj$theta,na.rm = TRUE),4))
+    cat("The highest ability score: ",round(max(object$theta,na.rm = TRUE),4))
     cat("\n")
-    cat("The lowest ability score: ",round(min(obj$theta,na.rm = TRUE),4))
+    cat("The lowest ability score: ",round(min(object$theta,na.rm = TRUE),4))
   }
 
   if(is.null(par) | "beta" %in% par){
     cat("\n\n")
     cat("The estimated difficulty scores:")
     cat("\n")
+<<<<<<< HEAD
     # reported_beta <- obj$beta #* obj$real_vek
     reported_beta <- unlist(tapply(obj$beta,rep(1:length(obj$mt_vek),obj$mt_vek),function(x){
       if(length(x) < max(obj$mt_vek)){
@@ -295,6 +344,19 @@ summary.pcm <- function(object, ...){
     cat("The most difficult item: ",obj$itemName[which(temp == max(temp,na.rm = TRUE))])
     cat("\n")
     cat("The easiest item: ",obj$itemName[which(temp == min(temp,na.rm = TRUE))])
+=======
+    reported_beta <- object$beta * object$real_vek
+    beta_mat <- matrix(reported_beta, nrow = length(object$mt_vek), byrow = TRUE)
+    beta_mat <- as.data.frame(round(beta_mat,4), row.names = object$itemName)
+    colnames(beta_mat) <- paste("Th_",c(1:max(object$mt_vek)),sep = "")
+    beta_mat[["Item Loc."]] <- temp <- round(apply(beta_mat,1,mean,na.rm=TRUE),4)
+    beta_mat$` ` <- apply(beta_mat[,1:max(object$mt_vek)],1,function(x){if(is.unsorted(na.omit(x))){return("*")}else{return("")}})
+    print(beta_mat, quote = FALSE, ... = ...)
+    cat("\n")
+    cat("The most difficult item: ",object$itemName[which(temp == max(temp,na.rm = TRUE))])
+    cat("\n")
+    cat("The easiest item: ",object$itemName[which(temp == min(temp,na.rm = TRUE))])
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
     cat("\n")
     ntd_items <- length(which(beta_mat[,ncol(beta_mat)] == "*"))
     cat("There are",ntd_items,"items which have disordered thresholds.")
@@ -307,6 +369,7 @@ summary.pcm <- function(object, ...){
 #'
 #' @rdname pcm
 #' @export
+<<<<<<< HEAD
 print.pcm <- function(x, ...){
 
   obj <- x
@@ -318,12 +381,17 @@ print.pcm <- function(x, ...){
   } else {
     par <- NULL
   }
+=======
+print.pcm <- function(x, par = c(), ...){
+  cls <- class(x)
+  class(x) <- "list"
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 
   if(is.null(par) | "theta" %in% par){
     cat("\n")
     cat("$theta")
     cat("\n")
-    print(obj$theta)
+    print(x$theta, ... = ...)
     cat("\n")
   }
 
@@ -331,7 +399,7 @@ print.pcm <- function(x, ...){
     cat("\n")
     cat("$beta")
     cat("\n")
-    print(obj$beta)
+    print(x$beta, ... = ...)
     cat("\n")
   }
 

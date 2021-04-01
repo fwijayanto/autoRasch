@@ -11,9 +11,15 @@ pcm(X, init_par = c(), setting = c())
 
 \method{fitStats}{pcm}(obj, isAlpha = TRUE, isTraced = FALSE)
 
+<<<<<<< HEAD
 \method{summary}{pcm}(object, ...)
 
 \method{print}{pcm}(x, ...)
+=======
+\method{summary}{pcm}(object, par = c(), ...)
+
+\method{print}{pcm}(x, par = c(), ...)
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 }
 \arguments{
 \item{X}{Input dataset as matrix or data frame with ordinal responses (starting from 0);
@@ -26,13 +32,21 @@ rows represent individuals, columns represent items.}
 \item{obj}{The object of class \code{'pcm'}.}
 
 \item{isAlpha}{Boolean value that indicates whether the discrimination parameters is needed to be estimated or not.
-The discrimination parameters are estimated using the corresponding models (GPCM or GPCM-DIF).}
+The discrimination parameters are estimated using the corresponding models (GPCM).}
 
+\item{object}{The object of class \code{'pcm'}.}
+
+<<<<<<< HEAD
 \item{isTraced}{A list of some matrices, i.e., the expected values, the variances, the curtosis, and the standardized residual matrix.}
 
 \item{object}{The object of class \code{'pcm'}.}
 
 \item{...}{Further arguments to be passed.}
+=======
+\item{par}{The parameter that are wanted to be summarized.}
+
+\item{...}{further argument passed or from other method.}
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 
 \item{x}{The object of class \code{'pcm'}.}
 }
@@ -78,6 +92,7 @@ will automatically transforms the PCM to the Rasch model.
 \code{fitStats} compute the fit statistics (e.g., Outfit and Infit) of the PCM model estimation (items and persons).
 }
 \examples{
+<<<<<<< HEAD
 pcm_res <- pcm(polydif_inh_dset[,c(14:17,19)])
 summary(pcm_res)
 
@@ -91,10 +106,18 @@ plot_fitStats(fit_res, toPlot = c("alpha","outfit"), useName = TRUE, type = "n")
 }
 \references{
 Wright, B. D., & Masters, G. N. (1982). Rating Scale Analysis. Chicago: MESA Press.
+=======
+res <- pcm(pcm_data)
+res
+summary(res)
+
+fit_res <- fitStats(res)
+plot(fit_res, plot.x = "gamma", plot.y = "outfit")
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 
 Masters, G. N. (1982). A rasch model for partial credit scoring. Psychometrika, 47(2), 149–174. https://doi.org/10.1007/BF02296272. \cr\cr
 Wright, B. D., & Masters, G. N. (1990). Computation of outfit and infit statistics. Rasch Measurement Transactions, 3(4), 84–85. Retrieved from https://www.rasch.org/rmt/rmt34e.htm
 }
 \seealso{
-\code{\link{pcm}}, \code{\link{pcm_dif}}, \code{\link{gpcm}}, \code{\link{gpcm_dif}}
+\code{\link{pcm}}, \code{\link{gpcm}}
 }

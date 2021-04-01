@@ -17,6 +17,7 @@ knitr::opts_chunk$set(
 ```{r setup}
 library(autoRasch)
 ```
+<<<<<<< HEAD
 
 ## Working with The Models 
 
@@ -72,3 +73,5 @@ summary(pcmdif_fit)
 
 <!--![cv_images](images/facial_2_cv.png)-->
 
+=======
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5

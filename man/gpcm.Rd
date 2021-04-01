@@ -8,9 +8,15 @@
 \usage{
 gpcm(X, init_par = c(), setting = c())
 
+<<<<<<< HEAD
 \method{summary}{gpcm}(object, ...)
 
 \method{print}{gpcm}(x, ...)
+=======
+\method{summary}{gpcm}(object, par = c(), ...)
+
+\method{print}{gpcm}(x, par = c(), ...)
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 }
 \arguments{
 \item{X}{Input dataset as matrix or data frame with ordinal responses (starting from 0);
@@ -18,6 +24,7 @@ rows represent individuals, columns represent items.}
 
 \item{init_par}{a vector of initial values of the estimated parameters.}
 
+<<<<<<< HEAD
 \item{setting}{a list of the optimization control setting parameters. See \code{\link[autoRasch:autoRaschOptions]{autoRaschOptions()}.}}
 
 \item{object}{The object of class \code{'gpcm'}.}
@@ -25,6 +32,15 @@ rows represent individuals, columns represent items.}
 \item{...}{Further arguments to be passed.}
 
 \item{x}{The object of class \code{'gpcm'}.}
+=======
+\item{object}{The object of class \code{'gpcm'}.}
+
+\item{par}{The parameter that are wanted to be summarized.}
+
+\item{...}{The object of class \code{gpcm}.}
+
+\item{x}{The object of class \code{gpcm}.}
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 }
 \value{
 \item{X}{   The dataset that is used for estimation.}
@@ -46,13 +62,19 @@ In the discrimination parameters estimation, instead of estimating the discrimin
 we are estimating its natural logarithm to avoid negative values, \eqn{\alpha = exp(\gamma)}.
 }
 \examples{
+<<<<<<< HEAD
 gpcm_res <- gpcm(short_poly_data)
 summary(gpcm_res, par = "alpha")
+=======
+res <- gpcm(pcm_data)
+res
+summary(res)
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 
 }
 \references{
 Muraki, E. (1992). A generalized partial credit model: Application of an EM algorithm. Applied Psychological Measurement, 16(2). https://doi.org/10.1177/014662169201600206
 }
 \seealso{
-\code{\link{pcm}}, \code{\link{pcm_dif}}, \code{\link{gpcm}}, \code{\link{gpcm_dif}}
+\code{\link{pcm}}, \code{\link{gpcm}}
 }

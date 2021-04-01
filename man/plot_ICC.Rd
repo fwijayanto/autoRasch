@@ -24,13 +24,12 @@ see \code{\link[graphics:plot.default]{plot.default()}}}
 
 \item{lty}{a vector of line types.}
 
+<<<<<<< HEAD
 \item{...}{Further arguments to be passed.}
+=======
+\item{...}{further argument passed or from other method.}
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 }
 \description{
 This function plots the curve(s) of the estimated ability parameters against the probabilities of responses.
-}
-\examples{
-res <- pcm(poly_inh_dset)
-plot_EVC(res, itemno = 4)
-
 }

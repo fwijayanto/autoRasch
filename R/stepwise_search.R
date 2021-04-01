@@ -3,7 +3,7 @@
 #' To search itemset that give maximum value of the criterion
 #'
 #' @param X A matrix or data.frame of the observed responses (ordinal or binary response).
-#' @param criterion The criterion that should be used, either ipoqll or ipoqlldif. The default is ipoqll.
+#' @param criterion The criterion that should be used. The default is ipoqll.
 #' @param incl_set A vector of initial items in the included set to start the search. The default is to start with full items.
 #' @param groups_map A matrix or vector to map the subject to the DIFs groups.
 #' @param cores An integer value of number of cores should be used for computation. The default is 2.
@@ -20,12 +20,13 @@
 #' @param setting_par_oq a list of the optimization control setting parameters for the included set. See \code{setting} parameter in \code{\link[autoRasch:autoRaschOptions]{autoRaschOptions()}}.
 #'
 #' @return
-#' A matrix of the itemsets that obtain the highest scores for each number of items in the included set.
+#' A matrix of the itemsets that obtain the highest scores for each number of items in the included set and it scores (IQ-LL,OQ-LL, and IPOQ-LL).
 #'
 #'
 #' @details
 #' To search the itemset that give the maximum score.
 #'
+<<<<<<< HEAD
 #' @import doParallel
 #' @import foreach
 #'
@@ -43,6 +44,27 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
 #                             random.init = TRUE, random.init.th = 1e-2, eps = 0, lambda_out =1, opt.method = "optim",
 #                             max.iter = 2, abs.tol = 1e-12, scale.down = 0.3, psi.mult.up = 0.3,
 #                             checkNonZero = TRUE, step = 0.075, maxit = 2,max.diff.par = 1e-8){
+=======
+#' @examples
+#' #pcmdata_search <- stepwise_search(X = pcm_data, incl_set = c(1:ncol(pcm_data)), cores = 2)
+#' #plot(pcmdata_search)
+#'
+#' #To search only using backward search
+#' #pcmdata_search <- backward_search(X = pcm_data, incl_set = c(1:ncol(pcm_data)))
+#'
+#' @import parallel
+#' @import doParallel
+#' @import foreach
+#' @import utils
+#'
+#' @rdname search
+#' @export
+stepwise_search <- function(X, criterion = c("ipoqll") , incl_set = c(), groups_map = c(), cores = 20,
+                            optz_tuner_iq = list(maxit=5e+2, reltol=1e-21, fnscale = 10),
+                            optz_tuner_oq = list(maxit=5e+2, reltol=1e-21, fnscale = 10), isTracked = TRUE,
+                            isContinued = FALSE, prevData = c(), isLegacy = TRUE, fileOutput = FALSE,
+                            tempFile = "temp_stepSearch.RData", isConvert = FALSE){
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 
   namecsv <- paste(paste(strsplit(tempFile, "(\\.)")[[1]][1:(length(strsplit(tempFile, "(\\.)")[[1]])-1)],collapse = "."),".csv",sep = "")
   fullitem <- c(1:ncol(X))
@@ -64,12 +86,17 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
     optim_control_oq <- optim_control_oq
   }
 
+<<<<<<< HEAD
   if(criterion[1] == "ipoqlldif"){
     n_par <- sum(nrow(X),((1+ncol(groups_map)+(max(X,na.rm = TRUE)-min(X,na.rm = TRUE)))*ncol(X)))
   } else {
     n_par <- sum(nrow(X),((1+(max(X,na.rm = TRUE)-min(X,na.rm = TRUE)))*ncol(X)))
     # print(n_par)
   }
+=======
+  n_par <- sum(nrow(X),((1+(max(X,na.rm = TRUE)-min(X,na.rm = TRUE)))*ncol(X)))
+
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 
   trace <- list()
   trace[["isLegacy"]] <- isLegacy
@@ -99,7 +126,11 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
       trace[["next_step"]] <- "forward"
 
 
+<<<<<<< HEAD
       if(isLegacy & (i+1) < length(fullitem)){
+=======
+      if(isLegacy & (i+3) < length(fullitem)){
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
         init_par_iq <- c(na.omit(scoreMat[i,c((3+ncol(X)+1):(3+ncol(X)+n_par))]))
         init_par_oq <- c(na.omit(scoreMat[i,c((3+ncol(X)+n_par+1):(3+ncol(X)+n_par+(n_par-nrow(X))))]))
       } else {
@@ -148,7 +179,11 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
         write.csv(scoreMat, file = namecsv)
 
 
+<<<<<<< HEAD
         if(isLegacy & (i+1) < length(fullitem)){
+=======
+        if(isLegacy & (i+3) < length(fullitem)){
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
           init_par_iq <- c(na.omit(scoreMat[i,c((3+ncol(X)+1):(3+ncol(X)+n_par))]))
           init_par_oq <- c(na.omit(scoreMat[i,c((3+ncol(X)+n_par+1):(3+ncol(X)+n_par+(n_par-nrow(X))))]))
         } else {
@@ -231,8 +266,12 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
 
     #### Begin backward ####
 
+<<<<<<< HEAD
     # if(isLegacy & (i+1) < length(fullitem)){
     if(isLegacy & ((i+1) < length(fullitem) & i > 1)){
+=======
+    if(isLegacy & ((i+1) < length(fullitem)) & ((i-1) > 1)){
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
       init_par_iq <- c(na.omit(scoreMat[i+1,c((3+ncol(X)+1):(3+ncol(X)+n_par))]))
       # init_par_oq <- c(na.omit(scoreMat[i+1,c((3+ncol(X)+n_par+1):(3+ncol(X)+n_par+(n_par-nrow(X))))]))
       init_par_oq <- c(na.omit(scoreMat[i+1,c((3+ncol(X)+n_par+1):(ncol(scoreMat)))]))
@@ -291,7 +330,11 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
 
         trace[["next_step"]] <- "forward"
 
+<<<<<<< HEAD
         if(isLegacy & (i+2) < length(fullitem)){
+=======
+        if(isLegacy & ((i+1) < length(fullitem)) & ((i-1) > 1)){
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
           init_par_iq <- c(na.omit(scoreMat[i,c((3+ncol(X)+1):(3+ncol(X)+n_par))]))
           init_par_oq <- c(na.omit(scoreMat[i,c((3+ncol(X)+n_par+1):(3+ncol(X)+n_par+(n_par-nrow(X))))]))
         } else {
@@ -338,7 +381,11 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
             cat("\n")
           }
 
+<<<<<<< HEAD
           if(isLegacy & (i+2) < length(fullitem)){
+=======
+          if(isLegacy & ((i+1) < length(fullitem)) & ((i-1) > 1)){
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
             init_par_iq <- c(na.omit(scoreMat[i,c((3+ncol(X)+1):(3+ncol(X)+n_par))]))
             init_par_oq <- c(na.omit(scoreMat[i,c((3+ncol(X)+n_par+1):(3+ncol(X)+n_par+(n_par-nrow(X))))]))
           } else {
@@ -405,6 +452,7 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
     res_search <- res_search[,1:(3+ncol(X))]
   }
 
+<<<<<<< HEAD
   if(isConvert){
     if(criterion[1] == "ipoqll"){
       if(!is.null(groups_map)){
@@ -431,6 +479,8 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
     class(res_search) <- c(class(res_search),"search", "ipoqll", "autoRasch")
   }
 
+=======
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
   # If saved in file
   if(fileOutput != FALSE & !is.null(fileOutput)){
     save(res_search, file = tempFile)
@@ -438,27 +488,38 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
     write.csv(res_search, file = namecsv)
   }
 
+<<<<<<< HEAD
   # if("ipoqll" %in% class(res_search)){
   #   dimnames(res_search) <- list(c(1:ncol(res_search)),c("IQ-LL","OQ-LL","IPOQ-LL",paste("V",c(1:ncol(res_search)),sep = '')))
   # } else if("ipoqlldif" %in% class(res_search)){
   #   dimnames(res_search) <- list(c(1:ncol(res_search)),c("IQ-LL-DIF","OQ-LL-DIF","IPOQ-LL-DIF",paste("V",c(1:ncol(res_search)),sep = '')))
   # }
 
+=======
+  colnames(res_search) <- c("IQ-LL","OQ-LL","IPOQ-LL",paste("Item",c(1:nrow(res_search)),sep = ""))
+
+  class(res_search) <- c("search", class(res_search))
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 
   return(res_search)
 
 }
 
+<<<<<<< HEAD
 #' @examples
 #' #search_res <- backward_search(short_poly_data,criterion = "ipoqll", incl_set = c(1:9), cores = 2)
 #' #plot_search(search_res,type="l")
 #'
+=======
+
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 #' @rdname search
 #'
 #' @import doParallel
 #' @import foreach
 #'
 #' @export
+<<<<<<< HEAD
 backward_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = c(), groups_map = c(), cores = NULL,
                             optim_control_iq = c(), optim_control_oq = c(), isTracked = TRUE, isContinued = FALSE,
                             prevData = c(), isLegacy = FALSE, fileOutput = FALSE, tempFile = "temp_backSearch.RData",
@@ -467,6 +528,13 @@ backward_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
 #                             optim_control_iq = c(), optim_control_oq = c(), isTracked = TRUE, isContinued = FALSE,
 #                             prevData = c(), isLegacy = FALSE, fileOutput = FALSE, tempFile = "temp_backSearch.RData",
 #                             isConvert = FALSE, lambda_delta = 7, random.init = FALSE, random.init.th = 1e-2, eps = 0){
+=======
+backward_search <- function(X, criterion = c("ipoqll") , incl_set = c(), groups_map = c(), cores = 20,
+                            optz_tuner_iq = list(maxit=5e+2, reltol=1e-21, fnscale = 10),
+                            optz_tuner_oq = list(maxit=5e+2, reltol=1e-21, fnscale = 10), isTracked = TRUE,
+                            isContinued = FALSE, prevData = c(), isLegacy = TRUE, fileOutput = TRUE,
+                            tempFile = "temp_backSearch.RData", isConvert = FALSE){
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 
 
   namecsv <- paste(paste(strsplit(tempFile, "(\\.)")[[1]][1:(length(strsplit(tempFile, "(\\.)")[[1]])-1)],collapse = "."),".csv",sep = "")
@@ -485,11 +553,7 @@ backward_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
     optim_control_oq <- optim_control_oq
   }
 
-  if(criterion[1] == "ipoqlldif"){
-    n_par <- sum(nrow(X),((1+ncol(groups_map)+(max(X,na.rm = TRUE)-min(X,na.rm = TRUE)))*ncol(X)))
-  } else {
-    n_par <- sum(nrow(X),((1+(max(X,na.rm = TRUE)-min(X,na.rm = TRUE)))*ncol(X)))
-  }
+  n_par <- sum(nrow(X),((1+(max(X,na.rm = TRUE)-min(X,na.rm = TRUE)))*ncol(X)))
 
   trace <- list()
   trace[["isLegacy"]] <- isLegacy
@@ -625,6 +689,7 @@ backward_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
     res_search <- res_search[,1:(3+ncol(X))]
   }
 
+<<<<<<< HEAD
   if(isConvert){
     if(criterion[1] == "ipoqll"){
       if(!is.null(groups_map)){
@@ -651,6 +716,8 @@ backward_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
     class(res_search) <- c(class(res_search),"search", "ipoqll", "autoRasch")
   }
 
+=======
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
   # If saved in file
   if(fileOutput != FALSE & !is.null(fileOutput)){
     save(res_search, file = tempFile)
@@ -658,6 +725,7 @@ backward_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
     write.csv(res_search, file = namecsv)
   }
 
+<<<<<<< HEAD
   # if("ipoqll" %in% class(res_search)){
   #   dimnames(res_search) <- list(c(1:ncol(res_search)),c("IQ-LL","OQ-LL","IPOQ-LL",paste("V",c(1:ncol(res_search)),sep = '')))
   # } else if("ipoqlldif" %in% class(res_search)){
@@ -665,58 +733,85 @@ backward_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
   # }
 
 
+=======
+  colnames(res_search) <- c("IQ-LL","OQ-LL","IPOQ-LL",paste("Item",c(1:nrow(res_search)),sep = ""))
+
+  class(res_search) <- c("search",class(res_search))
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 
   return(res_search)
 
 }
 
 #' @param object The object of class \code{'search'}.
+<<<<<<< HEAD
 #' @param ... Further arguments to be passed.
+=======
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 #'
 #' @rdname search
 #' @export
 summary.search <- function(object, ...){
+<<<<<<< HEAD
   obj <- object
 
   idx_max <- which(obj[,3] == max(obj[,3], na.rm = TRUE))
+=======
+  idx_max <- which(object[,3] == max(object[,3], na.rm = TRUE))
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 
   cat("\n")
-  if("ipoqll" %in% class(obj)){
-    cat("Maximum IPOQ-LL score is obtained with ",idx_max," items in the included set.")
-  } else if("ipoqlldif" %in% class(obj)){
-    cat("Maximum IPOQ-LL-DIF score is obtained with ",idx_max," items in the included set.")
-  }
+  cat("Maximum IPOQ-LL score is obtained with ",idx_max," items in the included set.")
   cat("\n")
-  cat("Items no.: ",paste(na.omit(obj[idx_max,4:ncol(obj)]),collapse = ","))
+  cat("Items no.: ",paste(na.omit(object[idx_max,4:ncol(object)]),collapse = ","))
   cat("\n\n")
-  if("ipoqll" %in% class(obj)){
-    print(matrix(obj[idx_max,1:3],ncol = 3,byrow = TRUE,dimnames = list(c(""),c("IQ-LL","OQ-LL","IPOQ-LL"))))
-  } else if("ipoqlldif" %in% class(obj)){
-    print(matrix(obj[idx_max,1:3],ncol = 3,byrow = TRUE,dimnames = list(c(""),c("IQ-LL-DIF","OQ-LL-DIF","IPOQ-LL-DIF"))))
-  }
+  print(matrix(object[idx_max,1:3],ncol = 3,byrow = TRUE,dimnames = list(c(""),c("IQ-LL","OQ-LL","IPOQ-LL"))), ... = ...)
   cat("\n\n")
 }
 
+<<<<<<< HEAD
 #' @param x The object of class \code{'search'}.
 #'
 #' @rdname search
 #' @export
 print.search <- function(x,...){
   obj <- x
+=======
+print.search <- function(obj, ...){
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
   class(obj) <- c("matrix")
-  print(obj)
+  print(obj, ... = ...)
 }
 
+<<<<<<< HEAD
 #' @param obj An object of class "search".
 #' @param remOrdered A logical statement whether show the order of the items removal or not.
 #' @param locateMax A logical statement whether the location of the maximum score is needed to be marked or not.
+=======
+#' @param x The object of class \code{search}.
+#' @param use.name Boolean value whether the plot will use variable name or not.
+#' @param remOrdered Boolean value whether the plot will show the removal order of the items or not.
+#' @param isMax Boolean value whether there is a line mark of the highest IPOQ-LL or not.
+#' @param ... further argument passed or from other method.
+#' @param type The type of the plot.
+#' @param xlab The label of the x axis.
+#' @param ylab The label of the y axis.
+#' @param xlim The range value of the x axis plot.
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 #'
 #' @rdname search
 #'
 #' @export
+<<<<<<< HEAD
 plot_search <- function(obj, remOrdered = TRUE, locateMax = TRUE, ...){
+=======
+plot.search <- function(x, use.name = FALSE, remOrdered = TRUE, isMax = TRUE, ylab = "IPOQ-LL", xlab = expression('|S'['in']*'|'),
+                        xlim = c(), type = "l", ...){
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 
+  obj <- x
   dotdotdot <- list(...)
+<<<<<<< HEAD
 
   # if(!is.null(dotdotdot$xlab)){
   #   xlab <- dotdotdot$xlab
@@ -788,6 +883,23 @@ plot_search <- function(obj, remOrdered = TRUE, locateMax = TRUE, ...){
     suppressWarnings(plot(x = c(1:nrow(obj)), y = obj[,3], xlim = c(nrow(obj),1), ... = ...))
   }
 
+=======
+
+  ygap <- (max(obj[,3],na.rm = TRUE)-min(obj[,3],na.rm = TRUE))
+
+  if(!is.null(xlim)){
+    if(xlim[2] >= xlim[1]){
+      xlim <- xlim[c(2,1)]
+    } else {
+      xlim <- xlim
+    }
+  } else {
+    xlim <- c(nrow(obj),1)
+  }
+
+  suppressWarnings(plot(x = c(1:nrow(obj)), y = obj[,3], ylab = ylab, xlab = xlab, xlim = xlim, type = type, ... = ...))
+
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
   if(remOrdered){
     for(i in (length(obj[,3])-1):1){
       prev.item <- obj[i+1,4:(length(obj[,3])+3)]
@@ -801,7 +913,11 @@ plot_search <- function(obj, remOrdered = TRUE, locateMax = TRUE, ...){
       } else {
         labels <- labels.rem
       }
+<<<<<<< HEAD
       text(i,obj[i,3], pos = 1, labels = labels, cex = ifelse(!is.null(dotdotdot$cex),(0.8*dotdotdot$cex),(0.8)))
+=======
+      text(i,obj[i,3], pos = 1, labels = labels, ... = ...)
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
     }
   }
 
@@ -811,6 +927,7 @@ plot_search <- function(obj, remOrdered = TRUE, locateMax = TRUE, ...){
   }
 
 }
+<<<<<<< HEAD
 # plot.search <- function(obj, type = "l", xlab = NULL, ylab = NULL, xlim = c(), ylim = c(), use.name = FALSE, remOrdered = TRUE, isMax = TRUE, ...){
 #
 #   dotdotdot <- list(...)
@@ -868,6 +985,67 @@ plot_search <- function(obj, remOrdered = TRUE, locateMax = TRUE, ...){
 #           text(x = i, y = (obj[i,3]-(ygap/20)), adj = c(0.5,1), labels = paste(remList[[nrow(obj)-i]],collapse = ",\n"), col = c(), ... = ...)
 #         }
 #     }
+=======
+
+# plot.search <- function(obj, fileOutput = FALSE, use.name = FALSE, remOrdered = TRUE, isMax = TRUE, ...){
+#
+#   if(fileOutput){
+#     cairo_pdf("test.pdf", width = 2, height = 1.43, bg = "transparent")
+#     cex.axis <- 0.5
+#     cex.lab <- 0.6
+#     cex <- 0.4
+#     mar = c(1.4, 1.45, 0.05, 0.05)
+#     mgp = c(0.8,0.1,0)
+#     par(mar = mar, oma = c(0, 0,0, 0))
+#     line.x <- 0.5
+#     line.y <- 0.7
+#     tcl <- -0.2
+#     lwd.line <- 0.5
+#     lwd.axis <- 0.4
+#     mgp.x <- c(0.5,-0.1,0)
+#     mgp.y <- c(0.5,0.1,0)
+#   } else {
+#     cex.axis <- 1.3
+#     cex.lab <- 1.5
+#     cex <- 1
+#     mar = c(4, 4.5, 0.5, 0.5)
+#     mgp = c(1,0.1,0)
+#     par(mar = mar, oma = c(0, 0,0, 0))
+#     line.x <- 3
+#     line.y <- 3
+#     tcl <- -0.5
+#     lwd.line <- 2
+#     lwd.axis <- 2
+#     mgp.x <- c(1,1,0)
+#     mgp.y <- c(1,1,0)
+#   }
+#   is_title <- FALSE
+#
+#   diff_y <- max(obj[,3])-min(obj[,3])
+#   ymax <- max(obj[,3]) + (0.1*diff_y)
+#   ymin <- min(obj[,3]) - (0.2*diff_y)
+#
+#   plot(c(1:length(obj[,3])),obj[,3], main = ifelse(is_title,"Stepwise Search",""), xlim = c(length(obj[,3]),1), xlab = "", ylab = "",
+#        cex.main = cex, cex = 0.1, cex.axis = cex.axis, cex.lab = cex.lab, mgp =mgp, lwd = lwd.line, tcl = tcl, xaxt = "n", yaxt = "n",
+#        type = "l")
+#   axis(1, lwd = lwd.axis, tcl = tcl,cex.axis = cex.axis, cex = cex, cex.lab = cex.lab, mgp = mgp.x)
+#   axis(2, lwd = lwd.axis, tcl = tcl,cex.axis = cex.axis, cex = cex, cex.lab = cex.lab, mgp = mgp.y)
+#   box(lwd=lwd.axis)
+#
+#   for(i in (length(obj[,3])-1):1){
+#     prev.item <- obj[i+1,4:(length(obj[,3])+3)]
+#     next.item <- obj[i,4:(length(obj[,3])+3)]
+#     labels.rem.idx <- which(!(prev.item %in% next.item))
+#     labels.add.idx <- which(!(next.item %in% prev.item))
+#     labels.rem <- paste(prev.item[labels.rem.idx],collapse="\n")
+#     if(length(labels.rem.idx) > 1){
+#       labels.add <- paste("+",next.item[labels.add.idx],collapse="\n",sep="")
+#       labels <- paste(labels.rem,"\n",labels.add,sep="")
+#     } else {
+#       labels <- labels.rem
+#     }
+#     text(i,obj[i,3], pos = 1, labels = labels, cex = cex)
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 #   }
 #
 #   if(isMax){
@@ -875,4 +1053,13 @@ plot_search <- function(obj, remOrdered = TRUE, locateMax = TRUE, ...){
 #     lines(c(maxPos,maxPos),c(-100000,obj[maxPos,3]), col = 3, lty = 2, ... = ...)
 #   }
 #
+<<<<<<< HEAD
+=======
+#   title(xlab = "|Sin|", line = line.x, cex.lab = cex.lab)
+#   title(ylab = "IPOQ-LL", line = line.y, cex.lab = cex.lab)
+#
+#   if(fileOutput){
+#     dev.off()
+#   }
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 # }

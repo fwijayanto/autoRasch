@@ -3,6 +3,7 @@
 \name{compute_score}
 \alias{compute_score}
 \alias{compute_scores}
+<<<<<<< HEAD
 \title{Compute the In-plus-out-of-questionnaire log likelihood (with DIF) (IPOQ-LL(-DIF))}
 \usage{
 compute_score(X, incl_set, type = c("ipoqll", "ipoqlldif"),
@@ -15,6 +16,21 @@ compute_scores(X, incl_sets, type = c("ipoqll", "ipoqlldif"),
   init_par_iq = c(), init_par_oq = c(), optim_control_iq = c(),
   optim_control_oq = c(), setting_par_iq = c(), setting_par_oq = c(),
   cores = NULL)
+=======
+\alias{summary.score}
+\title{Compute the In-plus-out-of-questionnaire log likelihood (IPOQ-LL)}
+\usage{
+compute_score(X, incl_set, type = c("ipoqll"), groups_map = c(),
+  init_par_iq = c(), init_par_oq = c(), optz_tuner_iq = c(),
+  optz_tuner_oq = c(), isTracked = FALSE)
+
+compute_scores(X, itemsets, type = c("ipoqll"),
+  step_direct = c("fixed", "forward", "backward"), groups_map = c(),
+  init_par_iq = c(), init_par_oq = c(), optz_tuner_iq = c(),
+  optz_tuner_oq = c(), cores = NULL)
+
+\method{summary}{score}(object, ...)
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 }
 \arguments{
 \item{X}{A matrix or data.frame of the observed responses (ordinal or binary response).}
@@ -35,6 +51,7 @@ compute_scores(X, incl_sets, type = c("ipoqll", "ipoqlldif"),
 
 \item{setting_par_iq}{The coordinate descent optimisation setting of the included set. See \code{\link[autoRasch:autoRaschOptions]{autoRasch::autoRaschOptions()}} \code{cd_control} parameter.}
 
+<<<<<<< HEAD
 \item{setting_par_oq}{The coordinate descent optimisation setting of the excluded set. See \code{\link[autoRasch:autoRaschOptions]{autoRasch::autoRaschOptions()}} \code{cd_control} parameter.}
 
 \item{incl_sets}{A matrix as a results of a \code{rbind} of \code{incl_set}.}
@@ -44,6 +61,17 @@ compute_scores(X, incl_sets, type = c("ipoqll", "ipoqlldif"),
 \code{backward}  computes all the scores of the possible combination of items if an item is removed to the given set.}
 
 \item{cores}{Number of cores that is used in the paralellization.}
+=======
+\item{itemsets}{A matrix as a results of a \code{rbind} of \code{incl_set}.}
+
+\item{step_direct}{The direction of the computation; \code{fixed}, \code{forward}, or \code{backward} .}
+
+\item{cores}{Number of cores that is used in the paralellization.}
+
+\item{object}{The object from the class \code{score}. The result of the score computation.}
+
+\item{...}{further argument passed or from other method.}
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 }
 \value{
 \code{compute_score} will return a vector which contains in-questionnaire log likelihood (IQ-LL(-DIF)), out-of-questionnaire log likelihood(OQ-LL(-DIF)),
@@ -58,9 +86,14 @@ While \code{compute_scores} computes the IPOQ-LL/IPOQ-LL-DIF score of many (more
 the given initial survey simultanously.
 }
 \examples{
+<<<<<<< HEAD
 ipoqll_score <- compute_score(short_poly_data,incl_set = c(1:3),type = "ipoqll")
 
 ipoqll_scores <- compute_scores(short_poly_data,incl_set = rbind(c(1:3),c(4:6)),
                                 type = "ipoqll", cores = 2)
+=======
+ipoqll_score <- compute_score(pcm_data, incl_set = c(4,5,6))
+summary(ipoqll_score)
+>>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 
 }
