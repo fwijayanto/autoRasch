@@ -5,7 +5,6 @@
 # init_par is a vector contains the initial values of the estimated parameters
 # setting contains the parameter setting used  in the estimation. See autoRaschOptions().
 
-<<<<<<< HEAD
 pjmle <- function(X, init_par = c(), setting = c()){
 
   dset <- as.data.frame(X)                          ### makes sure that the dataset has a matrix format
@@ -15,34 +14,11 @@ pjmle <- function(X, init_par = c(), setting = c()){
   } else {
     opts <- setting
   }
-=======
-# jml.gpcm.dif3.est <- function(X, opts$fixed_par = c(), opts$fixed_theta = c(), opts$fixed_beta = c(), opts$fixed_gamma = c(), opts$fixed_deltabeta = c(), gamma_penalized = TRUE, deltabeta_penalized = TRUE, theta_penalized = TRUE, resp.info = c(), resp.th = c(0), opt.method = c("nlminb"), plot.ll = FALSE, opt.tuner = list(iter.max = 20000, eval.max = 30000, rel.tol = 1e-10, step.max = 0.000001), opt.plot = list(), psi = 0.0078, max.iter = 150, objtype = "", desc = NULL,THETA.PCOEFF = 0.05, GAMMA.PCOEFF = 50, SMALLGAMMA.COEFF = 0.000005, DELTABETA.PCOEFF = 10000, DELTAGAMMA.PCOEFF = 10000, eps = 0.0, random.init = FALSE, random.init.th = 1e-2, init.par = c(), hessian = FALSE,tracked = TRUE){
-
-
-pjmle <- function(X, init_par = c(), ...){
-
-  dset <- as.data.frame(X)                          ### makes sure that the dataset has a matrix format
-
-  dotdotdot <- list(...)
-
-  opts_default <- autoRaschOptions()
-
-  opt_names <- names(dotdotdot)[which(names(dotdotdot) %in% names(opts_default))]
-  opts <- opts_default
-  for (i in opt_names) {
-    if(!is.null(dotdotdot[[i]])){
-      opts[[i]] <- dotdotdot[[i]]
-    }
-  }
-  opts[["fixed_par"]] <- c(opts[["fixed_par"]], "deltagamma")
-  opts[["isPenalized_deltabeta"]] <- FALSE
->>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 
   ### preprocessing the data
   dataPrep <- data_prep(dset = dset, fixed_par = opts$fixed_par, groups_map = opts$groups_map)
 
   ### Intializing the parameters ###
-<<<<<<< HEAD
   if(opts$randomized){
     theta <- runif(nrow(dataPrep$dset),-1,1)*opts$random.init.th
     beta <- runif(dataPrep$allcat,-1,1)*opts$random.init.th
@@ -54,16 +30,6 @@ pjmle <- function(X, init_par = c(), ...){
     gamma <- rep(0,ncol(dataPrep$dset)) #gpcm uses different gamma for each item
     delta <- rep(0,(ncol(dataPrep$dset)*ncol(dataPrep$groups_map)))
   }
-=======
-  #
-  theta <- rep(0,nrow(dataPrep$dset))
-  beta <- rep(0,dataPrep$allcat)
-  gamma <- rep(0,ncol(dataPrep$dset)) #gpcm uses different gamma for each item
-  deltabeta <- rep(0,(ncol(dataPrep$dset)*ncol(dataPrep$groups_map)))
-  deltagamma <- rep(0,(ncol(dataPrep$dset)*ncol(dataPrep$groups_map)))
-  #
-
->>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 
   ### setting the optimized parameter
   nlmPar <- c(theta,beta,gamma,delta)
@@ -133,7 +99,6 @@ pjmle <- function(X, init_par = c(), ...){
   nameCol <- colnames(as.data.frame(X))
   output <- list("X" = X, "mt_vek" = dataPrep$mt_vek, "real_vek" = dataPrep$na_catVec, "itemName" = nameCol,
                  "penalty.coeff" = list("lambda_theta" = opts$lambda_theta,"lambda_in" = opts$lambda_in,
-<<<<<<< HEAD
                                         "lambda_out" = opts$lambda_out,"lambda_delta" = opts$lambda_delta))
 
   if(!is.null(opts$groups_map)){
@@ -166,33 +131,7 @@ pjmle <- function(X, init_par = c(), ...){
                          abs.tol = opts$cd_control$abs.tol, maxit.cd.higher = opts$cd_control$maxit.cd.higher,
                          maxit.optim = opts$cd_control$maxit.optim, scale.down = opts$cd_control$scale.down,
                          checkNonZero = opts$cd_control$checkNonZero,
-                         max.diff.par = opts$cd_control$max.diff.par))#,
-                         #psi = psi, psi.mult.up = psi.mult.up))
-=======
-                                        "lambda_out" = opts$lambda_out,"lambda_deltabeta" = opts$lambda_deltabeta))
-
-  if(!is.null(dotdotdot$groups_map)){
-    output[["groups_map"]] <- dataPrep$groups_map
-  }
-
-  time.v <- system.time(minRes <- optim(nlmPar, loglik_fun, gr = grad_fun, hessian = opts$isHessian, dset = dataPrep$dset,
-                                        lambda_theta = opts$lambda_theta, lambda_in = opts$lambda_in,lambda_out = opts$lambda_out,
-                                        lambda_deltabeta = opts$lambda_deltabeta, estPar_arr = estPar_arr, estLength_array = estLength_array,
-                                        fixLength_arr = fixLength_arr, allcat = dataPrep$allcat, n_th = dataPrep$n_th, XN = dataPrep$XN, XNA = dataPrep$XNA, #XREAL = dataPrep$XREAL,
-                                        groups_map = dataPrep$groups_map, mt_vek = dataPrep$mt_vek, fixed_par = opts$fixed_par, fixValue = fixValue,
-                                        isPenalized_gamma = opts$isPenalized_gamma, isPenalized_theta = opts$isPenalized_theta,
-                                        isPenalized_deltabeta = opts$isPenalized_deltabeta, method = "BFGS", control = opts$optz_tuner, tracked =  opts$isTracked))
-
-  est <- minRes$par
-  obj <- minRes$value
-  iter <- minRes$iterations
-  conv <- minRes$convergence
-  counts <- minRes$counts
-  output[["loglik"]] <- -obj
-  if(opts$isHessian){
-    output[["hessian"]] <- minRes$hessian
-  }
->>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
+                         max.diff.par = opts$cd_control$max.diff.par))
 
     est <- minRes$par
     obj <- minRes$value
@@ -294,33 +233,14 @@ data_prep <- function(dset, fixed_par, groups_map){
   xn.mat <- matrix(xn.vec, nrow = dimResp[1], byrow = TRUE)
   xna.mat <- matrix(xna.vec, nrow = dimResp[1], byrow = TRUE)
 
-
-<<<<<<< HEAD
-=======
-  idx <- which(is.na(dset))
-  new.idx <- (nrow(dset)*n_th*(ceiling(idx/nrow(dset))-1))+(idx%%nrow(dset))+(ifelse(idx%%nrow(dset) == 0,1,0)*nrow(dset))
-  full.idx <- c()
-  for(j in 1:mt_vek[1]){
-    next.idx <- new.idx+(nrow(dset)*(j-1))
-    full.idx <- c(full.idx,next.idx)
-  }
-  xn.mat[full.idx] <- NA
-  xna.mat[full.idx] <- NA
-
->>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
   XN <- as.vector(t(xn.mat))
   XNA <- as.vector(t(xna.mat))
 
-<<<<<<< HEAD
   ret <- list("dset" = dset, "mt_vek" = mt_vek, "mt_idx" = mt_idx, "dimResp" = dimResp, "groups_map" = groups_map, "n_th" = n_th, "na_catVec" = na_catVec, "allcat" = allcat, "XN" = XN, "XNA" = XNA)#,"XREAL" = XREAL)
-=======
-  ret <- list("dset" = dset, "mt_vek" = mt_vek, "groups_map" = groups_map, "n_th" = n_th, "na_catVec" = na_catVec, "allcat" = allcat, "XN" = XN, "XNA" = XNA)#,"XREAL" = XREAL)
->>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 
   return(ret)
 
 }
-<<<<<<< HEAD
 
 coord.descent <- function(nlmPar, dset, dataPrep, opts, fixed_par = c(), step.vec = NULL,
                           estPar_arr = c(), estLength_array = c(), eps = c(),fixLength_arr = c(), fixValue = c(),
@@ -562,5 +482,3 @@ mixed.min <- function(nlmPar, dset, dataPrep, opts,
   return(list("value" = ll.val.new, "par" = par.new, iterations = i))
 
 }
-=======
->>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5

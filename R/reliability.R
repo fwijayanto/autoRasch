@@ -30,46 +30,14 @@
 #' Person reliability index
 #'
 #' @examples
-<<<<<<< HEAD
 #' #pcmObject <- pcm(poly_inh_dset)
 #' #rel <- checkRel(pcmObject)
 #' #summary(rel)
-=======
-#' res <- pcm(pcm_data, isHessian = TRUE)
-#' rel <- checkRel(res)
-#' summary(rel)
->>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 #'
 #' @rdname reliability
 #' @export
 checkRel <- function(obj){
 
-<<<<<<< HEAD
-  # if("pcm" %in% class(obj)){
-  #   newobj <- pjmleRel(X = obj$X, fixed_par = c("gamma","delta"), isPenalized_gamma = FALSE, isPenalized_delta = FALSE, isHessian = TRUE)
-  # } else if("pcmdif" %in% class(obj)) {
-  #   newobj <- pjmleRel(X = obj$X, fixed_par = c("gamma"), isPenalized_gamma = FALSE, groups_map = obj$groups_map,
-  #                      lambda_delta = obj$penalty.coeff$delta, isHessian = TRUE,
-  #                      optim_control = list(maxit=5e+2, reltol=1e-12, fnscale = 10))
-  # } else if("gpcm" %in% class(obj)) {
-  #   newobj <- pjmleRel(X = obj$X, fixed_par = c("delta"), isPenalized_delta = FALSE, isHessian = TRUE)
-  # } else if("gpcmdif" %in% class(obj)) {
-  #   newobj <- pjmleRel(X = obj$X, groups_map = obj$groups_map, lambda_delta = obj$penalty.coeff$delta, isHessian = TRUE)
-  # }
-  #
-  # obj <- newobj
-  # if(length(which(is.na(obj$real_vek))) != 0){
-  #   rem.idx <- length(obj$theta)+which(is.na(obj$real_vek))
-  #
-  #   obj$hessian <- obj$hessian[-c(rem.idx),-c(rem.idx)]
-  # }
-=======
-  if(length(which(is.na(obj$real_vek))) != 0){
-    rem.idx <- length(obj$theta)+which(is.na(obj$real_vek))
-
-    obj$hessian <- obj$hessian[-c(rem.idx),-c(rem.idx)]
-  }
->>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 
   if(is.null(obj$hessian)){
     if("gpcmdif" %in% class(obj)){
@@ -115,11 +83,7 @@ checkRel <- function(obj){
   true_ivar <- i_var - (rmse_item^2)
   true_isd <- sqrt(true_ivar)
   i_sep_coeff <- true_isd/rmse_item
-<<<<<<< HEAD
   i_rel_idx <- (true_ivar)/(i_var)
-=======
-  i_rel_idx <- (i_sep_coeff^2)/(1+(i_sep_coeff^2))
->>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 
   result <- list("reliability" = list("PRI" = p_sep_coeff, "PSR" = p_rel_idx, "IRI" = i_sep_coeff, "ISR" = i_rel_idx), "stdError" = rmseroor)
   class(result) <- c("seprel","autoRasch",class(result))
@@ -142,27 +106,14 @@ stdError <- function(obj){
 }
 
 
-<<<<<<< HEAD
-
 #' @param object The object of class \code{'seprel'}.
 #' @param ... Further arguments to be passed.
-#'
-#' @rdname checkRel
-#' @export
-summary.seprel <- function(object,...){
-  obj <- object
-  res_table <- cbind(c(obj$reliability$PRI,obj$reliability$PSR,obj$stdError$rmsse_pers),c(obj$reliability$IRI,obj$reliability$ISR,obj$stdError$rmsse_item))
-=======
-#' @param object The object of class \code{pcm} or \code{gpcm}.
-#' @param ... further argument passed or from other method.
 #'
 #' @rdname reliability
 #' @export
 summary.seprel <- function(object,...){
-
-  res_table <- cbind(c(object$reliability$PRI,object$reliability$PSR,object$stdError$rmsse_pers),c(object$reliability$IRI,object$reliability$ISR,object$stdError$rmsse_item))
-  class(res_table) <- "matrix"
->>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
+  obj <- object
+  res_table <- cbind(c(obj$reliability$PRI,obj$reliability$PSR,obj$stdError$rmsse_pers),c(obj$reliability$IRI,obj$reliability$ISR,obj$stdError$rmsse_item))
   dimnames(res_table) <- list(c("Reliability Index","Separation Reliability","RMSSE"),c("Person","Item"))
   cat("\n")
   print(res_table)

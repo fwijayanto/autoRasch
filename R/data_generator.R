@@ -5,7 +5,6 @@
 #' @param responseType The type of the dataset. The types include \code{multidim.nocorrel}, \code{multidim.withcorrel}, \code{discriminate}, \code{multidim.within}, and \code{testlets}.
 #' @param theta A vector of the ability parameters range value, \code{c(min.theta,max.theta)}. It applies when the \code{randtype = "uniform"}.
 #' @param ntheta The number of the observations.
-<<<<<<< HEAD
 #' @param sdtheta Standard deviation which is used to generate theta values using \code{\link[stats:rnorm]{rnorm()}} with \code{n = ntheta}, \code{mean = 0}, and \code{sd = sdtheta}.It applies when the \code{randtype = "normal"}.
 #' @param beta A vector of the item difficulty parameters range value, \code{c(min.beta,max.beta)}. It applies when the \code{randtype = "uniform"}.
 #' @param nitem The number of the items in each subgroup.
@@ -14,16 +13,6 @@
 #' @param thGap The difference between adjacent threshold.
 #' @param alpha A vector of the discrimination parameters apply to each items.
 #' @param sdlambda A vector of the standard deviation to simulate the testlet (local dependency) effect. The effect is added using \code{\link[stats:rnorm]{rnorm()}} with \code{n = ntheta}, \code{mean = 0}, and \code{sd = sdlambda}
-=======
-#' @param sdtheta Standard deviation which is used to generate theta values using \code{\link[stats:rnorm]{stats::rnorm()}} with \code{n = ntheta}, \code{mean = 0}, and \code{sd = sdtheta}.It applies when the \code{randtype = "normal"}.
-#' @param beta A vector of the item difficulty parameters range value, \code{c(min.beta,max.beta)}. It applies when the \code{randtype = "uniform"}.
-#' @param nitem The number of the items in each subgroup.
-#' @param sdbeta Standard deviation which is used to generate item location values using \code{\link[stats:rnorm]{stats::rnorm()}} with \code{n = nitem}, \code{mean = 0}, and \code{sd = sdbeta}.It applies when the \code{randtype = "normal"}.
-#' @param ncat The number of the response categories
-#' @param thGap The difference between adjacent threshold.
-#' @param alpha A vector of the discrimination parameters apply to each items.
-#' @param sdlambda A vector of the standard deviation to simulate the testlet (local dependency) effect. The effect is added using \code{\link[stats:rnorm]{stats::rnorm()}} with \code{n = ntheta}, \code{mean = 0}, and \code{sd = sdlambda}
->>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 #' @param randtype The randomize type. This includes \code{uniform} and \code{normal}.
 #' @param ndim The number of subgroups (dimensions/testlets) created.
 #' @param dim.members The list of item members in each dimension.
@@ -36,12 +25,8 @@
 #' #correl02_multidim <- generate_data(responseType = "multidim.withcorrel", corLevel = 0.2)
 #'
 #' #Generate multidimensional dataset with some items relate to more than one dimension.
-<<<<<<< HEAD
 #' #withinItem_multidim <- generate_data(responseType = "multidim.within", ndim = 3,
 #' #                                      dim.members = list(c(1:6,13),c(3,7:12),c(5,13:18)))
-=======
-#' #withinItem_multidim <- generate_data(responseType = "multidim.within", ndim = 3, dim.members = list(c(1:6,13),c(3,7:12),c(5,13:18)))
->>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 #'
 #' #generate dataset which consist of two bundle items with different level of local dependency effect.
 #' #testlets_dataset <- generate_data(responseType = "testlets", ndim = 2, sdlambda = c(0,4))
@@ -130,8 +115,6 @@ generate_data <- function(responseType = "multidim.nocorrel", theta = c(-3,3), s
     D.mat <- matrix(D, ncol = (ncat-1), nrow = length(D)) #Create a set of thersholds scores
 
   }
-
-  # print(dim(D.mat))
 
   temp.mx <- c()
   pmat.mx <- c()
@@ -242,14 +225,9 @@ generate_data <- function(responseType = "multidim.nocorrel", theta = c(-3,3), s
       return(t(pmat.part))
     })
 
-    # print(length(unlist(pmat.l)))
     pmat <- matrix(unlist(pmat.l), nrow = length(B), byrow = FALSE)
-    # print(dim(pmat))
-
-
 
     mt_ind <- rep(1:nrow(D.mat),each = (mt_vek+1))
-    # print(length(mt_ind))
 
     datagen <- apply(pmat, 1, function(pmat.r) {                       #runs over missing structures
       pmat.t <- pmat.r
@@ -290,29 +268,15 @@ generate_data <- function(responseType = "multidim.nocorrel", theta = c(-3,3), s
 
       temp.mx <- cbind(temp.mx,t(matrix(X,nrow = nitem)))
     }
-    # X <- c()
-    #
-    # disc.diff <- exp(t(diff) * alphas)
-    # Pr <- disc.diff/(1+disc.diff)
-    #
-    # for(i in 1:length(Pr)){
-    #   X <- cbind(X,rbinom(1,1,Pr[i]))
-    # }
-    #
-    # temp.mx <- t(matrix(X,nrow = (nitem*ndim)))
-    # print(dim(temp.mx))
 
     mxpmat <- c()
 
   }
 
-  # }
-
   mxdat <- as.data.frame(temp.mx)
   colnames(mxdat) <- c(1:(nitem*ndim))
   colnames(mxdat) <- paste("I", colnames(mxdat), sep = "")
 
-  # return(list(mxdat,mxpmat,list("theta" = B.mat, "beta" = D.mat)))
   return(mxdat)
 
 }

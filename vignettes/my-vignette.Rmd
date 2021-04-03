@@ -17,7 +17,6 @@ knitr::opts_chunk$set(
 ```{r setup}
 library(autoRasch)
 ```
-<<<<<<< HEAD
 
 ## Working with The Models 
 
@@ -61,17 +60,14 @@ For further, a specific S3 function have been developed to compute the (item/per
 
 ```{r}
 pcm_fit <- fitStats(pcm_res)
-summary(pcm_fit)
+itemfit(pcm_fit)
 ```
 
 ```{r}
 pcmdif_fit <- fitStats(pcmdif_res)
-summary(pcmdif_fit)
+itemfit(pcmdif_fit)
 ```
 
 
 
 <!--![cv_images](images/facial_2_cv.png)-->
-
-=======
->>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
