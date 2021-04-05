@@ -4,14 +4,9 @@
 \alias{plot_PImap}
 \title{Plot The Person-Item Map}
 \usage{
-<<<<<<< HEAD
-plot_PImap(obj, th_dif = 0.01, main = NULL, xlab = NULL,
-  cex = NULL, cex.lab = NULL, cex.axis = NULL, cex.main = NULL,
-  lwd = NULL, v = NULL)
-=======
 plot_PImap(obj, main = NULL, xlab = NULL, cex = NULL,
-  cex.lab = NULL, cex.axis = NULL, cex.main = NULL, lwd = NULL)
->>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
+  cex.lab = NULL, cex.axis = NULL, cex.main = NULL, lwd = NULL,
+  v = NULL)
 }
 \arguments{
 \item{obj}{The object of class \code{'pcm'}.}
@@ -39,9 +34,4 @@ see \code{\link[graphics:par]{par()}}.}
 }
 \description{
 This function maps the distribution of the persons' abilities and the items difficulties along the latent continuum.
-}
-\examples{
-res <- pcm(pcm_data)
-plot_PImap(res)
-
 }

@@ -10,7 +10,6 @@ autoRaschOptions(x = NULL)
 \item{x}{A name of single parameter setting that is wanted to be shown. \code{NULL} means returns all parameters.}
 }
 \value{
-<<<<<<< HEAD
 \item{fixed_par}{   A vector of names of the parameter types that are set to be fixed. It means that these parameters are not going to be estimated.}
 \item{fixed_theta}{   A vector of \code{theta} values when \code{theta} are listed in the \code{fixed_par}. If it is not set, it will be set to zero.}
 \item{fixed_beta}{   A vector of \code{beta} values when \code{beta} are listed in the \code{fixed_par}. If it is not set, it will be set to zero.}
@@ -31,21 +30,6 @@ When it is set to \code{mixed} means that it applies the coordinate descent.}
 \item{random.init.th}{   A threshold value to limit the range of the initial values. The default value is \code{1e-2}, means that the initial values range between \code{[-0.01,0.01]}}
 \item{isHessian}{   A logical parameter whether, in the estimation procedure, need to return the Hessian matrix or not. The default value is \code{TRUE}, which means the Hessian matrix will be computed.}
 \item{cd_control}{   A list of coordinate descent optimization setting.}
-=======
-\item{fixed_par}{   A vector of parameter types that are set to be fix. It means that these parameters are not estimated.}
-\item{fixed_theta}{   A vector of \code{theta} values when \code{theta} are set to be fix at the \code{fixed_par}. If it is not set, it will be set to zero.}
-\item{fixed_beta}{   A vector of \code{theta} values when \code{beta} are set to be fix at the \code{fixed_par}. If it is not set, it will be set to zero.}
-\item{fixed_gamma}{   A vector of \code{gamma} (natural logarithm of discrimination parameters, \eqn{\alpha = exp(\gamma)}) values when \code{gamma} are set to be fix at the \code{fixed_par}. If it is not set, it will be set to zero.}
-\item{isPenalized_theta}{   It is a logical parameter whether, in the estimation procedure, \code{theta} is penalized or not.}
-\item{isPenalized_gamma}{   It is a logical parameter whether, in the estimation procedure, \code{gamma} is penalized or not.}
-\item{groups_map}{   A matrix \eqn{n x f} to map the subject into DIF groups, where \eqn{n} is number of subjects and \eqn{f} is number of focal groups.}
-\item{optz_tuner}{   A list of optimization function settings. For complete settings can be seen in \code{\link[stats:optim]{stats::optim()}}.}
-\item{lambda_theta}{   An integer value to set the regularization parameter to the \code{theta}.}
-\item{lambda_in}{   An integer value to set the regularization parameter to the \code{gamma} in the included itemset.}
-\item{lambda_out}{   An integer value to set the regularization parameter to the \code{gamma} in the excluded itemset.}
-\item{isHessian}{   It is a logical parameter whether, in the estimation procedure, need to return the Hessian matrix or not.}
-\item{isTracked}{   It is a logical parameter whether need to track the process or not.}
->>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 }
 \description{
 Returns and updates the default settings used by the functions in \strong{autoRasch} package.

@@ -8,7 +8,6 @@
 \alias{plot_search}
 \title{Stepwise Selection Search}
 \usage{
-<<<<<<< HEAD
 stepwise_search(X, criterion = c("ipoqll", "ipoqlldif"),
   incl_set = c(), groups_map = c(), cores = NULL,
   optim_control_iq = c(), optim_control_oq = c(), isTracked = TRUE,
@@ -28,27 +27,6 @@ backward_search(X, criterion = c("ipoqll", "ipoqlldif"),
 \method{print}{search}(x, ...)
 
 plot_search(obj, remOrdered = TRUE, locateMax = TRUE, ...)
-=======
-stepwise_search(X, criterion = c("ipoqll"), incl_set = c(),
-  groups_map = c(), cores = 20, optz_tuner_iq = list(maxit = 500,
-  reltol = 1e-21, fnscale = 10), optz_tuner_oq = list(maxit = 500, reltol
-  = 1e-21, fnscale = 10), isTracked = TRUE, isContinued = FALSE,
-  prevData = c(), isLegacy = TRUE, fileOutput = FALSE,
-  tempFile = "temp_stepSearch.RData", isConvert = FALSE)
-
-backward_search(X, criterion = c("ipoqll"), incl_set = c(),
-  groups_map = c(), cores = 20, optz_tuner_iq = list(maxit = 500,
-  reltol = 1e-21, fnscale = 10), optz_tuner_oq = list(maxit = 500, reltol
-  = 1e-21, fnscale = 10), isTracked = TRUE, isContinued = FALSE,
-  prevData = c(), isLegacy = TRUE, fileOutput = TRUE,
-  tempFile = "temp_backSearch.RData", isConvert = FALSE)
-
-\method{summary}{search}(object, ...)
-
-\method{plot}{search}(x, use.name = FALSE, remOrdered = TRUE,
-  isMax = TRUE, ylab = "IPOQ-LL", xlab = expression("|S"["in"] *
-  "|"), xlim = c(), type = "l", ...)
->>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 }
 \arguments{
 \item{X}{A matrix or data.frame of the observed responses (ordinal or binary response).}
@@ -79,7 +57,6 @@ backward_search(X, criterion = c("ipoqll"), incl_set = c(),
 
 \item{isConvert}{A logical value whether it is wanted to recompute the score of the search results using IPOQ-LL-DIF criterion.}
 
-<<<<<<< HEAD
 \item{setting_par_iq}{a list of the optimization control setting parameters for the included set. See \code{setting} parameter in \code{\link[autoRasch:autoRaschOptions]{autoRaschOptions()}}.}
 
 \item{setting_par_oq}{a list of the optimization control setting parameters for the included set. See \code{setting} parameter in \code{\link[autoRasch:autoRaschOptions]{autoRaschOptions()}}.}
@@ -95,27 +72,6 @@ backward_search(X, criterion = c("ipoqll"), incl_set = c(),
 \item{remOrdered}{A logical statement whether show the order of the items removal or not.}
 
 \item{locateMax}{A logical statement whether the location of the maximum score is needed to be marked or not.}
-=======
-\item{object}{The object of class \code{'search'}.}
-
-\item{...}{further argument passed or from other method.}
-
-\item{x}{The object of class \code{search}.}
-
-\item{use.name}{Boolean value whether the plot will use variable name or not.}
-
-\item{remOrdered}{Boolean value whether the plot will show the removal order of the items or not.}
-
-\item{isMax}{Boolean value whether there is a line mark of the highest IPOQ-LL or not.}
-
-\item{ylab}{The label of the y axis.}
-
-\item{xlab}{The label of the x axis.}
-
-\item{xlim}{The range value of the x axis plot.}
-
-\item{type}{The type of the plot.}
->>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 }
 \value{
 A matrix of the itemsets that obtain the highest scores for each number of items in the included set and it scores (IQ-LL,OQ-LL, and IPOQ-LL).
@@ -127,15 +83,7 @@ To search itemset that give maximum value of the criterion
 To search the itemset that give the maximum score.
 }
 \examples{
-<<<<<<< HEAD
 #search_res <- backward_search(short_poly_data,criterion = "ipoqll", incl_set = c(1:9), cores = 2)
 #plot_search(search_res,type="l")
-=======
-#pcmdata_search <- stepwise_search(X = pcm_data, incl_set = c(1:ncol(pcm_data)), cores = 2)
-#plot(pcmdata_search)
-
-#To search only using backward search
-#pcmdata_search <- backward_search(X = pcm_data, incl_set = c(1:ncol(pcm_data)))
->>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 
 }
