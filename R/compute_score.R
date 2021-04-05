@@ -21,7 +21,6 @@
 #' and the estimated items' parameters in the excluded set, sequentially.
 #'
 #' @examples
-<<<<<<< HEAD
 #' ipoqll_score <- compute_score(short_poly_data,incl_set = c(1:3),type = "ipoqll")
 #'
 #' ipoqll_scores <- compute_scores(short_poly_data,incl_set = rbind(c(1:3),c(4:6)),
@@ -35,23 +34,12 @@ compute_score <- function(X, incl_set, type = c("ipoqll","ipoqlldif"), groups_ma
                           init_par_iq = c(), init_par_oq = c(),
                           optim_control_iq = c(), optim_control_oq = c(),
                           setting_par_iq = c(), setting_par_oq = c()){
-=======
-#' ipoqll_score <- compute_score(pcm_data, incl_set = c(4,5,6))
-#' summary(ipoqll_score)
-#'
-#' @rdname compute_score
-#' @export
-compute_score <- function(X, incl_set, type = c("ipoqll"), groups_map = c(),
-                          init_par_iq = c(), init_par_oq = c(), optz_tuner_iq = c(), optz_tuner_oq = c(),
-                          isTracked = FALSE){
 
->>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
   if(is.null(type)){
     type <- "ipoqll"
   }
 
   if(type[1] == "ipoqll"){
-<<<<<<< HEAD
     fixed_par <- c("delta")
     isPenalized_delta <- FALSE
     groups_map <- NULL
@@ -62,10 +50,8 @@ compute_score <- function(X, incl_set, type = c("ipoqll"), groups_map = c(),
       stop("autoRasch ERROR: to use the `ipoqlldif`, `groups_map` must be provided.")
     }
     groups_map <- as.matrix(groups_map)
-=======
     fixed_par <- c("deltabeta")
     isPenalized_deltabeta <- FALSE
->>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
   }
 
   dset <- as.matrix(X)
@@ -76,7 +62,6 @@ compute_score <- function(X, incl_set, type = c("ipoqll"), groups_map = c(),
     excl_resp <- dset[,-c(incl_set)]
   }
 
-<<<<<<< HEAD
   if(!is.null(init_par_iq) ){
 
     if((minCat <- min(dset,na.rm = TRUE)) != 0){  ### makes sure the response is started at 0
@@ -171,15 +156,9 @@ compute_score <- function(X, incl_set, type = c("ipoqll"), groups_map = c(),
 
   iqll <- pjmle(incl_resp, init_par = init_par_iq, setting = setting_par_iq)
 
-=======
-  iqll <- pjmle(incl_resp, init_par = init_par_iq, fixed_par = fixed_par,
-                optz_tuner = optz_tuner_iq, groups_map = groups_map, isHessian = FALSE, isTracked = isTracked)
->>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
-
   if(ncol(dset) == length(incl_set)){
     loglik_oqll <- NA
   } else {
-<<<<<<< HEAD
     if(is.null(setting_par_oq)){
       setting_par_oq <- autoRaschOptions()
     } else {
@@ -204,19 +183,12 @@ compute_score <- function(X, incl_set, type = c("ipoqll"), groups_map = c(),
 
     oqll <- pjmle(excl_resp, init_par = init_par_oq, setting = setting_par_oq)
 
-=======
-    oqll <- pjmle(excl_resp, init_par = init_par_oq, fixed_par = c("theta",fixed_par), fixed_theta = iqll$theta,
-                  isPenalized_theta = FALSE, optz_tuner = optz_tuner_oq,
-                  groups_map = groups_map, isHessian = FALSE, isTracked = isTracked)
->>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
     loglik_oqll <- oqll$loglik
   }
 
   ipoqll <- sum(c(iqll$loglik,loglik_oqll),na.rm = TRUE)
   res <- c(iqll$loglik, loglik_oqll, ipoqll)
 
-
-<<<<<<< HEAD
 
   if(type[1] == "ipoqlldif"){
     n_par <- sum(nrow(dset),((1+ncol(groups_map)+(max(dset,na.rm = TRUE)-min(dset,na.rm = TRUE)))*ncol(dset)))
@@ -324,14 +296,15 @@ compute_score <- function(X, incl_set, type = c("ipoqll"), groups_map = c(),
     }
     length(iqll_params) <- n_par
     length(oqll_params) <- n_par - nrow(dset)
-=======
+
+  }
+
   n_par <- sum(nrow(dset),((1+(max(dset,na.rm = TRUE)-min(dset,na.rm = TRUE)))*ncol(dset)))
   iqll_params <- c(iqll$theta, iqll$beta, iqll$gamma)
   if(ncol(dset) == length(incl_set)){
     oqll_params <- NA
   } else {
     oqll_params <- c(oqll$beta, oqll$gamma)
->>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
   }
   length(iqll_params) <- n_par
   length(oqll_params) <- n_par - nrow(dset)
@@ -343,15 +316,10 @@ compute_score <- function(X, incl_set, type = c("ipoqll"), groups_map = c(),
   return(res)
 }
 
-<<<<<<< HEAD
 compute_scores_unparalleled <- function(X, incl_sets, type = c("ipoqll","ipoqlldif"),
                                         step_direct = c("fixed","forward","backward"), groups_map = c(),
                                         init_par_iq = c(), init_par_oq = c(), optim_control_iq = c(), optim_control_oq = c(),
                                         setting_par_iq = c(), setting_par_oq = c()){
-=======
-compute_scores_unparalleled <- function(X, itemsets, type = c("ipoqll"), step_direct = c("fixed","forward","backward"), groups_map = c(),
-                           init_par_iq = c(), init_par_oq = c(), optz_tuner_iq = c(), optz_tuner_oq = c()){
->>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 
 
   dset <- as.matrix(X)
@@ -361,7 +329,6 @@ compute_scores_unparalleled <- function(X, itemsets, type = c("ipoqll"), step_di
     stop("autoRasch ERROR: the number of items in the incl_set can not exceed the initial items.")
   }
 
-<<<<<<< HEAD
   if(type[1] == "ipoqlldif"){
     if(is.null(groups_map)){
       stop("autoRasch ERROR: to use the `ipoqlldif`, `groups_map` must be provided.")
@@ -370,10 +337,7 @@ compute_scores_unparalleled <- function(X, itemsets, type = c("ipoqll"), step_di
     type <- "ipoqll"
   }
 
-  if(is.null(step_direct)){
-=======
   if(is.matrix(incl_sets) | is.null(step_direct)){
->>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
     step_direct <- "fixed"
   }
 
@@ -392,15 +356,9 @@ compute_scores_unparalleled <- function(X, itemsets, type = c("ipoqll"), step_di
 
   incl_sets <- as.matrix(incl_sets)
 
-<<<<<<< HEAD
   i <- NULL
 
   scoreList <- foreach(i=1:nrow(incl_sets), .combine = rbind, .errorhandling = "stop", .packages = c("autoRasch"), .export = c()) %dopar% {
-=======
-# print("IN")
-
-  scoreList <- foreach(i=1:nrow(incl_sets), .combine = rbind, .errorhandling = "remove", .packages = c("autoRasch"), .export = c()) %dopar% {
->>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 
     incl_set <- incl_sets[i,]
     incl_set <- incl_set[!is.na(incl_set)]
@@ -439,16 +397,11 @@ compute_scores_unparalleled <- function(X, itemsets, type = c("ipoqll"), step_di
 
 
   res <- scoreList
-<<<<<<< HEAD
 
-=======
-  # class(res) <- c(paste(type,"s",sep = ""))
->>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
   return(res)
 }
 
-#' @param itemsets A matrix as a results of a \code{rbind} of \code{incl_set}.
-#' @param step_direct The direction of the computation; \code{fixed}, \code{forward}, or \code{backward} .
+#' @param incl_sets A matrix as a results of a \code{rbind} of \code{incl_set}.
 #' @param cores Number of cores that is used in the paralellization.
 #' @param step_direct How will you compute the criterion score. \code{fixed} for the given itemset,
 #' \code{forward} computes all the scores of the possible combination of items if an item is added to the given set,
@@ -463,17 +416,11 @@ compute_scores_unparalleled <- function(X, itemsets, type = c("ipoqll"), step_di
 #'
 #' @rdname compute_score
 #' @export
-<<<<<<< HEAD
 compute_scores <- function(X, incl_sets, type = c("ipoqll","ipoqlldif"),
                            step_direct = c("fixed","forward","backward"), groups_map = c(),
                            init_par_iq = c(), init_par_oq = c(), optim_control_iq = c(), optim_control_oq = c(),
                            setting_par_iq = c(), setting_par_oq = c(),
                            cores = NULL){
-=======
-compute_scores <- function(X, itemsets, type = c("ipoqll"), step_direct = c("fixed","forward","backward"), groups_map = c(),
-                           init_par_iq = c(), init_par_oq = c(), optz_tuner_iq = c(), optz_tuner_oq = c(), cores = NULL){
->>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
-
 
 
   incl_sets <- as.matrix(incl_sets)
@@ -673,8 +620,6 @@ insert.at <- function(a, pos, max.nlmpar){
   }
   return(result)
 }
-<<<<<<< HEAD
-=======
 
 #' @param object The object from the class \code{score}. The result of the score computation.
 #' @param ... further argument passed or from other method.
@@ -691,4 +636,3 @@ summary.score <- function(object, ...){
   cat("\nIPOQ-LL: ", object[3])
   cat("\n\n")
 }
->>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5

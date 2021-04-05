@@ -1,37 +1,23 @@
-##### Complete Log likelihood and Gradient Function of GPCM with DIF implementation ######
+##### The general implementation of the log-likelihood and gradient functions of the moodels ######
 
-##########################################################################################
-# Mapping the full parameters as a vector to each variable, i.e., theta, beta, gamma, delta and deltagamma
+##### Estimated parameters extractor #####
 #
-# nlmPar = A vector of full parameters of those which are going  to be estimated using JMLE. First, they are mapped.
-# estPar_arr = A vector of parameters' names of which are going to be estimated
-# estLength_array = A vector of parameters' length of which are going to be estimated
-# fixed_par = A vector parameters' names of which are set to be fixed
-# fixLength_arr = A vector of parameters' length of which are set to be fixed
-# fixValue = A vector of the fixed parameters values
+# Mapping the estimated parameters to each variable, i.e., theta, beta, gamma, and delta.
 #
-# output = an output list of the extracted parameter values
-##########################################################################################
-
+# @param nlmPar A vector of the estimated parameters values.
+# @param estPar_arr A vector of the types of the estimated parameters.
+# @param estLength_array A vector of the lengths of each types of the estimated parameters.
+# @param fixed_par A vector of the types of the fixed parameters.
+# @param fixLength_arr A vector of the lengths of each types of the fixed parameters.
+# @param fixValue A vector of the fixed parameters values.
+#
+# @return output A list of the extracted estimated parameter values.
+#
+##########################################
 par_map <- function(nlmPar, estPar_arr, estLength_array, fixValue, fixed_par, fixLength_arr){
-  # print(fixed_par)
+
   output <- list()
-  # if(!identical(grep("deltagamma",estPar_arr), integer(0))){
-  #   # the sequence number of the parameter
-  #   parNo <- grep("deltagamma",estPar_arr)
-  #   if(parNo == 1){
-  #     output[["deltagamma"]] <- nlmPar[c((1):(sum(estLength_array[1])))]
-  #   } else {
-  #     output[["deltagamma"]] <- nlmPar[c((sum(estLength_array[1:(parNo-1)])+1):(sum(estLength_array[1:parNo])))]
-  #   }
-  # } else {
-  #   parNo <- grep("deltagamma",fixed_par)
-  #   if(parNo == 1){
-  #     output[["deltagamma"]] <- fixValue[c((1):(sum(fixLength_arr[1])))]
-  #   } else {
-  #     output[["deltagamma"]] <- fixValue[c((sum(fixLength_arr[1:(parNo-1)])+1):(sum(fixLength_arr[1:parNo])))]
-  #   }
-  # }
+
   if(!identical(grep("delta",estPar_arr), integer(0))){
     parNo <- grep("delta",estPar_arr)
     if(parNo == 1){
@@ -97,28 +83,37 @@ par_map <- function(nlmPar, estPar_arr, estLength_array, fixValue, fixed_par, fi
 }
 
 ##########################################################################################
-#THE LOG-LIKELIHOOD FUNCTION
+##### THE LOG-LIKELIHOOD FUNCTION #####
 #
-# nlmPar = parameters which are going to be estimated
-# dset = the dataset
-# zeroIdx = the nlmPar index which the delta(beta/gamma) very small and need to be rounded to zero. (in evaluation since the gradient descent failed in operation)
-# allcat = the number of beta parameters for all items
-# n_th = the number of beta for each items (the assumption for now is that every item has the same number of thresholds)
-# XN = matrix for mapping x_vi (true response of person v to item i)
-# XNA = matrix for mapping the NA responses
-# groups_map = a vector or matrix to map person v
+# nlmPar : the estimated parameters
+# dset : the dataset
+# lamda_theta : the penalty coefficient on the theta parameters.
+# lambda_in : the penalty coefficient on the included set
+# lambda_out : the penalty coefficient on the excluded set
+# lambda delta : the penalty coefficiant on the delta parameters
+# estPar_arr : A vector of the types of the estimated parameters.
+# estLength_array : A vector of the lengths of each types of the estimated parameters.
+# fixed_par : A vector of the types of the fixed parameters.
+# fixLength_arr : A vector of the lengths of each types of the fixed parameters.
+# fixValue : A vector of the fixed parameters values.
+# groups_map : Binary matrix. Respondents membership to DIF groups; rows represent individuals, column represent group partitions.
+# mt_vek : A vector of the number of thresholds
+# mt_idx : A vector of indexes to map the categories in each items.
+# dimResp : A vector of the dimension of the response. Columns represent items and rows represent subjects.
+# allcat : The number of beta parameters/thresholds for all items
+# n_th : the number of beta for each items (the assumption for now is that every item has the same number of thresholds)
+# XN : matrix for mapping x_vi (true response of person v to item i)
+# XNA : matrix for mapping the NA responses
+# eps : Small constant value as a workaround to solve the lasso penalty.
+# isPenalized_theta : It is a logical parameter whether, in the estimation procedure, theta is penalized or not.
+# isPenalized_gamma : It is a logical parameter whether, in the estimation procedure, gamma is penalized or not.
+# isPenalized_delta : It is a logical parameter whether, in the estimation procedure, delta is penalized or not.
+#
 ##########################################################################################
-<<<<<<< HEAD
 loglik_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_delta,
                        estPar_arr, fixed_par, fixValue, fixLength_arr, estLength_array,
                        groups_map, mt_vek, mt_idx, dimResp, allcat, n_th, XN, XNA, eps = 0,
                        isPenalized_gamma, isPenalized_theta, isPenalized_delta){
-=======
-
-loglik_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_deltabeta, lambda_deltagamma = 1e+6, eps = 0,
-                       estPar_arr, fixLength_arr, estLength_array, allcat, n_th, XN, XNA, XREAL, groups_map, mt_vek, fixed_par, fixValue,
-                       isPenalized_gamma, isPenalized_theta, isPenalized_deltabeta, tracked){
->>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 
 
   # map the nlmPar
@@ -154,12 +149,8 @@ loglik_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda
   disc_diff <- t_diff * exp_gamma
 
   ### map the corresponding NA value of the dataset to the matrix
-<<<<<<< HEAD
   disc_diff <- XNA * disc_diff
   disc_diff <- matrix(disc_diff, nrow = allcat)
-=======
-  disc_diff <- XNA * disc_diff #  * XREAL
->>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 
   ### compute the first part of the log-likelihood (simple addition part)
   l1 <- sum((XN * disc_diff), na.rm = TRUE)
@@ -205,22 +196,14 @@ loglik_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda
 }
 
 ############################################################################
+#
 #THE GRADIENT FUNCTION
 #
-#
 ############################################################################
-<<<<<<< HEAD
 grad_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_delta,
                      estPar_arr, fixed_par, fixValue, fixLength_arr, estLength_array,
                      groups_map, mt_vek, mt_idx, dimResp, allcat, n_th, XN, XNA, eps = 0,
                      isPenalized_gamma, isPenalized_theta, isPenalized_delta){
-=======
-
-#rasch.gpcm.dif3.grad <- function(nlmPar,dset = c(),zeroIdx = c(), lambda_theta, lambda_in, lambda_out, lambda_deltabeta, lambda_deltagamma, eps, estPar_arr = c(), fixLength_arr = c(), estLength_array = c(), allcat = c(), n_th = c(), idx.1st.cat = c(), XN = c(), XNA = c(), groups_map = c(), mt_vek = c(),fixed_par = c(),fixValue = c(), isPenalized_gamma = TRUE, isPenalized_theta = TRUE,tracked = TRUE, isPenalized_deltabeta = TRUE){
-grad_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_deltabeta, lambda_deltagamma = 1e+6, eps = 0,
-                     estPar_arr, fixLength_arr, estLength_array, allcat, n_th, XN, XNA, XREAL, groups_map, mt_vek, fixed_par, fixValue,
-                     isPenalized_gamma, isPenalized_theta, isPenalized_deltabeta, tracked){
->>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 
   lambda_theta <- lambda_theta*2
   lambda_in <- lambda_in*2
@@ -253,14 +236,8 @@ grad_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_d
 
   t_diff <- t_diff - delta_tot_rep          #delta.tot.rep is total delta which has been replicated to every categoory
   disc_diff <- t_diff * total_alpha_mat
-<<<<<<< HEAD
   disc_diff <- XNA * disc_diff
   disc_diff <- matrix(disc_diff, nrow = allcat)
-=======
-  # disc_diff <- t_diff * exp_gamma
-  # disc_diff <- disc_diff * exp_deltagamma_tot_rep
-  disc_diff <- XNA * disc_diff #* XREAL
->>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 
   ##### first part of gradient ###
 
@@ -459,16 +436,7 @@ grad_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_d
     output <- c(grad_theta,output)
   }
 
-<<<<<<< HEAD
   grad_tot <- output
-=======
-
-  # if(!is.null(zeroIdx)){
-  #   grad_tot <- output[-c(zeroIdx)]
-  # } else {
-  grad_tot <- output
-  # }
->>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 
   return(-grad_tot)
 
@@ -585,21 +553,10 @@ GPCMDIF_LL <- function(dset = c(), fixValue.theta, fixValue.beta, fixValue.gamma
 
   st1st2 <- c(l1,l2)
 
-<<<<<<< HEAD
   lnL <- st1st2[1] - st1st2[2]
 
   if(isPenalized_theta){
     lnL <- lnL - (lambda_theta*(sum(theta^2)))
-=======
-  if(isPenalized_gamma & isPenalized_theta & isPenalized_deltabeta){
-    lnL <- st1st2[1] - st1st2[2] - (lambda_theta*(sum(theta^2))) - (lambda_in*(sum(gamma^2)))- (lambda_deltabeta*(sum(abs(deltabeta)^(1+eps))))- (lambda_deltagamma*(sum(abs(deltagamma)^(1+eps))))
-  } else if(isPenalized_gamma){
-    lnL <- st1st2[1] - st1st2[2] - (lambda_out*(sum(gamma^2)))- (lambda_deltabeta*(sum(abs(deltabeta)^(1+eps))))- (lambda_deltagamma*(sum(abs(deltagamma)^(1+eps))))
-  } else if(isPenalized_theta){
-    lnL <- st1st2[1] - st1st2[2] - (lambda_theta*(sum(theta^2)))- (lambda_deltabeta*(sum(abs(deltabeta)^(1+eps))))- (lambda_deltagamma*(sum(abs(deltagamma)^(1+eps))))
-  } else {
-    lnL <- st1st2[1] - st1st2[2]
->>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
   }
 
   if(isPenalized_theta & isPenalized_gamma){
