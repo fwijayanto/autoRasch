@@ -2,33 +2,18 @@ Package: autoRasch
 Version: 0.1.0
 Date: 2020-05-13
 Title: Semi-Automated Rasch Analysis
-<<<<<<< HEAD
-Authors@R: person(given = "Feri", family = "Wijayanto", role = c("aut","cre"), email = "f.wijayanto@cs.ru.nl")
-Author: Feri WIjayanto [aut, cre]
-Maintainer: Maint Developer <Maint.Developer@some.domain.net>
-Depends: R (>= 3.1.0)
-Imports: doParallel, foreach, lavaan
-Suggests: 
-    knitr,
-    rmarkdown,
-    testthat
-Description: This package helps user to do a semi-automated Rasch analysis with a capability to perfect the analysis by a standard Rasch analysis using its common statistics.
-License: GPL-2
-URL: 
-BugReports: 
-=======
 Authors@R: person("Wijayanto", "Feri", email = "f.wijayanto@cs.ru.nl", role = c("aut", "cre"))
 Author: Feri Wijayanto [cre, aut], Perry Groot [aut], Tom Heskes [aut]
 Depends: R (>= 3.1.0)
 Imports:
     doParallel,
-    foreach
+    foreach,
+    lavaan
 Suggests: 
     knitr,
     rmarkdown
 Description: This package helps user to do a semi-automated Rasch analysis which is comparable to the analysis by a standard Rasch analysis using its common statistics.
 License:  GPL-2
->>>>>>> 7bda44cf6ff72132fa57077ea53e1ef9d6063ea5
 VignetteBuilder: knitr
 Type: Package
 Encoding: UTF-8
