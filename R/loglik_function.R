@@ -1,18 +1,19 @@
 ##### The general implementation of the log-likelihood and gradient functions of the moodels ######
 
-#' Estimated parameters extractor
-#'
-#' Mapping the estimated parameters to each variable, i.e., theta, beta, gamma, and delta.
-#'
-#' @param nlmPar A vector of the estimated parameters values.
-#' @param estPar_arr A vector of the types of the estimated parameters.
-#' @param estLength_array A vector of the lengths of each types of the estimated parameters.
-#' @param fixed_par A vector of the types of the fixed parameters.
-#' @param fixLength_arr A vector of the lengths of each types of the fixed parameters.
-#' @param fixValue A vector of the fixed parameters values.
-#'
-#' @return output A list of the extracted estimated parameter values.
-#'
+##### Estimated parameters extractor #####
+#
+# Mapping the estimated parameters to each variable, i.e., theta, beta, gamma, and delta.
+#
+# @param nlmPar A vector of the estimated parameters values.
+# @param estPar_arr A vector of the types of the estimated parameters.
+# @param estLength_array A vector of the lengths of each types of the estimated parameters.
+# @param fixed_par A vector of the types of the fixed parameters.
+# @param fixLength_arr A vector of the lengths of each types of the fixed parameters.
+# @param fixValue A vector of the fixed parameters values.
+#
+# @return output A list of the extracted estimated parameter values.
+#
+##########################################
 par_map <- function(nlmPar, estPar_arr, estLength_array, fixValue, fixed_par, fixLength_arr){
 
   output <- list()
@@ -82,16 +83,32 @@ par_map <- function(nlmPar, estPar_arr, estLength_array, fixValue, fixed_par, fi
 }
 
 ##########################################################################################
-#THE LOG-LIKELIHOOD FUNCTION
+##### THE LOG-LIKELIHOOD FUNCTION #####
 #
-# nlmPar = parameters which are going to be estimated
-# dset = the dataset
-# zeroIdx = the nlmPar index which the delta(beta/gamma) very small and need to be rounded to zero. (in evaluation since the gradient descent failed in operation)
-# allcat = the number of beta parameters for all items
-# n_th = the number of beta for each items (the assumption for now is that every item has the same number of thresholds)
-# XN = matrix for mapping x_vi (true response of person v to item i)
-# XNA = matrix for mapping the NA responses
-# groups_map = a vector or matrix to map person v
+# nlmPar : the estimated parameters
+# dset : the dataset
+# lamda_theta : the penalty coefficient on the theta parameters.
+# lambda_in : the penalty coefficient on the included set
+# lambda_out : the penalty coefficient on the excluded set
+# lambda delta : the penalty coefficiant on the delta parameters
+# estPar_arr : A vector of the types of the estimated parameters.
+# estLength_array : A vector of the lengths of each types of the estimated parameters.
+# fixed_par : A vector of the types of the fixed parameters.
+# fixLength_arr : A vector of the lengths of each types of the fixed parameters.
+# fixValue : A vector of the fixed parameters values.
+# groups_map : Binary matrix. Respondents membership to DIF groups; rows represent individuals, column represent group partitions.
+# mt_vek : A vector of the number of thresholds
+# mt_idx : A vector of indexes to map the categories in each items.
+# dimResp : A vector of the dimension of the response. Columns represent items and rows represent subjects.
+# allcat : The number of beta parameters/thresholds for all items
+# n_th : the number of beta for each items (the assumption for now is that every item has the same number of thresholds)
+# XN : matrix for mapping x_vi (true response of person v to item i)
+# XNA : matrix for mapping the NA responses
+# eps : Small constant value as a workaround to solve the lasso penalty.
+# isPenalized_theta : It is a logical parameter whether, in the estimation procedure, theta is penalized or not.
+# isPenalized_gamma : It is a logical parameter whether, in the estimation procedure, gamma is penalized or not.
+# isPenalized_delta : It is a logical parameter whether, in the estimation procedure, delta is penalized or not.
+#
 ##########################################################################################
 loglik_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_delta,
                        estPar_arr, fixed_par, fixValue, fixLength_arr, estLength_array,
@@ -179,8 +196,8 @@ loglik_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda
 }
 
 ############################################################################
-#THE GRADIENT FUNCTION
 #
+#THE GRADIENT FUNCTION
 #
 ############################################################################
 grad_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_delta,
