@@ -151,7 +151,7 @@ summary.gpcmdif <- function(object, ...){
     delta_mat <- as.data.frame(delta_mat)
     print(delta_mat, quote = FALSE)
     cat("\n")
-    cat("DIF effect threshold =",th_dif)
+    # cat("DIF effect threshold =",th_dif)
   }
 }
 

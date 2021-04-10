@@ -380,7 +380,7 @@ summary.pcmdif <- function(object, ...){
     delta_mat <- as.data.frame(delta_mat)[remRowIdx,]
     print(delta_mat, quote = FALSE)
     cat("\n")
-    cat("DIF effect threshold =",th_dif)
+    # cat("DIF effect threshold =",th_dif)
   }
 }
 
