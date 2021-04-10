@@ -6,3 +6,5 @@
 ^.*ipoqlldif.*\.RData$
 ^.*_random3\.RData$
 ^.*.pdf$
+^doc$
+^Meta$

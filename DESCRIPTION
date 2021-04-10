@@ -13,9 +13,9 @@ Suggests:
     knitr,
     rmarkdown
 Description: This package helps user to do a semi-automated Rasch analysis which is comparable to the analysis by a standard Rasch analysis using its common statistics.
-License:  GPL-2
+License: GPL-2
 VignetteBuilder: knitr
 Type: Package
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1
