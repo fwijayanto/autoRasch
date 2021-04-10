@@ -7,7 +7,7 @@ title: "autoRasch ::: Working with the models"
 # output: 
 #   pdf_document:
 #     latex_engine: pdflatex
-output: html_vignette
+output: html_document
 vignette: >
   %\VignetteIndexEntry{autoRasch ::: Working with the models}
   %\VignetteEngine{knitr::rmarkdown}
