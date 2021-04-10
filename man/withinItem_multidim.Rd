@@ -4,7 +4,9 @@
 \name{withinItem_multidim}
 \alias{withinItem_multidim}
 \title{The Within-item Multidimensional Polytomous Dataset}
-\format{An object of class \code{data.frame} with 301 rows and 18 columns.}
+\format{
+An object of class \code{data.frame} with 301 rows and 18 columns.
+}
 \usage{
 data(withinItem_multidim)
 }

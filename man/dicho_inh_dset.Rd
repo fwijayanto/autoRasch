@@ -4,7 +4,9 @@
 \name{dicho_inh_dset}
 \alias{dicho_inh_dset}
 \title{The Inhomogenous Dichotomous Dataset}
-\format{An object of class \code{data.frame} with 301 rows and 18 columns.}
+\format{
+An object of class \code{data.frame} with 301 rows and 18 columns.
+}
 \usage{
 data(dicho_inh_dset)
 }

@@ -4,8 +4,16 @@
 \alias{plot_ICC}
 \title{Plot The Item Characteristic Curves}
 \usage{
-plot_ICC(obj, itemno = 5, xlab = NULL, ylab = NULL, xlim = c(-10,
-  10), col = c("green4", "darkorange2", "red2"), lty = c(1, 1, 1), ...)
+plot_ICC(
+  obj,
+  itemno = 5,
+  xlab = NULL,
+  ylab = NULL,
+  xlim = c(-10, 10),
+  col = c("green4", "darkorange2", "red2"),
+  lty = c(1, 1, 1),
+  ...
+)
 }
 \arguments{
 \item{obj}{The object of class \code{'pcm'}.}

@@ -16,8 +16,7 @@ itemfit(objFit)
 
 personfit(objFit)
 
-plot_fitStats(objFit, toPlot = c("alpha", "infit"), useName = FALSE,
-  ...)
+plot_fitStats(objFit, toPlot = c("alpha", "infit"), useName = FALSE, ...)
 }
 \arguments{
 \item{obj}{The object of class \code{'pcm'} or \code{'pcmdif'}.}

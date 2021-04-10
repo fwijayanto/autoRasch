@@ -4,7 +4,9 @@
 \name{testlets_dataset}
 \alias{testlets_dataset}
 \title{The Multi-testlets Polytomous Dataset}
-\format{An object of class \code{data.frame} with 301 rows and 12 columns.}
+\format{
+An object of class \code{data.frame} with 301 rows and 12 columns.
+}
 \usage{
 data(testlets_dataset)
 }

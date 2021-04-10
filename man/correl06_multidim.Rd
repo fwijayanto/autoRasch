@@ -4,7 +4,9 @@
 \name{correl06_multidim}
 \alias{correl06_multidim}
 \title{The Multidimensional Polytomous Dataset with 0.6 Correlation}
-\format{An object of class \code{data.frame} with 301 rows and 12 columns.}
+\format{
+An object of class \code{data.frame} with 301 rows and 12 columns.
+}
 \usage{
 data(correl06_multidim)
 }

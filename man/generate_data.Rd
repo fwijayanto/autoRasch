@@ -4,10 +4,23 @@
 \alias{generate_data}
 \title{Generate the artificial dataset}
 \usage{
-generate_data(responseType = "multidim.nocorrel", theta = c(-3, 3),
-  sdtheta = 6, ntheta = 301, beta = c(-2.5, 2.5), sdbeta = 4,
-  nitem = 6, alpha = c(1), sdlambda = 1, ncat = 5, thGap = 0.8,
-  ndim = 3, randtype = "uniform", corLevel = 0, dim.members = c())
+generate_data(
+  responseType = "multidim.nocorrel",
+  theta = c(-3, 3),
+  sdtheta = 6,
+  ntheta = 301,
+  beta = c(-2.5, 2.5),
+  sdbeta = 4,
+  nitem = 6,
+  alpha = c(1),
+  sdlambda = 1,
+  ncat = 5,
+  thGap = 0.8,
+  ndim = 3,
+  randtype = "uniform",
+  corLevel = 0,
+  dim.members = c()
+)
 }
 \arguments{
 \item{responseType}{The type of the dataset. The types include \code{multidim.nocorrel}, \code{multidim.withcorrel}, \code{discriminate}, \code{multidim.within}, and \code{testlets}.}

@@ -4,7 +4,9 @@
 \name{poly_inh_dset}
 \alias{poly_inh_dset}
 \title{The Inhomogenous Polytomous Dataset}
-\format{An object of class \code{data.frame} with 301 rows and 18 columns.}
+\format{
+An object of class \code{data.frame} with 301 rows and 18 columns.
+}
 \usage{
 data(poly_inh_dset)
 }

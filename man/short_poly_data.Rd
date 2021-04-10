@@ -4,7 +4,9 @@
 \name{short_poly_data}
 \alias{short_poly_data}
 \title{A Shorter Inhomogenous Polytomous Dataset}
-\format{An object of class \code{data.frame} with 151 rows and 9 columns.}
+\format{
+An object of class \code{data.frame} with 151 rows and 9 columns.
+}
 \usage{
 data(short_poly_data)
 }

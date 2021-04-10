@@ -8,19 +8,43 @@
 \alias{plot_search}
 \title{Stepwise Selection Search}
 \usage{
-stepwise_search(X, criterion = c("ipoqll", "ipoqlldif"),
-  incl_set = c(), groups_map = c(), cores = NULL,
-  optim_control_iq = c(), optim_control_oq = c(), isTracked = TRUE,
-  isContinued = FALSE, prevData = c(), isLegacy = FALSE,
-  fileOutput = FALSE, tempFile = "temp_stepSearch.RData",
-  isConvert = FALSE, setting_par_iq = c(), setting_par_oq = c())
+stepwise_search(
+  X,
+  criterion = c("ipoqll", "ipoqlldif"),
+  incl_set = c(),
+  groups_map = c(),
+  cores = NULL,
+  optim_control_iq = c(),
+  optim_control_oq = c(),
+  isTracked = TRUE,
+  isContinued = FALSE,
+  prevData = c(),
+  isLegacy = FALSE,
+  fileOutput = FALSE,
+  tempFile = "temp_stepSearch.RData",
+  isConvert = FALSE,
+  setting_par_iq = c(),
+  setting_par_oq = c()
+)
 
-backward_search(X, criterion = c("ipoqll", "ipoqlldif"),
-  incl_set = c(), groups_map = c(), cores = NULL,
-  optim_control_iq = c(), optim_control_oq = c(), isTracked = TRUE,
-  isContinued = FALSE, prevData = c(), isLegacy = FALSE,
-  fileOutput = FALSE, tempFile = "temp_backSearch.RData",
-  isConvert = FALSE, setting_par_iq = c(), setting_par_oq = c())
+backward_search(
+  X,
+  criterion = c("ipoqll", "ipoqlldif"),
+  incl_set = c(),
+  groups_map = c(),
+  cores = NULL,
+  optim_control_iq = c(),
+  optim_control_oq = c(),
+  isTracked = TRUE,
+  isContinued = FALSE,
+  prevData = c(),
+  isLegacy = FALSE,
+  fileOutput = FALSE,
+  tempFile = "temp_backSearch.RData",
+  isConvert = FALSE,
+  setting_par_iq = c(),
+  setting_par_oq = c()
+)
 
 \method{summary}{search}(object, ...)
 

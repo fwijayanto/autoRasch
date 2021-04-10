@@ -4,7 +4,9 @@
 \name{polydif_inh_dset}
 \alias{polydif_inh_dset}
 \title{The Inhomogenous Polytomous Dataset containing DIF items}
-\format{An object of class \code{data.frame} with 490 rows and 20 columns.}
+\format{
+An object of class \code{data.frame} with 490 rows and 20 columns.
+}
 \usage{
 data(polydif_inh_dset)
 }

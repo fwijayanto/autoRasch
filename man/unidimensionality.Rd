@@ -4,8 +4,13 @@
 \alias{check.unidim}
 \title{Unidimensionality Check}
 \usage{
-check.unidim(x, is.polychor = TRUE, se = "robust",
-  estimator = "WLSMV", test = "Satorra.Bentler")
+check.unidim(
+  x,
+  is.polychor = TRUE,
+  se = "robust",
+  estimator = "WLSMV",
+  test = "Satorra.Bentler"
+)
 }
 \arguments{
 \item{x}{The dataset of responses.}

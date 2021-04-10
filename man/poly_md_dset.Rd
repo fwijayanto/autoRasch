@@ -4,7 +4,9 @@
 \name{poly_md_dset}
 \alias{poly_md_dset}
 \title{The Uncorrelated Multidimensional Polytomous Dataset}
-\format{An object of class \code{data.frame} with 301 rows and 18 columns.}
+\format{
+An object of class \code{data.frame} with 301 rows and 18 columns.
+}
 \usage{
 data(poly_md_dset)
 }
