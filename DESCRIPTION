@@ -2,8 +2,8 @@ Package: autoRasch
 Version: 1.0.0
 Date: 2021-04-10
 Title: Semi-Automated Rasch Analysis
-Authors@R: person("Wijayanto", "Feri", email = "f.wijayanto@cs.ru.nl", role = c("aut", "cre"))
-Author: Feri Wijayanto [cre, aut], Perry Groot [aut], Tom Heskes [aut]
+Authors@R: person("Doe", "John", email = "john.doe@email.com", role = c("aut", "cre"))
+Author: John Doe[cre, aut]
 Depends: R (>= 3.1.0)
 Imports:
     doParallel,
@@ -12,7 +12,7 @@ Imports:
 Suggests: 
     knitr,
     rmarkdown
-Description: This package helps user to do a semi-automated Rasch analysis which is comparable to the analysis by a standard Rasch analysis using its common statistics.
+Description: This package helps user to do Rasch analysis (semi-)automatically which is comparable to the standard Rasch analysis using common statistics.
 License: GPL-2
 VignetteBuilder: knitr
 Type: Package
