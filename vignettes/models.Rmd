@@ -21,6 +21,11 @@ knitr::opts_chunk$set(
 )
 ```
 
+```{}
+# install.packages("remotes")
+remotes::install_github("fwijayanto/autoRasch")
+```
+
 ```{r setup}
 library(autoRasch)
 ```

@@ -21,10 +21,17 @@ knitr::opts_chunk$set(
 )
 ```
 
+```{}
+# install.packages("remotes")
+remotes::install_github("fwijayanto/autoRasch")
+```
+
 ```{r setup}
 library(autoRasch)
 ```
 
+
+### Computing the criteron score (IPOQ-LL/IPOQ-LL-DIF)
 
 Utilizing the generalized partial credit model (GPCM) and the generalized partial credit model with DIF (GPCM-DIF), we develop a score as a criterion to judge the quality of an itemset within an original survey, called the In-plus-out-of-questionnaire log-likelihood (IPOQ-LL) and In-plus-out-of-questionnaire log-likelihood with DIF (IPOQ-LL-DIF), respectively.
 
@@ -41,6 +48,9 @@ Furthermore, to compute multiple IPOQ-LL scores of several itemsets simultanousl
 ipoqll_scores <- compute_scores(short_poly_data, incl_sets = rbind(c(1:3),c(7:9)), type = "ipoqll", cores = 2)
 View(ipoqll_scores[,1:12])
 ```
+
+
+### Semi-automated Rasch analysis by searching the maximum of the (IPOQ-LL/IPOQ-LL-DIF) score
 
 The IPOQ-LL obtains by totalling the IQ-LL and OQ-LL. Changing `type = ipoqlldif` means the IPOQ-LL-DIF score is computed, by considering the DIF effects, instead of the IPOQ-LL. This log-likelihood is a score for model comparison, which means that there are more items combinations to be compared in order to obtain the maximum. Hence, we conduct the semi-automated Rasch analysis using the IPOQ-LL score by running
 
