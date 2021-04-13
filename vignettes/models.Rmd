@@ -23,7 +23,7 @@ knitr::opts_chunk$set(
 
 ```{}
 # install.packages("remotes")
-remotes::install_github("fwijayanto/autoRasch")
+remotes::install_github("fwijayanto/autoRasch", build_manual = TRUE, build_vignettes = TRUE)
 ```
 
 ```{r setup}
