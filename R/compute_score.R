@@ -43,6 +43,7 @@ compute_score <- function(X, incl_set, type = c("ipoqll","ipoqlldif"), groups_ma
     fixed_par <- c("delta")
     isPenalized_delta <- FALSE
     groups_map <- NULL
+    scoreName <- "IPOQ-LL"
   } else if(type[1] == "ipoqlldif"){
     fixed_par <- c()
     isPenalized_delta <- TRUE
@@ -52,6 +53,7 @@ compute_score <- function(X, incl_set, type = c("ipoqll","ipoqlldif"), groups_ma
     groups_map <- as.matrix(groups_map)
     fixed_par <- c("deltabeta")
     isPenalized_deltabeta <- FALSE
+    scoreName <- "IPOQ-LL-DIF"
   }
 
   dset <- as.matrix(X)
@@ -312,7 +314,8 @@ compute_score <- function(X, incl_set, type = c("ipoqll","ipoqlldif"), groups_ma
 
   length(incl_set) <- ncol(dset)
   res <- c(res, incl_set, iqll_params, oqll_params)
-  class(res) <- c("score",type[1])
+  names(res) <- c("IQ-LL","OQ-LL",scoreName,rep("item no.",length(incl_set)),rep("iq-ll par.",length(iqll_params)),rep("oq-ll par.",length(oqll_params)))
+  class(res) <- c(class(res),"score",type[1])
   return(res)
 }
 
