@@ -9,7 +9,7 @@ title: "autoRasch ::: The Semi-automated Rasch Analysis"
 #     latex_engine: pdflatex
 output: html_document
 vignette: >
-  %\VignetteIndexEntry{autoRasch ::: Working with the models}
+  %\VignetteIndexEntry{autoRasch ::: The Semi-automated Rasch Analysis}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
