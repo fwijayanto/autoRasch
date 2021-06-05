@@ -51,8 +51,6 @@ compute_score <- function(X, incl_set, type = c("ipoqll","ipoqlldif"), groups_ma
       stop("autoRasch ERROR: to use the `ipoqlldif`, `groups_map` must be provided.")
     }
     groups_map <- as.matrix(groups_map)
-    fixed_par <- c("deltabeta")
-    isPenalized_deltabeta <- FALSE
     scoreName <- "IPOQ-LL-DIF"
   }
 
@@ -187,6 +185,7 @@ compute_score <- function(X, incl_set, type = c("ipoqll","ipoqlldif"), groups_ma
 
     loglik_oqll <- oqll$loglik
   }
+
 
   ipoqll <- sum(c(iqll$loglik,loglik_oqll),na.rm = TRUE)
   res <- c(iqll$loglik, loglik_oqll, ipoqll)

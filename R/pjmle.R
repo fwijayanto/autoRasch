@@ -112,7 +112,7 @@ pjmle <- function(X, init_par = c(), setting = c()){
                                           fixLength_arr = fixLength_arr, allcat = dataPrep$allcat, dimResp = dataPrep$dimResp, n_th = dataPrep$n_th, XN = dataPrep$XN, XNA = dataPrep$XNA, #XREAL = dataPrep$XREAL,
                                           groups_map = dataPrep$groups_map, mt_vek = dataPrep$mt_vek, mt_idx = dataPrep$mt_idx, fixed_par = opts$fixed_par, fixValue = fixValue,
                                           isPenalized_gamma = opts$isPenalized_gamma, isPenalized_theta = opts$isPenalized_theta,
-                                          isPenalized_delta = opts$isPenalized_delta, method = "BFGS"))
+                                          isPenalized_delta = opts$isPenalized_delta, method = "BFGS", control = opts$optim_control))
 
     est <- minRes$par
     obj <- minRes$value

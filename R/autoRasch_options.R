@@ -105,13 +105,6 @@ autoRasch_options_default <- function(){
     eps = 0.0,
     randomized = FALSE,
     random.init.th = 1e-2,
-    isPenalized_gamma = TRUE,
-    isPenalized_theta = TRUE,
-    groups_map = c(),
-    optz_tuner = list(maxit = 2e+4, reltol = 1e-12, fnscale = 10),
-    lambda_theta = 0.05,
-    lambda_in = 50,
-    lambda_out = 5e-3,
     isHessian = TRUE,
     cd_control = list("init.step" = 1, scale.down = 0.5, maxit.cd.higher = 500, maxit.cd.lower = 500, maxit.optim = 1e+4,
                       abs.tol = 1e-12, max.diff.par = 1e-8)
