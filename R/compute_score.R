@@ -351,7 +351,7 @@ compute_scores_unparalleled <- function(X, incl_sets, type = c("ipoqll","ipoqlld
   } else if(step_direct[1] == "backward"){
     incl_sets <- t(combn(incl_sets,(length(incl_sets)-1)))
   } else if(step_direct[1] == "fixed"){
-    if((class(incl_sets) == "matrix") & (dim(incl_sets)[2] == 1 | dim(incl_sets)[1] == 1)){
+    if((any(class(incl_sets) == "matrix")) & (dim(incl_sets)[2] == 1 | dim(incl_sets)[1] == 1)){
       incl_sets <- matrix(as.vector(incl_sets), ncol = 1)
     }
   }
