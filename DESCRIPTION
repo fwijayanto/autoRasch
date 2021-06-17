@@ -4,7 +4,7 @@ Date: 2021-04-10
 Title: Semi-Automated Rasch Analysis
 Authors@R: person("Doe", "John", email = "john.doe@email.com", role = c("aut", "cre"))
 Author: John Doe[cre, aut]
-Depends: R (>= 3.1.0)
+Depends: R (>= 3.5.0)
 Imports:
     doParallel,
     foreach,
