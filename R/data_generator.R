@@ -17,24 +17,63 @@
 #' @param ndim The number of subgroups (dimensions/testlets) created.
 #' @param dim.members The list of item members in each dimension.
 #' @param corLevel The correlation between the two dimensions.
+#' @param seed Integer seed for reproducibility.
 #'
 #' @import stats
 #'
 #' @examples
+#' # 1. Multidimensional Polytomous Dataset with 0.2 Correlation
 #' # Generate multidimensional dataset which having correlation of 0.2 between the dimensions
-#' #correl02_multidim <- generate_data(responseType = "multidim.withcorrel", corLevel = 0.2)
+#' correl02_multidim <- generate_data(responseType = "multidim.withcorrel", corLevel = 0.2, seed = 2021)
 #'
-#' #Generate multidimensional dataset with some items relate to more than one dimension.
-#' #withinItem_multidim <- generate_data(responseType = "multidim.within", ndim = 3,
-#' #                                      dim.members = list(c(1:6,13),c(3,7:12),c(5,13:18)))
+#' # 2.  Within-item Multidimensional Polytomous Dataset
+#' # Generate multidimensional dataset with some items relate to more than one dimension.
+#' withinItem_multidim <- generate_data(responseType = "multidim.within", ndim = 3,
+#'                                       dim.members = list(c(1:6,13),c(3,7:12),c(5,13:18)), seed = 2021)
 #'
-#' #generate dataset which consist of two bundle items with different level of local dependency effect.
-#' #testlets_dataset <- generate_data(responseType = "testlets", ndim = 2, sdlambda = c(0,4))
-#'
+#' # 3. Multi-testlets Polytomous Dataset
+#' # Generate dataset which consist of two bundle items with different level of local dependency effect.
+#' testlets_dataset <- generate_data(responseType = "testlets", ndim = 2, sdlambda = c(0,4), seed = 2021)
+#' 
+#' # 4a. Inhomogenous Dichotomous Dataset
+#' # Generate dataset with binary type responses containing three subsets with different discrimination values.
+#' # TODO: fix
+#' # dicho_inh_dset <- generate_data(
+#' #   responseType = "discriminate", ncat = 2, seed = 2021,
+#' #   alpha = c(0.04,0.045,0.05,0.055,0.06,0.065,0.2,0.25,0.3,0.35,0.4,0.45,2.6,2.65,2.7,2.75,2.8,2.85,2.9)
+#' # )
+#' 
+#' # 4b. Inhomogenous Polytomous Dataset
+#' # Generate dataset with polytomous responses (five categories) containing three subsets with different discrimination values.
+#' # TODO: fix
+#' # poly_inh_dset <- generate_data(
+#' #   responseType = "discriminate", ncat = 5, seed = 2021,
+#' #   alpha = c(0.04,0.045,0.05,0.055,0.06,0.065,0.2,0.25,0.3,0.35,0.4,0.45,2.6,2.65,2.7,2.75,2.8,2.85,2.9)
+#' # )
+#' 
+#' # 4c. Shorter Inhomogenous Polytomous Dataset
+#' short_poly_data <- generate_data(alpha = c(0.02,0.5,2), nitem = 3, ndim = 3, ncat = 5, 
+#'                                  theta = c(-6,6), beta = c(-4,4), ntheta = 151, seed = 2021)
+#'                                  
+#' # 4d. Inhomogenous Polytomous Dataset containing DIF items
+#' # Generate dataset with polytomous responses (five categories) containing three subsets with different discrimination values and two DIF-items.
+#' # TODO: add
+#' 
+#' # 5a. Uncorrelated Multidimensional Dichotomous Dataset
+#' # Generate dataset with binary type responses containing three subsets which represent different uncorrelated dimensions.
+#' dicho_md_dset <- generate_data(responseType = "multidim.nocorrel", ncat = 2, seed = 2021)
+#' 
+#' # 5b. Uncorrelated Multidimensional Polytomous Dataset
+#' # Generate dataset with polytomous responses (five categories) containing three subsets which represent different uncorrelated dimensions.
+#' poly_md_dset <- generate_data(responseType = "multidim.nocorrel", ncat = 5, seed = 2021)
+#' 
+
 #' @export
 generate_data <- function(responseType = "multidim.nocorrel", theta = c(-3,3), sdtheta = 6, ntheta = 301, beta = c(-2.5,2.5), sdbeta = 4, nitem = 6,
                           alpha = c(1), sdlambda = 1, ncat = 5, thGap = 0.8, ndim = 3, randtype = "uniform", corLevel = 0,
-                          dim.members = c()){
+                          dim.members = c(), seed = NULL){
+  
+  set.seed(seed)
 
   mB <- mA <- c()
 
