@@ -45,8 +45,9 @@ This function computes the reliability index, separation and the standard error 
 Person reliability index
 }
 \examples{
-#pcmObject <- pcm(poly_inh_dset)
-#rel <- checkRel(pcmObject)
-#summary(rel)
+# TODO: generate poly_inh_dset here
+# pcmObject <- pcm(poly_inh_dset)
+# rel <- checkRel(pcmObject)
+# summary(rel)
 
 }

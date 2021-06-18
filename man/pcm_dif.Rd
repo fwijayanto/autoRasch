@@ -79,11 +79,14 @@ by implementing the coordinate descent.
 \code{fitStats} compute the fit statistics (i.e., Outfit and Infit) of the PCM-DIF model estimation (items and persons).
 }
 \examples{
+\dontrun{
+# TODO: generate polydif_inh_dset here
 pcmdif_res <- pcm_dif(polydif_inh_dset[,c(14:17,19)], groups_map = c(rep(1,245),rep(0,245)))
 fit_res <- fitStats(pcmdif_res)
 itemfit(fit_res)
 personfit(fit_res)
 plot_fitStats(fit_res, toPlot = c("alpha","outfit"), useName = FALSE, type = "n")
+}
 
 }
 \seealso{

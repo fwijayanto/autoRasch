@@ -48,8 +48,11 @@ In the discrimination parameters estimation, instead of estimating the discrimin
 we are estimating the natural logarithm of the parameters to avoid negative values, \eqn{\alpha = exp(\gamma)}.
 }
 \examples{
+\dontrun{
+# TODO: generate polydif_inh_dset here
 gpcmdif_res <- gpcm_dif(polydif_inh_dset[,c(14:17,19)], groups_map = c(rep(1,245),rep(0,245)))
 summary(gpcmdif_res, par="delta")
+}
 
 
 }
