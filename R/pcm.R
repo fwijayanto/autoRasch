@@ -25,6 +25,7 @@
 #' Wright, B. D., & Masters, G. N. (1982). Rating Scale Analysis. Chicago: MESA Press.
 #'
 #' @examples
+#' # TODO: generate polydif_inh_dset here
 #' pcm_res <- pcm(polydif_inh_dset[,c(14:17,19)])
 #' summary(pcm_res)
 #'

@@ -97,11 +97,14 @@ pcm_dif <- function(X, init_par = c(), groups_map = c(), setting = c()){
 #'
 #'
 #' @examples
+#' \dontrun{
+#' # TODO: generate polydif_inh_dset here
 #' pcmdif_res <- pcm_dif(polydif_inh_dset[,c(14:17,19)], groups_map = c(rep(1,245),rep(0,245)))
 #' fit_res <- fitStats(pcmdif_res)
 #' itemfit(fit_res)
 #' personfit(fit_res)
 #' plot_fitStats(fit_res, toPlot = c("alpha","outfit"), useName = FALSE, type = "n")
+#' }
 #'
 #' @rdname pcm_dif
 #' @export

@@ -23,8 +23,11 @@
 #' @seealso \code{\link{pcm}}, \code{\link{pcm_dif}}, \code{\link{gpcm}}, \code{\link{gpcm_dif}}
 #'
 #' @examples
+#' \dontrun{
+#' # TODO: generate polydif_inh_dset here
 #' gpcmdif_res <- gpcm_dif(polydif_inh_dset[,c(14:17,19)], groups_map = c(rep(1,245),rep(0,245)))
 #' summary(gpcmdif_res, par="delta")
+#' }
 #'
 #'
 #' @export
