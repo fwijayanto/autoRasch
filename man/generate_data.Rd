@@ -75,24 +75,22 @@ testlets_dataset <- generate_data(responseType = "testlets", ndim = 2, sdlambda 
 
 # 4a. Inhomogenous Dichotomous Dataset
 # Generate dataset with binary type responses containing three subsets with different discrimination values.
-# TODO: fix
 # dicho_inh_dset <- generate_data(
 #   responseType = "discriminate", ncat = 2, seed = 2021,
-#   alpha = c(0.04,0.045,0.05,0.055,0.06,0.065,0.2,0.25,0.3,0.35,0.4,0.45,2.6,2.65,2.7,2.75,2.8,2.85,2.9)
+#   alpha = c(0.04,0.045,0.05,0.055,0.06,0.065,0.2,0.25,0.3,0.35,0.4,0.45,2.6,2.65,2.7,2.75,2.8,2.85)
 # )
 
 # 4b. Inhomogenous Polytomous Dataset
 # Generate dataset with polytomous responses (five categories) containing three subsets with different discrimination values.
-# TODO: fix
 # poly_inh_dset <- generate_data(
 #   responseType = "discriminate", ncat = 5, seed = 2021,
-#   alpha = c(0.04,0.045,0.05,0.055,0.06,0.065,0.2,0.25,0.3,0.35,0.4,0.45,2.6,2.65,2.7,2.75,2.8,2.85,2.9)
+#   alpha = c(0.04,0.045,0.05,0.055,0.06,0.065,0.2,0.25,0.3,0.35,0.4,0.45,2.6,2.65,2.7,2.75,2.8,2.85)
 # )
 
 # 4c. Shorter Inhomogenous Polytomous Dataset
-short_poly_data <- generate_data(alpha = c(0.02,0.5,2), nitem = 3, ndim = 3, ncat = 5, 
+short_poly_data <- generate_data(alpha = c(0.02,0.5,2), nitem = 3, ndim = 3, ncat = 5,
                                  theta = c(-6,6), beta = c(-4,4), ntheta = 151, seed = 2021)
-                                 
+
 # 4d. Inhomogenous Polytomous Dataset containing DIF items
 # Generate dataset with polytomous responses (five categories) containing three subsets with different discrimination values and two DIF-items.
 # TODO: add
