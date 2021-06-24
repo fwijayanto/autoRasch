@@ -184,11 +184,18 @@ generate_data <- function(responseType = "multidim.nocorrel", theta = c(-3,3), s
     } else {
       if(is.null(mB)){
         mBvec <- c()
-        for(i in 1:(ndim-1)){
-          mBvec <- c(mBvec,rep(1,nthDim),rep(0,nthres))
+        if(ndim > 1){
+          for(i in 1:(ndim-1)){
+            mBvec <- c(mBvec,rep(1,nthDim),rep(0,nthres))
+          }
+          print(mBvec)
+          mB <- matrix(c(mBvec,rep(1,nthDim)),ncol = ndim,byrow = FALSE)
+          # mB <- matrix(c(rep(1,nthDim),rep(0,nthres),rep(1,nthDim),rep(0,nthres),rep(1,nthDim)),ncol = ndim,byrow = FALSE)
+        } else {
+          print(nthres)
+          mB <- matrix(1,ncol = 1,nrow = nthres)
         }
-        mB <- matrix(c(mBvec,rep(1,nthDim)),ncol = ndim,byrow = FALSE)
-        # mB <- matrix(c(rep(1,nthDim),rep(0,nthres),rep(1,nthDim),rep(0,nthres),rep(1,nthDim)),ncol = ndim,byrow = FALSE)
+        print(mB)
       }
     }
   }
@@ -198,6 +205,9 @@ generate_data <- function(responseType = "multidim.nocorrel", theta = c(-3,3), s
   }
 
   D.vector <- as.vector(t(D.mat))
+
+  View(mA)
+  View(mB)
 
   B.mult <- mB %*% B.mat
   D.mult <- mA %*% D.vector
@@ -221,6 +231,9 @@ generate_data <- function(responseType = "multidim.nocorrel", theta = c(-3,3), s
   } else {
     stop("The length of alpha is larger than the number of items!")
   }
+
+  print(dim(B.mult))
+  print(dim(D.mult))
 
   diff <- t(B.mult) - t(D.mult)
 
