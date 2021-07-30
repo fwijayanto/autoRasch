@@ -204,7 +204,7 @@ loglik_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda
 }
 
 
-#
+# Different way of implementing the log-likelihood function
 loglik_fun_novel <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_delta,
                        estPar_arr, fixed_par, fixValue, fixLength_arr, estLength_array,
                        groups_map, mt_vek, mt_idx, dimResp, allcat, n_th, XN, XNA, eps = 0,
@@ -309,6 +309,26 @@ loglik_fun_novel <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, 
   }
   
   return (-lnL)
+}
+
+# Wrapper for the Rcpp implementation of the log-likelihood function
+loglik_fun_fast <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_delta,
+                        estPar_arr, fixed_par, fixValue, fixLength_arr, estLength_array,
+                        groups_map, mt_vek, mt_idx, dimResp, allcat, n_th, XN, XNA, eps = 0,
+                        isPenalized_gamma, isPenalized_theta, isPenalized_delta) {
+  
+  # TODO: implement XNA part
+  
+  map_nlmPar <- par_map(nlmPar, estPar_arr = estPar_arr, estLength_array = estLength_array,
+                        fixValue = fixValue, fixed_par = fixed_par, fixLength_arr = fixLength_arr)
+  theta <- map_nlmPar$theta
+  beta_mat <- matrix(map_nlmPar$beta, ncol(dset), n_th, byrow = TRUE)
+  gamma <- map_nlmPar$gamma
+  delta_mat <- matrix(map_nlmPar$delta, ncol(dset), ncol(groups_map), byrow = TRUE)
+  
+  ll_cpp(theta, gamma, delta_mat, groups_map, beta_mat, mt_vek, as.matrix(dset),
+         isPenalized_gamma, isPenalized_delta, isPenalized_theta,
+         lambda_in, lambda_out, lambda_delta, lambda_theta, eps)
 }
 
 ############################################################################
@@ -593,6 +613,7 @@ grad_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_d
 }
 
 
+# Different way of implementing the gradient function
 grad_fun_novel <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_delta,
                      estPar_arr, fixed_par, fixValue, fixLength_arr, estLength_array,
                      groups_map, mt_vek, mt_idx, dimResp, allcat, n_th, XN, XNA, eps = 0,
@@ -735,6 +756,27 @@ grad_fun_novel <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, la
   
   return(-grad_tot)
   
+}
+
+
+# Wrapper for the Rcpp implementation of the gradient function
+grad_fun_fast <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_delta,
+                            estPar_arr, fixed_par, fixValue, fixLength_arr, estLength_array,
+                            groups_map, mt_vek, mt_idx, dimResp, allcat, n_th, XN, XNA, eps = 0,
+                            isPenalized_gamma, isPenalized_theta, isPenalized_delta) {
+  
+  # TODO: implement XNA part
+  
+  map_nlmPar <- par_map(nlmPar, estPar_arr = estPar_arr, estLength_array = estLength_array,
+                        fixValue = fixValue, fixed_par = fixed_par, fixLength_arr = fixLength_arr)
+  theta <- map_nlmPar$theta
+  beta_mat <- matrix(map_nlmPar$beta, ncol(dset), n_th, byrow = TRUE)
+  gamma <- map_nlmPar$gamma
+  delta_mat <- matrix(map_nlmPar$delta, ncol(dset), ncol(groups_map), byrow = TRUE)
+  
+  c(grad_cpp(theta, gamma, delta_mat, groups_map, beta_mat, mt_vek, as.matrix(dset),
+         isPenalized_gamma, isPenalized_delta, isPenalized_theta,
+         lambda_in, lambda_out, lambda_delta, lambda_theta, eps))
 }
 
 
