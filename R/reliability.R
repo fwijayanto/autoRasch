@@ -114,7 +114,7 @@ stdError <- function(obj){
 #' @export
 summary.seprel <- function(object,...){
   obj <- object
-  res_table <- cbind(c(obj$reliability$PRI,obj$reliability$PSR,obj$stdError$rmsse_pers),c(obj$reliability$IRI,obj$reliability$ISR,obj$stdError$rmsse_item))
+  res_table <- round(cbind(c(obj$reliability$PRI,obj$reliability$PSR,obj$stdError$rmsse_pers),c(obj$reliability$IRI,obj$reliability$ISR,obj$stdError$rmsse_item)),2)
   dimnames(res_table) <- list(c("Reliability Index","Separation Reliability","RMSSE"),c("Person","Item"))
   cat("\n")
   print(res_table)
