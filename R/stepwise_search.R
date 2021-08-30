@@ -661,13 +661,23 @@ summary.search <- function(object, ...){
 
   idx_max <- which(obj[,3] == max(obj[,3], na.rm = TRUE))
 
-  cat("\n")
-  cat("Maximum IPOQ-LL score is obtained with ",idx_max," items in the included set.")
-  cat("\n")
-  cat("Items no.: ",paste(na.omit(object[idx_max,4:ncol(object)]),collapse = ","))
-  cat("\n\n")
-  print(matrix(object[idx_max,1:3],ncol = 3,byrow = TRUE,dimnames = list(c(""),c("IQ-LL","OQ-LL","IPOQ-LL"))), ... = ...)
-  cat("\n\n")
+  if("ipoqlldif" %in% class(object)){
+    cat("\n")
+    cat("Maximum IPOQ-LL-DIF score is obtained with",idx_max,"items in the included set.")
+    cat("\n")
+    cat("Items no.: ",paste(na.omit(object[idx_max,4:ncol(object)]),collapse = ","))
+    cat("\n\n")
+    print(matrix(object[idx_max,1:3],ncol = 3,byrow = TRUE,dimnames = list(c(""),c("IQ-LL-DIF","OQ-LL-DIF","IPOQ-LL-DIF"))), ... = ...)
+    cat("\n\n")
+  } else {
+    cat("\n")
+    cat("Maximum IPOQ-LL score is obtained with ",idx_max," items in the included set.")
+    cat("\n")
+    cat("Items no.: ",paste(na.omit(object[idx_max,4:ncol(object)]),collapse = ","))
+    cat("\n\n")
+    print(matrix(object[idx_max,1:3],ncol = 3,byrow = TRUE,dimnames = list(c(""),c("IQ-LL","OQ-LL","IPOQ-LL"))), ... = ...)
+    cat("\n\n")
+  }
 }
 
 #' @param x The object of class \code{'search'}.
