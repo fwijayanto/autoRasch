@@ -43,11 +43,7 @@ gpcm_dif <- function(X, init_par = c(), groups_map = c(), setting = c()){
     }
   }
 
-  if(is.null(setting$isHessian)){
-    settingPar$isHessian <- FALSE
-  } else {
-    settingPar$isHessian <- setting$isHessian
-  }
+  settingPar$isHessian <- FALSE
   settingPar$randomized <- TRUE
   if(is.null(setting$optz_method)){
     settingPar$optz_method <- "mixed"
