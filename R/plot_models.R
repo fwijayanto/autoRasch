@@ -89,18 +89,19 @@ plot_EVC <- function(obj = c(), itemno = 5, xlab = NULL, ylab = NULL, xlim = c(-
 #'
 #' @export
 plot_ICC <- function(obj, itemno = 5, xlab = NULL, ylab = NULL, xlim = c(-10,10),
-                     col = c("green4","darkorange2","red2"), lty = c(1,1,1), ...){
+                     col = c("green4","darkorange2","red2"), lty = c(1,1,1),
+                     main = NULL, ...){
 
   if(itemno > length(obj$mt_vek)){
     stop("autoRasch ERROR: itemno exceed the number of items.")
   }
 
   dotdotdot <- list(...)
-  if(!is.null(dotdotdot$main)){
-    par(mar = c(6.5, 7.5, 2.5, 1), oma = c(0, 0,0, 0))
-  } else {
-    par(mar = c(6.5, 7.5, 0.5, 1), oma = c(0, 0,0, 0))
-  }
+  # if(!is.null(dotdotdot$main)){
+  #   par(mar = c(6.5, 7.5, 2.5, 1), oma = c(0, 0,0, 0))
+  # } else {
+  #   par(mar = c(6.5, 7.5, 0.5, 1), oma = c(0, 0,0, 0))
+  # }
 
   if(is.null(xlim) | length(xlim) != 2){
     xlim <- c(-10,10)
@@ -109,13 +110,17 @@ plot_ICC <- function(obj, itemno = 5, xlab = NULL, ylab = NULL, xlim = c(-10,10)
   if(!is.null(xlab)){
     x.lab <- xlab
   } else {
-    x.lab <- "ability trait"
+    x.lab <- expression("ability trait/ "*theta)
   }
 
   if(!is.null(ylab)){
     y.lab <- ylab
   } else {
     y.lab <- "P(ability)"
+  }
+
+  if(is.null(main)){
+    main <- paste("ICC of Item - ",colnames(obj$X)[itemno])
   }
 
   pmat_list <- emat_compute(obj, theta.lim = c((xlim[1]-1),(xlim[2]+1)))
@@ -131,13 +136,13 @@ plot_ICC <- function(obj, itemno = 5, xlab = NULL, ylab = NULL, xlim = c(-10,10)
     length(lty) <- (length(pmat_list$pmat) - 1)
   }
 
-  matplot(as.matrix(pmat_list[[1]]), pmat_list$pmat[[1]][,c(((itemno-1)*n.cat+1):(itemno*n.cat))], type = "l", lty = lty[1], xlab = x.lab, ylab = y.lab, ...)
+  matplot(as.matrix(pmat_list[[1]]), pmat_list$pmat[[1]][,c(((itemno-1)*n.cat+1):(itemno*n.cat))], type = "l", lty = lty[1], xlab = x.lab, ylab = y.lab, main = main, ...)
   if(length(pmat_list$pmat) > 1){
     for(i in 2:length(pmat_list$pmat)){
       matlines(as.matrix(pmat_list[[1]]), pmat_list$pmat[[i]][,c(((itemno-1)*n.cat+1):(itemno*n.cat))], lty = lty[i], ...)
     }
   }
-  legend("topright", legend = c(0:(n.cat-1)),col=seq_len(n.cat),cex=0.8,fill=seq_len(n.cat), horiz = TRUE)
+  legend("topright", legend = c(0:((obj$mt_vek[itemno]+1)-1)),col=seq_len(obj$mt_vek[itemno]+1),cex=0.8,fill=seq_len(obj$mt_vek[itemno]+1), horiz = TRUE)
 
 }
 
@@ -281,7 +286,7 @@ plot_PImap <- function(obj, main = NULL, xlab = NULL, cex = NULL, cex.lab = NULL
   th_dif <- 1e-2
 
   par(mar = c(0, 1, 3, 0), oma = c(0, 0,0, 0))
-  layout(matrix(c(1,2,3,4), 2, 2, byrow = TRUE), widths=c(9,1), heights=c(1,3))
+  layout(matrix(c(1,2,3,4), 2, 2, byrow = TRUE), widths=c(8,2), heights=c(1,3))
 
   # reported_beta <- obj$beta * obj$real_vek
   reported_beta <- unlist(tapply(obj$beta,rep(1:length(obj$mt_vek),obj$mt_vek),function(x){
@@ -305,7 +310,8 @@ plot_PImap <- function(obj, main = NULL, xlab = NULL, cex = NULL, cex.lab = NULL
     for(i in 1:ncol(obj$groups_map)){
       idx <- which(abs(delta_mat[,i]) > th_dif)
       for(j in idx){
-        tempName <- paste(rownames(beta_mat)[j],"_",letters[i],sep = "")
+        # tempName <- paste(rownames(beta_mat)[j],"_",letters[i],sep = "")
+        tempName <- paste(rownames(beta_mat)[j],"_",colnames(obj$groups_map)[i],sep = "")
         tempItem <- beta_mat[j,] + delta_mat[j,i]
         beta_mat[nrow(beta_mat)+1,] <- tempItem
         rownames(beta_mat)[nrow(beta_mat)] <- tempName
@@ -382,3 +388,117 @@ plot_PImap <- function(obj, main = NULL, xlab = NULL, cex = NULL, cex.lab = NULL
 
   par(mfrow = c(1,1))
 }
+
+# plot_PImap <- function(obj, main = NULL, xlab = NULL, cex = NULL, cex.lab = NULL,
+#                        cex.axis = NULL, cex.main = NULL, lwd = NULL, v = NULL){
+#
+#   if(("pcm" %in% class(obj)) | ("pcmdif" %in% class(obj))){
+#   } else {
+#     stop("autoRasch ERROR: person-item map only for \"pcm\" or \"pcmdif\" object.")
+#   }
+#
+#   th_dif <- 1e-2
+#
+#   par(mar = c(0, 1, 3, 0), oma = c(0, 0,0, 0))
+#   layout(matrix(c(1,2,3,4), 2, 2, byrow = TRUE), widths=c(8,2), heights=c(1,3))
+#
+#   # reported_beta <- obj$beta * obj$real_vek
+#   reported_beta <- unlist(tapply(obj$beta,rep(1:length(obj$mt_vek),obj$mt_vek),function(x){
+#     if(length(x) < max(obj$mt_vek)){
+#       x <- c(x,rep(NA,(max(obj$mt_vek)-length(x))))
+#       x
+#     } else {
+#       x
+#     }
+#   }))
+#   beta_mat <- matrix(reported_beta, nrow = length(obj$mt_vek), byrow = TRUE)
+#   if(!is.null(v)){
+#     beta_mat <- as.data.frame(round(beta_mat,4), row.names = as.character(v))
+#   } else {
+#     beta_mat <- as.data.frame(round(beta_mat,4), row.names = obj$itemName)
+#   }
+#   colnames(beta_mat) <- paste("Th_",c(1:max(obj$mt_vek)),sep = "")
+#
+#   if("pcmdif" %in% class(obj)){
+#     delta_mat <- matrix(obj$delta, ncol = ncol(obj$groups_map))
+#     for(i in 1:ncol(obj$groups_map)){
+#       idx <- which(abs(delta_mat[,i]) > th_dif)
+#       for(j in idx){
+#         # tempName <- paste(rownames(beta_mat)[j],"_",letters[i],sep = "")
+#         tempName <- paste(rownames(beta_mat)[j],"_",colnames(obj$groups_map)[i],sep = "")
+#         tempItem <- beta_mat[j,] + delta_mat[j,i]
+#         beta_mat[nrow(beta_mat)+1,] <- tempItem
+#         rownames(beta_mat)[nrow(beta_mat)] <- tempName
+#       }
+#     }
+#   }
+#
+#   beta_mat[["Item Loc."]] <- round(apply(beta_mat,1,mean,na.rm=TRUE),4)
+#   if(max(obj$mt_vek) > 1){
+#     beta_mat$` ` <- apply(beta_mat[,1:max(obj$mt_vek)],1,function(x){if(is.unsorted(na.omit(x))){return("*")}else{return("")}})
+#   }
+#   beta_mat <- beta_mat[order(as.numeric(beta_mat[,(max(obj$mt_vek,na.rm = TRUE)+1)]),decreasing = TRUE),]
+#
+#   x_minbound <- ceiling(min(c(as.vector(obj$theta),as.vector(reported_beta)),na.rm = TRUE) - 1)
+#   x_maxbound <- floor(max(c(as.vector(obj$theta),as.vector(reported_beta)),na.rm = TRUE) + 1)
+#
+#   if(is.null(main)){
+#     main <- "Person-Item Map"
+#   }
+#   if(is.null(cex.main)){
+#     cex.main <- 1
+#   }
+#   breaks <- length(obj$theta)/1
+#   hist(obj$theta, breaks = breaks, mgp = c(5,1,0), yaxt = "n", xlim = c(x_minbound,x_maxbound), mgp = c(100,100,0), main = main, cex.main = cex.main)
+#   plot(c(1:1),c(1:1),type = "n", yaxt='n', xaxt = 'n', main = "", xlab = "", ylab = "", bty = "n")
+#
+#   if(is.null(xlab)){
+#     xlab <- "Latent trait"
+#   }
+#
+#   if(is.null(cex.lab)){
+#     cex.lab <- 1
+#   }
+#
+#   if(is.null(cex)){
+#     cex <- 1
+#   }
+#
+#   if(is.null(cex.axis)){
+#     cex.axis <- 1
+#   }
+#
+#
+#   par(mar = c(5, 1, 0, 0))
+#   plot(c(1:1),c(1:1),xlim = c(x_minbound,x_maxbound) ,ylim = c(0,nrow(beta_mat)+1), type = "n", yaxt='n', main = "", xlab = xlab, ylab = "", cex.lab = cex.lab, cex.axis = cex.axis)
+#   for(i in 1:nrow(beta_mat)){
+#     if(max(obj$mt_vek) > 1){
+#       if(beta_mat[i,(max(obj$mt_vek,na.rm = TRUE)+2)] == "*"){
+#         col <- "red"
+#       } else {
+#         col <- "black"
+#       }
+#     } else {
+#       col <- "black"
+#     }
+#     points(c(beta_mat[i,1:max(obj$mt_vek,na.rm = TRUE)]), rep(i,max(obj$mt_vek,na.rm = TRUE)),type = "b", bg = col, col = col, fg = col, pch = 16, lwd = lwd)
+#     points(beta_mat[i,(max(obj$mt_vek,na.rm = TRUE)+1)], c(i), type = "p", pch=22, bg = col, col = col, fg = col)
+#     text(c(beta_mat[i,1:max(obj$mt_vek,na.rm = TRUE)]), rep(i-0.5,4), labels = c(1:max(obj$mt_vek,na.rm = TRUE)), adj = c(0.5,NA), col = col, cex = (0.7*cex))
+#   }
+#   par(mar = c(5, 0, 0, 1))
+#   plot(c(1:1),c(1:1),xlim = c(0,10),ylim = c(0,nrow(beta_mat)+1), type = "n", yaxt='n', xaxt = 'n', main = "", xlab = "", ylab = "", bty = "n")
+#   for(i in 1:nrow(beta_mat)){
+#     if(max(obj$mt_vek) > 1){
+#       if(beta_mat[i,(max(obj$mt_vek,na.rm = TRUE)+2)] == "*"){
+#         col <- "red"
+#       } else {
+#         col <- "black"
+#       }
+#     } else {
+#       col <- "black"
+#     }
+#     text(1, i, labels = rownames(beta_mat)[i], adj = c(0,NA), col = col, cex = cex)
+#   }
+#
+#   par(mfrow = c(1,1))
+# }
