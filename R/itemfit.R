@@ -39,9 +39,9 @@ summary.fit <- function(object, ...){
     i.mat <- cbind(obj$i.fit$i.outfitMSQ, obj$i.fit$i.infitMSQ, obj$i.fit$i.outfitZ, obj$i.fit$i.infitZ)
     if(!is.null(obj$alpha)){
       i.mat <- cbind(i.mat, obj$alpha)
-      dimnames(i.mat) <- list(c(names(obj$i.fit$i.outfitMSQ)),c("OutfitMSQ","InfitMSQ","OutfitZ","InfitZ","Discrimination"))
+      dimnames(i.mat) <- list(c(names(obj$i.fit$i.outfitMSQ)),c("OutfitMnSq","InfitMnSq","OutfitZSTD","InfitZSTD","Alpha"))
     } else {
-      dimnames(i.mat) <- list(c(names(obj$i.fit$i.outfitMSQ)),c("OutfitMSQ","InfitMSQ","OutfitZ","InfitZ"))
+      dimnames(i.mat) <- list(c(names(obj$i.fit$i.outfitMSQ)),c("OutfitMnSq","InfitMnSq","OutfitZSTD","InfitZSTD"))
     }
     cat("\n")
     cat("Item Fit Statistics:")
@@ -112,16 +112,16 @@ plot_fitStats <- function(objFit, toPlot = c("alpha","infit"), useName = FALSE, 
 
   if(plotx == "outfit"){
     plotx <- x$i.fit$i.outfitMSQ
-    x.lab <- "Outfit"
+    x.lab <- "OutfitMnSq"
   } else if(plotx == "infit"){
     plotx <- x$i.fit$i.infitMSQ
-    x.lab <- "Infit"
+    x.lab <- "InfitMnSq"
   } else if(plotx == "outfitz"){
     plotx <- x$i.fit$i.outfitZ
-    x.lab <- "outfitZ"
+    x.lab <- "OutfitZSTD"
   } else if(plotx == "infitz"){
     plotx <- x$i.fit$i.infitZ
-    x.lab <- "infitZ"
+    x.lab <- "InfitZSTD"
   } else if(plotx == "alpha"){
     plotx <- obj$alpha
     # x.lab <- expression(paste("alpha (",alpha,")"))
@@ -130,16 +130,16 @@ plot_fitStats <- function(objFit, toPlot = c("alpha","infit"), useName = FALSE, 
   }
   if(ploty == "outfit"){
     ploty <- x$i.fit$i.outfitMSQ
-    y.lab <- "Outfit"
+    y.lab <- "OutfitMnSq"
   } else if(ploty == "infit"){
     ploty <- x$i.fit$i.infitMSQ
-    y.lab <- "Infit"
+    y.lab <- "InfitMnSq"
   } else if(ploty == "outfitz"){
     ploty <- x$i.fit$i.outfitZ
-    y.lab <- "outfitZ"
+    y.lab <- "OutfitZSTD"
   } else if(ploty == "infitz"){
     ploty <- x$i.fit$i.infitZ
-    y.lab <- "infitZ"
+    y.lab <- "InfitZSTD"
   } else if(ploty == "alpha"){
     ploty <- obj$alpha
     y.lab <- expression(hat(alpha))
@@ -188,11 +188,69 @@ plot_fitStats <- function(objFit, toPlot = c("alpha","infit"), useName = FALSE, 
 #' @rdname ld
 #'
 #' @export
-resid_corr <- function(objFit){
+resid_corr <- function(objFit, ldTh = c()){
   # if(!is.object(objFit$traceMat)){
   #   stop("Please compute Fitness object using isTrace = TRUE!")
   # }
   corLD <- cor(objFit$traceMat$std.res, use = "pairwise.complete.obs")
-  ld <- mean((corLD[lower.tri(corLD)]), na.rm = TRUE)
-  return(list("ld_correl" = corLD, "ld_mean" = ld, "ld_lowertri" = corLD[lower.tri(corLD)]))
+  class(corLD) <- c("ld",class(corLD))
+  return(corLD)
 }
+
+summary.ld <- function(objLD, LDth = c(0.3)){
+  if(length(LDth) == 1){
+    idx <- which((objLD >= LDth & objLD < 1), arr.ind = TRUE)
+    idx <- idx[which(!duplicated(t(apply(idx,1,sort)))),]
+    numLD <- nrow(idx)#/2
+
+    cat("\nCorrelation of the standardized residual: \n\n")
+    cat("There are",numLD,"pair(s) of variable(s) with correlation >=",LDth,"\n")
+
+    if(numLD > 0){
+      # idx <- idx[1:(nrow(idx)/2),]
+      for (i in 1:numLD) {
+        txt <- paste(i,". ",colnames(objLD)[idx[i,1]]," and ",colnames(objLD)[idx[i,2]],sep = "")
+        cat(txt,"\n")
+      }
+    }
+  } else {
+    idxPos <- which((objLD >= LDth[1] & objLD < 1), arr.ind = TRUE)
+    idxPos <- idxPos[which(!duplicated(t(apply(idxPos,1,sort)))),]
+    numLD <- nrow(idxPos)#/2
+
+    cat("\nCorrelation of the standardized residual: \n\n")
+    cat("There are",numLD,"pair(s) of variable(s) with correlation >=",LDth[1],"\n")
+
+    if(numLD > 0){
+      # idx <- idx[1:(nrow(idx)/2),]
+      for (i in 1:numLD) {
+        txt <- paste(i,". ",colnames(objLD)[idxPos[i,1]]," and ",colnames(objLD)[idxPos[i,2]],sep = "")
+        cat(txt,"\n")
+      }
+    }
+
+    idxNeg <- which((objLD <= LDth[2]), arr.ind = TRUE)
+    idxNeg <- idxNeg[which(!duplicated(t(apply(idxNeg,1,sort)))),]
+    numLD <- nrow(idxNeg)#/2
+
+    cat("\nThere are",numLD,"pair(s) of variable(s) with correlation <=",LDth[2],"\n")
+
+    if(numLD > 0){
+      # idx <- idx[1:(nrow(idx)/2),]
+      for (i in 1:numLD) {
+        txt <- paste(i,". ",colnames(objLD)[idxNeg[i,1]]," and ",colnames(objLD)[idxNeg[i,2]],sep = "")
+        cat(txt,"\n")
+      }
+    }
+  }
+
+}
+
+# resid_corr <- function(objFit){
+#   # if(!is.object(objFit$traceMat)){
+#   #   stop("Please compute Fitness object using isTrace = TRUE!")
+#   # }
+#   corLD <- cor(objFit$traceMat$std.res, use = "pairwise.complete.obs")
+#   ld <- mean((corLD[lower.tri(corLD)]), na.rm = TRUE)
+#   return(list("ld_correl" = corLD, "ld_mean" = ld, "ld_lowertri" = corLD[lower.tri(corLD)]))
+# }
