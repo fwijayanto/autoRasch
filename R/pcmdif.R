@@ -312,12 +312,12 @@ summary.pcmdif <- function(object, ...){
   if(!is.null(dotdotdot$th_dif)){
     th_dif <- dotdotdot$th_dif
   } else {
-    th_dif <- NULL
+    th_dif <- 1e-1
   }
 
   if(is.null(par) | "theta" %in% par){
     cat("\n\n")
-    cat("The estimated ability scores:")
+    cat("The estimated ability scores (theta):")
     cat("\n")
     print(round(obj$theta,2))
     cat("\n")
@@ -328,7 +328,7 @@ summary.pcmdif <- function(object, ...){
 
   if(is.null(par) | "beta" %in% par){
     cat("\n\n")
-    cat("The estimated difficulty scores:")
+    cat("The estimated difficulty scores (beta):")
     cat("\n")
     # reported_beta <- obj$beta * obj$real_vek
     reported_beta <- unlist(tapply(obj$beta,rep(1:length(obj$mt_vek),obj$mt_vek),function(x){
@@ -358,12 +358,12 @@ summary.pcmdif <- function(object, ...){
 
   if(is.null(par) | "delta" %in% par){
     cat("\n\n")
-    cat("The estimated DIF effects (gap of difficulties):")
+    cat("The estimated DIF effects (gap of difficulties) (delta):")
     cat("\n")
     # if(is.null(th_dif)){
     #   th_dif <- 1e-5
     # }
-    delta_mat <- matrix(round(obj$delta,2), ncol = ncol(obj$groups_map), dimnames = list(c(obj$itemName),c(paste("Group",c(1:ncol(obj$groups_map)),sep = ""))))
+    delta_mat <- matrix(round(obj$delta,2), ncol = ncol(obj$groups_map), dimnames = list(c(obj$itemName),colnames(obj$groups_map)))
     delta_mat[which(abs(delta_mat) < th_dif)] <- ""
     remRowIdx <- which(unlist(
       lapply(
@@ -381,7 +381,11 @@ summary.pcmdif <- function(object, ...){
     ) == 1)
 
     delta_mat <- as.data.frame(delta_mat)[remRowIdx,]
-    print(delta_mat, quote = FALSE)
+    if(nrow(delta_mat) == 0){
+      cat("There is no differential functioning in items found.")
+    } else {
+      print(delta_mat, quote = FALSE)
+    }
     cat("\n")
     # cat("DIF effect threshold =",th_dif)
   }
