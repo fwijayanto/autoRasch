@@ -125,34 +125,42 @@ loglik_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda
   delta <- map_nlmPar$delta
   deltagamma <- map_nlmPar$deltagamma
 
-  # get the value of alpha
+  # get the value of alpha, i.e. exp(gamma)
   exp_gamma <- exp(gamma)
   exp_gamma <- rep.int(exp_gamma, mt_vek)
 
-  # groups_map should be formed as matrix
+  # groups_map should be formed as matrix, size is V x G
   groups_map <- as.matrix(groups_map)
 
   # takes the total of DIF effect for all group for beta
+  # here we iterate over V, delta is a vector of length I X G, where the rows are stacked
+  # dset is actually data.frame(X) and has dimension V X I, so ncol(dset) == I
+  # delta_tot is written as an I x V matrix, as the outer product of delta (I x G) and k / groups_map (G x V)
+  # !alternatively delta_tot <- delta %*% t(groups_map)
   delta_tot <- 0
   for(i in 1:ncol(groups_map)){
     delta_tot <- delta_tot + outer(delta[(((i-1)*ncol(dset))+1):(i*ncol(dset))],groups_map[,i],"*")
   }
 
+  # the total delta which has been replicated to all categories
+  # - theta, size V, where each element is repeated I x J times
+  # - vec(beta), size I x J, is repeated V times, for which the columns of beta (length J) are stacked ?!
+  # # !! stacked on J first and then on I
+  # # idx = I * J * (v - 1) + J * (i - 1) + (j - 1) + 1
+  delta_tot_rep <- rep.int((delta_tot), rep.int(mt_vek,nrow(groups_map))) 
 
-  delta_tot_rep <- rep.int((delta_tot), rep.int(mt_vek,nrow(groups_map)))       #the total delta which has been replicated to all categories
-
-  ### compute the theta - (beta+delta)
+  # compute the theta - (beta+delta)
   t_diff <- rep(theta,each = allcat) - rep.int(beta,length(theta))
   t_diff <- t_diff - delta_tot_rep
 
-  ### multiplied by (alpha)
+  # multiplied by exp(gamma)
   disc_diff <- t_diff * exp_gamma
 
-  ### map the corresponding NA value of the dataset to the matrix
+  # map the corresponding NA value of the dataset to the matrix
   disc_diff <- XNA * disc_diff
   disc_diff <- matrix(disc_diff, nrow = allcat)
 
-  ### compute the first part of the log-likelihood (simple addition part)
+  # compute the first part of the log-likelihood (simple addition part)
   l1 <- sum((XN * disc_diff), na.rm = TRUE)
 
   ### compute the second part of the log-likelohood (with log)
@@ -193,6 +201,134 @@ loglik_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda
   }
 
   return(-lnL)
+}
+
+
+# Different way of implementing the log-likelihood function
+loglik_fun_novel <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_delta,
+                       estPar_arr, fixed_par, fixValue, fixLength_arr, estLength_array,
+                       groups_map, mt_vek, mt_idx, dimResp, allcat, n_th, XN, XNA, eps = 0,
+                       isPenalized_gamma, isPenalized_theta, isPenalized_delta) {
+  
+  # TODO: incorporate the XNA part
+  
+  # map the nlmPar
+  map_nlmPar <- par_map(nlmPar, estPar_arr = estPar_arr, estLength_array = estLength_array,
+                        fixValue = fixValue, fixed_par = fixed_par, fixLength_arr = fixLength_arr)
+  theta <- map_nlmPar$theta
+  beta <- map_nlmPar$beta
+  gamma <- map_nlmPar$gamma
+  delta <- map_nlmPar$delta
+  # deltagamma <- map_nlmPar$deltagamma
+  
+  exp_gamma <- exp(gamma)
+  X <- as.matrix(dset)
+  
+  
+  I <- ncol(dset)
+  V <- nrow(dset)
+  J <- max(mt_vek + 1) # max(m_i)
+  
+  # this needs to be fixed, beta needs to be passed differently
+  beta_mat <- matrix(beta, nrow = I, byrow = TRUE)
+  delta_group <- groups_map %*% t(delta)
+  Psi <- array(0, dim = c(V, I, J))
+  
+  # most efficient way is to iterate first by category
+  for (i in 1:I) {
+    J <- mt_vek[i] + 1
+    for (v in 1:V) {
+      for (j in 1:(J-1)) {
+        Psi[v, i, j+1] <- Psi[v, i, j] + (theta[v] - beta_mat[i, j] - delta_group[v, i]) * exp_gamma[i]
+      }
+    }
+  }
+
+  
+  l1 <- 0
+  for (v in 1:V) {
+    for (i in 1:I) {
+      l1 <- l1 + Psi[v, i, X[v, i] + 1]
+    }
+  }
+  
+  
+  
+  ### computed likelihood denominator (second part)
+  
+  exp_Psi <- exp(Psi)
+  cumul_Psi <- matrix(0, V, I)
+  
+  # TODO: is m_i then the maximum number of categories (mt_vek?)
+  
+  for (i in 1:I) {
+    J <- mt_vek[i] + 1
+    for (v in 1:V) {
+        for (j in 1:J) {
+          cumul_Psi[v, i] <- cumul_Psi[v, i] + exp_Psi[v, i, j]
+        }
+    }
+  }
+  
+  l2 <- sum(log(cumul_Psi), na.rm = TRUE)
+  
+  
+  # Sidenote: If it were possible to compute everything with matrices
+  # ## Compute first term
+  # l1 <- t(theta) %*% X %*% exp_gamma
+  # 
+  # # Compute the second term
+  # # for (i in 1:I) {
+  # #   beta[(i-1) * ]
+  # # }
+  # ones <- rep(1, length(theta))
+  # XB <- matrix(colSums(matrix(XN * rep(beta, length(theta)), nrow = 4)), byrow = TRUE, ncol = ncol(dset))
+  # l1 <- l1 - t(ones) %*% XB %*% exp_gamma
+  # 
+  # # Compute the third term
+  # # groups_map is V X G, t(delta) is G x I (hopefully)
+  # delta_group <- groups_map %*% t(delta) # size V x I
+  # XDG <- X * delta_group
+  # l1 <- l1 - t(ones) %*% (XDG) %*% exp_gamma
+  
+  
+  lnL <- l1 - l2
+  
+  if(isPenalized_theta){
+    lnL <- lnL - lambda_theta * sum(theta^2)
+  }
+  
+  if(isPenalized_gamma & isPenalized_theta){
+    lnL <- lnL - lambda_in * sum(gamma^2)
+  } else if(isPenalized_gamma){
+    lnL <- lnL - lambda_out * sum(gamma^2)
+  }
+  
+  if(isPenalized_delta){
+    lnL <- lnL - lambda_delta * sum(abs(delta)^(1+eps))
+  }
+  
+  return (-lnL)
+}
+
+# Wrapper for the Rcpp implementation of the log-likelihood function
+loglik_fun_fast <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_delta,
+                        estPar_arr, fixed_par, fixValue, fixLength_arr, estLength_array,
+                        groups_map, mt_vek, mt_idx, dimResp, allcat, n_th, XN, XNA, eps = 0,
+                        isPenalized_gamma, isPenalized_theta, isPenalized_delta) {
+  
+  # TODO: implement XNA part
+  
+  map_nlmPar <- par_map(nlmPar, estPar_arr = estPar_arr, estLength_array = estLength_array,
+                        fixValue = fixValue, fixed_par = fixed_par, fixLength_arr = fixLength_arr)
+  theta <- map_nlmPar$theta
+  beta_mat <- matrix(map_nlmPar$beta, ncol(dset), n_th, byrow = TRUE)
+  gamma <- map_nlmPar$gamma
+  delta_mat <- matrix(map_nlmPar$delta, ncol(dset), ncol(groups_map), byrow = TRUE)
+  
+  ll_cpp(theta, gamma, delta_mat, groups_map, beta_mat, mt_vek, as.matrix(dset),
+         isPenalized_gamma, isPenalized_delta, isPenalized_theta,
+         lambda_in, lambda_out, lambda_delta, lambda_theta, eps)
 }
 
 ############################################################################
@@ -281,6 +417,8 @@ grad_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_d
   length.mt_idx <- table(mt_idx)
 
   temp_prob_split <- split(disc_diff,mt_idx)
+  
+  # print(length(temp_prob_split))
 
   temp_gamma_split <- split(total_alpha_mat, mt_idx)
 
@@ -293,6 +431,8 @@ grad_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_d
   temp_gamma_nom_part <- c()
   temp_delta_peritem <- list()
   for(j in 1:length(temp_prob_split)){
+    
+    #print(length.mt_idx)
 
     if(length.mt_idx[j] > 1){
       temp_prob_part <- matrix(temp_prob_split[[j]], nrow = length.mt_idx[j])
@@ -312,6 +452,8 @@ grad_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_d
 
       temp_delta_peritem_test <- c()
       for(k in 1:ncol(groups_map)){
+        #print(dim(temp_theta_nom_mat_part))
+        #print(dim(groups_map))
         temp_delta_temp_peritem <- t(t(temp_theta_nom_mat_part) * groups_map[,k])
         temp_delta_peritem_test <- rbind(temp_delta_peritem_test,colSums(temp_delta_temp_peritem,na.rm = TRUE))
       }
@@ -355,6 +497,11 @@ grad_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_d
     }
 
   }
+  
+  #print(temp_theta_nom_part)
+  
+  #print(temp_delta_peritem)
+  #print(dim(temp_delta_peritem))
 
   temp_delta_nom_part <- list()
   for(k in 1:ncol(groups_map)){
@@ -364,6 +511,8 @@ grad_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_d
     }
     temp_delta_nom_part[[k]] <- temp
   }
+  
+  # print(temp_delta_nom_part[[1]][1:3, 1:3])
 
   temp_gamma <- temp_gamma_part
   expTempProb <- expTempProb_part
@@ -383,6 +532,10 @@ grad_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_d
 
   t2_beta_mat <- (Nom_beta/Denom_mat)
   t2_beta <- rowSums(t2_beta_mat, na.rm = TRUE)
+  
+  # print(paste("Nom theta", Nom_theta[1, 1]))
+  # print(paste("Nom gamma", Nom_gamma[1, 1]))
+  # print(paste("Denom", Denom[1, 1]))
 
   t2_gamma_mat <- (Nom_gamma/Denom)
   t2_gamma <- rowSums(t2_gamma_mat, na.rm = TRUE)
@@ -391,9 +544,25 @@ grad_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_d
   for(k in 1:ncol(groups_map)){
     Nom_delta <- matrix(temp_delta_nom_part[[k]],nrow = ncol(dset))
     t2_delta_mat <- (Nom_delta/Denom)
+    # print(Denom)
+   # print(t2_delta_mat)
+    #print(dim(t2_delta_mat))
     t2_delta <- c(t2_delta,rowSums(t2_delta_mat, na.rm = TRUE))
   }
-
+  
+  # print(t1_theta - t2_theta)
+  #print (t1_beta - t2_beta)
+  # print(paste("theta:", length(t1_theta), length(t2_theta)))
+  # print(t1_theta - t2_theta)
+  # print(paste("beta:", length(t1_beta), length(t2_beta)))
+  # print(- t1_beta + t2_beta)
+  # print(paste("gamma:", length(t1_gamma), length(t2_gamma)))
+  # print(t1_gamma - t2_gamma)
+  #print(paste("delta:", length(t1_delta), length(t2_delta)))
+  # print(- t1_delta + t2_delta)
+  # print(t1_delta)
+  #print(t2_delta)
+  
   if(isPenalized_theta){
     # grad_theta <- t1_theta - t2_theta - (0.1*theta)
     grad_theta <- t1_theta - t2_theta - (lambda_theta*theta)
@@ -401,6 +570,7 @@ grad_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_d
     grad_theta <- t1_theta - t2_theta
   }
 
+  # NOTE: this doesn't really do anything, no if statement necessary
   if(isPenalized_theta){
     grad_beta <- (-t1_beta) + t2_beta
   } else {
@@ -440,6 +610,173 @@ grad_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_d
 
   return(-grad_tot)
 
+}
+
+
+# Different way of implementing the gradient function
+grad_fun_novel <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_delta,
+                     estPar_arr, fixed_par, fixValue, fixLength_arr, estLength_array,
+                     groups_map, mt_vek, mt_idx, dimResp, allcat, n_th, XN, XNA, eps = 0,
+                     isPenalized_gamma, isPenalized_theta, isPenalized_delta){
+  
+  # TODO: incorporate the XNA part
+  
+  lambda_theta <- lambda_theta*2
+  lambda_in <- lambda_in*2
+  lambda_out <- lambda_out*2
+  
+  map_nlmPar <- par_map(nlmPar, estPar_arr = estPar_arr, estLength_array = estLength_array,
+                        fixValue = fixValue, fixed_par = fixed_par, fixLength_arr = fixLength_arr)
+  
+  theta <- map_nlmPar$theta
+  beta <- map_nlmPar$beta
+  gamma <- map_nlmPar$gamma
+  delta <- map_nlmPar$delta
+  
+  exp_gamma <- exp(gamma)
+  X <- as.matrix(dset)
+  
+  I <- ncol(dset)
+  V <- nrow(dset)
+  J <- max(mt_vek + 1) # max(m_i)
+  
+  # this needs to be fixed, beta needs to be passed differently
+  beta_mat <- matrix(beta, nrow = I, byrow = TRUE)
+  
+  # size V x G
+  groups_mat <- as.matrix(groups_map)
+  G <- ncol(groups_mat)
+  # size I X G
+  delta_mat <- matrix(delta, I, G)
+  
+  delta_group <- groups_mat %*% t(delta_mat)
+  Psi <- array(0, dim = c(V, I, J))
+  
+  # most efficient way is to iterate first by category
+  # NOTE: this could be potentially shared with loglik function
+  for (i in 1:I) {
+    J <- mt_vek[i] + 1
+    for (v in 1:V) {
+      for (j in 1:(J-1)) {
+        Psi[v, i, j+1] <- Psi[v, i, j] + (theta[v] - beta_mat[i, j] - delta_group[v, i]) * exp_gamma[i]
+      }
+    }
+  }
+  
+  
+  ### computed likelihood denominator (second part)
+  
+  exp_Psi <- exp(Psi)
+  cumul_Psi <- matrix(0, V, I)
+  theta_Psi <- matrix(0, V, I)
+  gamma_Psi <- matrix(0, V, I)
+  
+  # TODO: is m_i then the maximum number of categories (mt_vek?)
+  
+  for (i in 1:I) {
+    J <- mt_vek[i] + 1
+    for (v in 1:V) {
+      for (j in 2:J) {
+        cumul_Psi[v, i] <- cumul_Psi[v, i] + exp_Psi[v, i, j]
+        theta_Psi[v, i] <- theta_Psi[v, i] + (j - 1) * exp_gamma[i] * exp_Psi[v, i, j]
+        gamma_Psi[v, i] <- gamma_Psi[v, i] + Psi[v, i, j] * exp_Psi[v, i, j]
+      }
+    }
+  }
+  
+  beta_Psi <- array(0, c(V, I, J))
+  delta_Psi <- array(0, c(V, I, G))
+  
+  # NOTE: cumul needs to be fully computed by this point
+  for (i in 1:I) {
+    J <- mt_vek[i] + 1
+    for (v in 1:V) {
+      for (j in 2:J) {
+        delta_Psi[v, i, ] <- delta_Psi[v, i, ] + (j - 1) * exp_gamma[i] * exp_Psi[v, i, j] * groups_mat[v, ] / (1 + cumul_Psi[v, i])
+      }
+      for (j in J:2) {
+        beta_Psi[v, i, j-1] <- beta_Psi[v, i, j] + exp_gamma[i] * exp_Psi[v, i, j] / (1 + cumul_Psi[v, i])
+      }
+    }
+  }
+  
+
+  grad_theta <- X %*% exp_gamma - rowSums(theta_Psi / (1 + cumul_Psi))
+  
+  grad_beta <- matrix(0, I, J-1)
+  
+  for (j in 1:(J-1)) {
+    grad_beta[,j] <- colSums(X >= j) * exp_gamma
+  }
+  
+  grad_beta <- - grad_beta + apply(beta_Psi, 2:3, sum)[, -J]
+  
+  grad_gamma <- numeric(I)
+  for (i in 1:I) {
+    for (v in 1:V) {
+      grad_gamma[i] <- grad_gamma[i] + Psi[v, i, X[v, i] + 1]
+    }
+  }
+  grad_gamma <- grad_gamma - colSums(gamma_Psi / (1 + cumul_Psi))
+  
+  grad_delta <- - diag(exp_gamma) %*% t(X) %*% groups_mat + apply(delta_Psi, 2:3, sum)
+  
+  if(isPenalized_theta){
+    # grad_theta <- t1_theta - t2_theta - (0.1*theta)
+    grad_theta <- grad_theta - (lambda_theta*theta)
+  }
+
+  
+  if(isPenalized_gamma && isPenalized_theta){
+    grad_gamma <- grad_gamma - (lambda_in*(gamma))
+  } else if(isPenalized_gamma){
+    grad_gamma <- grad_gamma - (lambda_out*(gamma))
+  }
+  
+  if(isPenalized_delta){
+    grad_delta <- grad_delta - (lambda_delta*(1+eps)*sign(delta)*(abs(delta)^eps))
+  } 
+  
+  output <- c()
+  
+  if(!identical(grep("delta",estPar_arr), integer(0))){
+    output <- c(t(grad_delta),output)
+  }
+  if(!identical(grep("^gamma",estPar_arr), integer(0))){
+    output <- c(grad_gamma,output)
+  }
+  if(!identical(grep("^beta",estPar_arr), integer(0))){
+    output <- c(t(grad_beta),output)
+  }
+  if(!identical(grep("theta",estPar_arr), integer(0))){
+    output <- c(grad_theta,output)
+  }
+  
+  grad_tot <- output
+  
+  return(-grad_tot)
+  
+}
+
+
+# Wrapper for the Rcpp implementation of the gradient function
+grad_fun_fast <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_delta,
+                            estPar_arr, fixed_par, fixValue, fixLength_arr, estLength_array,
+                            groups_map, mt_vek, mt_idx, dimResp, allcat, n_th, XN, XNA, eps = 0,
+                            isPenalized_gamma, isPenalized_theta, isPenalized_delta) {
+  
+  # TODO: implement XNA part
+  
+  map_nlmPar <- par_map(nlmPar, estPar_arr = estPar_arr, estLength_array = estLength_array,
+                        fixValue = fixValue, fixed_par = fixed_par, fixLength_arr = fixLength_arr)
+  theta <- map_nlmPar$theta
+  beta_mat <- matrix(map_nlmPar$beta, ncol(dset), n_th, byrow = TRUE)
+  gamma <- map_nlmPar$gamma
+  delta_mat <- matrix(map_nlmPar$delta, ncol(dset), ncol(groups_map), byrow = TRUE)
+  
+  c(grad_cpp(theta, gamma, delta_mat, groups_map, beta_mat, mt_vek, as.matrix(dset),
+         isPenalized_gamma, isPenalized_delta, isPenalized_theta,
+         lambda_in, lambda_out, lambda_delta, lambda_theta, eps))
 }
 
 
