@@ -360,7 +360,7 @@ compute_scores_unparalleled <- function(X, incl_sets, type = c("ipoqll","ipoqlld
 
   i <- NULL
 
-  scoreList <- foreach(i=1:nrow(incl_sets), .combine = rbind, .errorhandling = "stop", .packages = c("autoRasch"), .export = c()) %dopar% {
+  scoreList <- foreach(i=1:nrow(incl_sets), .combine = rbind, .errorhandling = "stop", .export = c()) %dopar% {
 
     incl_set <- incl_sets[i,]
     incl_set <- incl_set[!is.na(incl_set)]
@@ -387,7 +387,7 @@ compute_scores_unparalleled <- function(X, incl_sets, type = c("ipoqll","ipoqlld
     # cat("\n length.init_iq : ",length(init_iq))
     # cat("\n length.init_oq : ",length(init_oq),"\n")
 
-    score_res <- compute_score(dset, incl_set = incl_set, type = type, groups_map = groups_map,
+    score_res <- autoRasch::compute_score(dset, incl_set = incl_set, type = type, groups_map = groups_map,
                               init_par_iq = init_iq, init_par_oq = init_oq,
                               optim_control_iq = optim_control_iq, optim_control_oq = optim_control_oq,
                               setting_par_iq = setting_par_iq, setting_par_oq = setting_par_oq)

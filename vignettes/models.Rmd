@@ -104,11 +104,11 @@ gpcmdif_res <- gpcm_dif(polydif_inh_dset[,13:19], groups_map = c(rep(0,245),rep(
 Similar to the PCM and PCM-DIF, some of the S3 generic functions such as `summary()` and `print()` also applied to these models.
 
 ```{r}
-summary(pcm_res, par="alpha")
+summary(gpcm_res, par="alpha")
 ```
 
 ```{r}
-summary(pcmdif_res, par="delta")
+summary(gpcmdif_res, par="delta")
 ```
 
 Unlike `plot_PImap()` which only implemented to the PCM and PCM-DIF, `plot_EVC()` and `plot_ICC()` are also implemented to the GPCM and the GPCM-DIF.

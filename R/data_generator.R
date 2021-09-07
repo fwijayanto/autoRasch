@@ -206,9 +206,6 @@ generate_data <- function(responseType = "multidim.nocorrel", theta = c(-3,3), s
 
   D.vector <- as.vector(t(D.mat))
 
-  View(mA)
-  View(mB)
-
   B.mult <- mB %*% B.mat
   D.mult <- mA %*% D.vector
   D.mult <- matrix(rep(diag(1,nrow = nthres)%*%D.mult,ntheta), nrow = nthres)

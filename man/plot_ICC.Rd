@@ -12,6 +12,7 @@ plot_ICC(
   xlim = c(-10, 10),
   col = c("green4", "darkorange2", "red2"),
   lty = c(1, 1, 1),
+  main = NULL,
   ...
 )
 }
@@ -31,6 +32,8 @@ see \code{\link[graphics:plot.default]{plot.default()}}}
 \item{col}{a vector of plotting colors}
 
 \item{lty}{a vector of line types.}
+
+\item{main}{String. Plot title.}
 
 \item{...}{Further arguments to be passed.}
 }

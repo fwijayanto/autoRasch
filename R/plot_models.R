@@ -86,6 +86,7 @@ plot_EVC <- function(obj = c(), itemno = 5, xlab = NULL, ylab = NULL, xlim = c(-
 #' @param col a vector of plotting colors
 #' @param lty a vector of line types.
 #' @param ... Further arguments to be passed.
+#' @param main String. Plot title.
 #'
 #' @export
 plot_ICC <- function(obj, itemno = 5, xlab = NULL, ylab = NULL, xlim = c(-10,10),

@@ -380,7 +380,7 @@ summary.pcmdif <- function(object, ...){
       )
     ) == 1)
 
-    delta_mat <- as.data.frame(delta_mat)[remRowIdx,]
+    delta_mat <- as.data.frame(delta_mat)[remRowIdx, , drop = FALSE]
     if(nrow(delta_mat) == 0){
       cat("There is no differential functioning in items found.")
     } else {
