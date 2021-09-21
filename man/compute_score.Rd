@@ -84,7 +84,9 @@ the given initial survey simultanously.
 \examples{
 ipoqll_score <- compute_score(short_poly_data,incl_set = c(1:3),type = "ipoqll")
 
+\dontrun{
 ipoqll_scores <- compute_scores(short_poly_data,incl_set = rbind(c(1:3),c(4:6)),
                                 type = "ipoqll", cores = 2)
+}
 
 }
