@@ -28,19 +28,19 @@ generate_data(
 
 \item{theta}{A vector of the ability parameters range value, \code{c(min.theta,max.theta)}. It applies when the \code{randtype = "uniform"}.}
 
-\item{sdtheta}{Standard deviation which is used to generate theta values using \code{\link[stats:rnorm]{rnorm()}} with \code{n = ntheta}, \code{mean = 0}, and \code{sd = sdtheta}.It applies when the \code{randtype = "normal"}.}
+\item{sdtheta}{Standard deviation which is used to generate theta values using \code{\link[stats:Normal]{stats::rnorm()}} with \code{n = ntheta}, \code{mean = 0}, and \code{sd = sdtheta}.It applies when the \code{randtype = "normal"}.}
 
 \item{ntheta}{The number of the observations.}
 
 \item{beta}{A vector of the item difficulty parameters range value, \code{c(min.beta,max.beta)}. It applies when the \code{randtype = "uniform"}.}
 
-\item{sdbeta}{Standard deviation which is used to generate item location values using \code{\link[stats:rnorm]{rnorm()}} with \code{n = nitem}, \code{mean = 0}, and \code{sd = sdbeta}.It applies when the \code{randtype = "normal"}.}
+\item{sdbeta}{Standard deviation which is used to generate item location values using \code{\link[stats:Normal]{stats::rnorm()}} with \code{n = nitem}, \code{mean = 0}, and \code{sd = sdbeta}.It applies when the \code{randtype = "normal"}.}
 
 \item{nitem}{The number of the items in each subgroup.}
 
 \item{alpha}{A vector of the discrimination parameters apply to each items.}
 
-\item{sdlambda}{A vector of the standard deviation to simulate the testlet (local dependency) effect. The effect is added using \code{\link[stats:rnorm]{rnorm()}} with \code{n = ntheta}, \code{mean = 0}, and \code{sd = sdlambda}}
+\item{sdlambda}{A vector of the standard deviation to simulate the testlet (local dependency) effect. The effect is added using \code{\link[stats:Normal]{stats::rnorm()}} with \code{n = ntheta}, \code{mean = 0}, and \code{sd = sdlambda}}
 
 \item{ncat}{The number of the response categories}
 

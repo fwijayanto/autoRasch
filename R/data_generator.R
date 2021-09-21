@@ -5,14 +5,14 @@
 #' @param responseType The type of the dataset. The types include \code{multidim.nocorrel}, \code{multidim.withcorrel}, \code{discriminate}, \code{multidim.within}, and \code{testlets}.
 #' @param theta A vector of the ability parameters range value, \code{c(min.theta,max.theta)}. It applies when the \code{randtype = "uniform"}.
 #' @param ntheta The number of the observations.
-#' @param sdtheta Standard deviation which is used to generate theta values using \code{\link[stats:rnorm]{rnorm()}} with \code{n = ntheta}, \code{mean = 0}, and \code{sd = sdtheta}.It applies when the \code{randtype = "normal"}.
+#' @param sdtheta Standard deviation which is used to generate theta values using [stats::rnorm()] with \code{n = ntheta}, \code{mean = 0}, and \code{sd = sdtheta}.It applies when the \code{randtype = "normal"}.
 #' @param beta A vector of the item difficulty parameters range value, \code{c(min.beta,max.beta)}. It applies when the \code{randtype = "uniform"}.
 #' @param nitem The number of the items in each subgroup.
-#' @param sdbeta Standard deviation which is used to generate item location values using \code{\link[stats:rnorm]{rnorm()}} with \code{n = nitem}, \code{mean = 0}, and \code{sd = sdbeta}.It applies when the \code{randtype = "normal"}.
+#' @param sdbeta Standard deviation which is used to generate item location values using [stats::rnorm()] with \code{n = nitem}, \code{mean = 0}, and \code{sd = sdbeta}.It applies when the \code{randtype = "normal"}.
 #' @param ncat The number of the response categories
 #' @param thGap The difference between adjacent threshold.
 #' @param alpha A vector of the discrimination parameters apply to each items.
-#' @param sdlambda A vector of the standard deviation to simulate the testlet (local dependency) effect. The effect is added using \code{\link[stats:rnorm]{rnorm()}} with \code{n = ntheta}, \code{mean = 0}, and \code{sd = sdlambda}
+#' @param sdlambda A vector of the standard deviation to simulate the testlet (local dependency) effect. The effect is added using [stats::rnorm()] with \code{n = ntheta}, \code{mean = 0}, and \code{sd = sdlambda}
 #' @param randtype The randomize type. This includes \code{uniform} and \code{normal}.
 #' @param ndim The number of subgroups (dimensions/testlets) created.
 #' @param dim.members The list of item members in each dimension.

@@ -21,21 +21,21 @@ A list of two objects, the reliability and the standard error.
 
 \emph{reliability}
 \itemize{
-   \item{PRI}{   Person reliability index.}
-   \item{PSR}{   Person separation reliability.}
-   \item{IRI}{   Item reliability index.}
-   \item{ISR}{   Item separation reliability.}
+\item{PRI}{   Person reliability index.}
+\item{PSR}{   Person separation reliability.}
+\item{IRI}{   Item reliability index.}
+\item{ISR}{   Item separation reliability.}
 }
 \emph{stdError}
 \itemize{
-   \item{var_err_pers}{   A matrix of variance error of the estimation.}
-   \item{std_err_pers}{   A matrix of standard error of the estimation.}
-   \item{rmsse_pers}{   Root mean square of the standard error per person.}
-   \item{var_err_item}{   A matrix of variance error of the estimation.}
-   \item{std_err_item}{   A matrix of standard error of the estimation.}
-   \item{rmsse_item}{   Root mean square of the standard error per person.}
-   \item{hessian_theta}{   Hessian matrix of \code{theta} parameter.}
-   \item{hessian_beta}{   Hessian matrix of \code{beta} parameter.}
+\item{var_err_pers}{   A matrix of variance error of the estimation.}
+\item{std_err_pers}{   A matrix of standard error of the estimation.}
+\item{rmsse_pers}{   Root mean square of the standard error per person.}
+\item{var_err_item}{   A matrix of variance error of the estimation.}
+\item{std_err_item}{   A matrix of standard error of the estimation.}
+\item{rmsse_item}{   Root mean square of the standard error per person.}
+\item{hessian_theta}{   Hessian matrix of \code{theta} parameter.}
+\item{hessian_beta}{   Hessian matrix of \code{beta} parameter.}
 }
 }
 \description{

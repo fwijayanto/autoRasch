@@ -4,6 +4,7 @@ Date: 2021-04-10
 Title: Semi-Automated Rasch Analysis
 Authors@R: person("Doe", "John", email = "john.doe@email.com", role = c("aut", "cre"))
 Author: John Doe[cre, aut]
+Maintainer: John Doe <john.doe@email.com>
 Depends: R (>= 3.4.0)
 Imports:
     doParallel,
@@ -19,7 +20,8 @@ VignetteBuilder: knitr
 Type: Package
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
+Roxygen: list(markdown = TRUE)
 LinkingTo: 
     RcppArmadillo,
     Rcpp
