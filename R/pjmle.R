@@ -106,7 +106,7 @@ pjmle <- function(X, init_par = c(), setting = c()){
   }
 
   if(opts$optz_method == "optim"){
-    (minRes <- optim(nlmPar, loglik_fun, gr = grad_fun, hessian = opts$isHessian, dset = dataPrep$dset,
+    (minRes <- optim(nlmPar, loglik_fun_fast, gr = grad_fun_fast, hessian = opts$isHessian, dset = dataPrep$dset,
                                           lambda_theta = opts$lambda_theta, lambda_in = opts$lambda_in,lambda_out = opts$lambda_out, eps = opts$eps,
                                           lambda_delta = opts$lambda_delta, estPar_arr = estPar_arr, estLength_array = estLength_array,
                                           fixLength_arr = fixLength_arr, allcat = dataPrep$allcat, dimResp = dataPrep$dimResp, n_th = dataPrep$n_th, XN = dataPrep$XN, XNA = dataPrep$XNA, #XREAL = dataPrep$XREAL,
@@ -385,7 +385,7 @@ mixed.min <- function(nlmPar, dset, dataPrep, opts,
     fixValue <- c(opts$fixed_theta,fixValue)
   }
 
-  (gpcm <- optim(nlmPar, fn = loglik_fun, gr = grad_fun, hessian = opts$isHessian, dset = dataPrep$dset,
+  (gpcm <- optim(nlmPar, fn = loglik_fun_fast, gr = grad_fun_fast, hessian = opts$isHessian, dset = dataPrep$dset,
                                   fixValue = fixValue, fixed_par = fixed_par_gpcm, estPar_arr = estPar_arr_gpcm, fixLength_arr = fixLength_arr_gpcm, estLength_array = estLength_array_gpcm,
                                   lambda_theta = opts$lambda_theta, lambda_in = opts$lambda_in,lambda_out = opts$lambda_out, eps = 0, lambda_delta = opts$lambda_delta,
                                   isPenalized_gamma = opts$isPenalized_gamma, isPenalized_theta = opts$isPenalized_theta, isPenalized_delta = FALSE,
@@ -432,7 +432,7 @@ mixed.min <- function(nlmPar, dset, dataPrep, opts,
           fixValue <- c(opts$fixed_theta,gpcmdif$par)
         }
       }
-      (gpcm <- optim(nlmPar, loglik_fun, gr = grad_fun, hessian = opts$isHessian, dset = dataPrep$dset,
+      (gpcm <- optim(nlmPar, loglik_fun_fast, gr = grad_fun_fast, hessian = opts$isHessian, dset = dataPrep$dset,
                      fixValue = fixValue, fixed_par = fixed_par_gpcm, estPar_arr = estPar_arr_gpcm, fixLength_arr = fixLength_arr_gpcm, estLength_array = estLength_array_gpcm,
                      lambda_theta = opts$lambda_theta, lambda_in = opts$lambda_in,lambda_out = opts$lambda_out, eps = 0, lambda_delta = opts$lambda_delta,
                      isPenalized_gamma = opts$isPenalized_gamma, isPenalized_theta = opts$isPenalized_theta, isPenalized_delta = FALSE,

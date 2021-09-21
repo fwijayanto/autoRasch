@@ -82,7 +82,7 @@ double ll_cpp(arma::vec theta, arma::vec gamma, arma::mat delta, arma::mat group
 }
 
 // [[Rcpp::export]]
-arma::vec grad_cpp(arma::vec theta, arma::vec gamma, arma::mat delta, arma::mat groups, 
+Rcpp::List grad_cpp(arma::vec theta, arma::vec gamma, arma::mat delta, arma::mat groups, 
                    arma::mat beta, arma::vec m_cat, arma::mat X,
                    bool gamma_penalized, bool delta_penalized, bool theta_penalized,
                    double lambda_in, double lambda_out, double lambda_delta, double lambda_theta, double eps
@@ -234,7 +234,14 @@ arma::vec grad_cpp(arma::vec theta, arma::vec gamma, arma::mat delta, arma::mat 
     grad_delta -= lambda_delta * (1 + eps) * (arma::sign(delta) % arma::pow(arma::abs(delta), eps));
   }
   
-  return -arma::join_cols(grad_theta, grad_beta.t().as_col(), grad_gamma, grad_delta.t().as_col());
+  return Rcpp::List::create(
+    Rcpp::Named("grad_theta") = grad_theta,
+    Rcpp::Named("grad_beta") = grad_beta.t().as_col(),
+    Rcpp::Named("grad_gamma") = grad_gamma,
+    Rcpp::Named("grad_delta") = grad_delta.t().as_col()
+  );
+  
+  // return -arma::join_cols(grad_theta, grad_beta.t().as_col(), grad_gamma, grad_delta.t().as_col());
   // return -grad_delta;
 }
 
