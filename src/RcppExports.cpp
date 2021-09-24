@@ -70,7 +70,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // grad_cpp
-arma::vec grad_cpp(arma::vec theta, arma::vec gamma, arma::mat delta, arma::mat groups, arma::mat beta, arma::vec m_cat, arma::mat X, bool gamma_penalized, bool delta_penalized, bool theta_penalized, double lambda_in, double lambda_out, double lambda_delta, double lambda_theta, double eps);
+Rcpp::List grad_cpp(arma::vec theta, arma::vec gamma, arma::mat delta, arma::mat groups, arma::mat beta, arma::vec m_cat, arma::mat X, bool gamma_penalized, bool delta_penalized, bool theta_penalized, double lambda_in, double lambda_out, double lambda_delta, double lambda_theta, double eps);
 RcppExport SEXP _autoRasch_grad_cpp(SEXP thetaSEXP, SEXP gammaSEXP, SEXP deltaSEXP, SEXP groupsSEXP, SEXP betaSEXP, SEXP m_catSEXP, SEXP XSEXP, SEXP gamma_penalizedSEXP, SEXP delta_penalizedSEXP, SEXP theta_penalizedSEXP, SEXP lambda_inSEXP, SEXP lambda_outSEXP, SEXP lambda_deltaSEXP, SEXP lambda_thetaSEXP, SEXP epsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;

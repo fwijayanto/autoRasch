@@ -1,5 +1,6 @@
 ---
-title: "autoRasch ::: Working with the models"
+title: "autoRasch: Working with the models"
+author: "John Doe"
 # output: 
 #   html_vignette:
 #     keep_md: true
@@ -7,10 +8,10 @@ title: "autoRasch ::: Working with the models"
 # output: 
 #   pdf_document:
 #     latex_engine: pdflatex
-output: html_document
+output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{autoRasch ::: Working with the models}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{autoRasch: Working with the models}
+  %\VignetteEngine{knitr::knitr}
   %\VignetteEncoding{UTF-8}
 ---
 

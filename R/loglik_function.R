@@ -774,6 +774,14 @@ grad_fun_novel <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, la
 }
 
 
+# grad_fun_fast(nlmPar, dset = dataPrep$dset,
+# lambda_theta = opts$lambda_theta, lambda_in = opts$lambda_in,lambda_out = opts$lambda_out, eps = opts$eps,
+# lambda_delta = opts$lambda_delta, estPar_arr = estPar_arr, estLength_array = estLength_array,
+# fixLength_arr = fixLength_arr, allcat = dataPrep$allcat, dimResp = dataPrep$dimResp, n_th = dataPrep$n_th, XN = dataPrep$XN, XNA = dataPrep$XNA, #XREAL = dataPrep$XREAL,
+# groups_map = dataPrep$groups_map, mt_vek = dataPrep$mt_vek, mt_idx = dataPrep$mt_idx, fixed_par = opts$fixed_par, fixValue = fixValue,
+# isPenalized_gamma = opts$isPenalized_gamma, isPenalized_theta = opts$isPenalized_theta,
+# isPenalized_delta = opts$isPenalized_delta)
+
 # Wrapper for the Rcpp implementation of the gradient function
 grad_fun_fast <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_delta,
                             estPar_arr, fixed_par, fixValue, fixLength_arr, estLength_array,
@@ -789,9 +797,30 @@ grad_fun_fast <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lam
   gamma <- map_nlmPar$gamma
   delta_mat <- matrix(map_nlmPar$delta, ncol(dset), ncol(groups_map), byrow = TRUE)
 
-  c(grad_cpp(theta, gamma, delta_mat, groups_map, beta_mat, mt_vek, as.matrix(dset),
+  result <- grad_cpp(theta, gamma, delta_mat, groups_map, beta_mat, mt_vek, as.matrix(dset),
          isPenalized_gamma, isPenalized_delta, isPenalized_theta,
-         lambda_in, lambda_out, lambda_delta, lambda_theta, eps))
+         lambda_in, lambda_out, lambda_delta, lambda_theta, eps)
+  
+  # print(result)
+  
+  output <- c()
+  
+  if(!identical(grep("delta",estPar_arr), integer(0))){
+    output <- c(result$grad_delta,output)
+  }
+  if(!identical(grep("^gamma",estPar_arr), integer(0))){
+    output <- c(result$grad_gamma,output)
+  }
+  if(!identical(grep("^beta",estPar_arr), integer(0))){
+    output <- c(result$grad_beta,output)
+  }
+  if(!identical(grep("theta",estPar_arr), integer(0))){
+    output <- c(result$grad_theta,output)
+  }
+  
+  grad_tot <- output
+  
+  return(-grad_tot)
 }
 
 

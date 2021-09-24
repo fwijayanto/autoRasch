@@ -11,6 +11,7 @@ An object of class \code{data.frame} with 490 rows and 20 columns.
 data(polydif_inh_dset)
 }
 \description{
-The artifical dataset of a polytomous responses (five categories) which contains of three subsets with different discrimination values and two DIF-items. .
+The artificial data set of a polytomous responses (five categories) which
+contains three subsets with different discrimination values and two DIF-items.
 }
 \keyword{datasets}

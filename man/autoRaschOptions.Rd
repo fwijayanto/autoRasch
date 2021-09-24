@@ -37,12 +37,12 @@ Returns and updates the default settings used by the functions in \strong{autoRa
 \details{
 \code{cd_control} lists the parameters used to control the coordinate descent optimization procedure. The paramaters are:
 \itemize{
-    \item{\code{init.step}}{   Initial value of the delta parameters updating step. The default is \code{1}.}
-    \item{\code{scale.down}}{   A constant value to scale down the updating step. The default is \code{0.5}.}
-    \item{\code{maxit.cd.higher}}{   Maximum iteration in the higher level coordinate descent. The default is \code{500}.}
-    \item{\code{maxit.cd.lower}}{   Maximum iteration for every coordinate optimization in the lower level coordinate descent. The default is \code{500}.}
-    \item{\code{abs.tol}}{   The convergence tolerance. The algorithm stops if it is unable to reduce the negative log likelihood value by the given tolerance. The default is \code{1e-12}.}
-    \item{\code{max.dif.par}}{   The convergence tolerance. The algorithm stops if it is unable to update all of the parameters' value by the given tolerance. The default is \code{1e-8}.}
+\item{\code{init.step}}{   Initial value of the delta parameters updating step. The default is \code{1}.}
+\item{\code{scale.down}}{   A constant value to scale down the updating step. The default is \code{0.5}.}
+\item{\code{maxit.cd.higher}}{   Maximum iteration in the higher level coordinate descent. The default is \code{500}.}
+\item{\code{maxit.cd.lower}}{   Maximum iteration for every coordinate optimization in the lower level coordinate descent. The default is \code{500}.}
+\item{\code{abs.tol}}{   The convergence tolerance. The algorithm stops if it is unable to reduce the negative log likelihood value by the given tolerance. The default is \code{1e-12}.}
+\item{\code{max.dif.par}}{   The convergence tolerance. The algorithm stops if it is unable to update all of the parameters' value by the given tolerance. The default is \code{1e-8}.}
 }
 }
 \examples{

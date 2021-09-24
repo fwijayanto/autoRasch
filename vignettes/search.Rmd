@@ -1,5 +1,5 @@
 ---
-title: "autoRasch ::: The Semi-automated Rasch Analysis"
+title: "autoRasch: The Semi-automated Rasch Analysis"
 # output: 
 #   html_vignette:
 #     keep_md: true
@@ -7,10 +7,10 @@ title: "autoRasch ::: The Semi-automated Rasch Analysis"
 # output: 
 #   pdf_document:
 #     latex_engine: pdflatex
-output: html_document
+output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{autoRasch ::: The Semi-automated Rasch Analysis}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{autoRasch: The Semi-automated Rasch Analysis}
+  %\VignetteEngine{knitr::knitr}
   %\VignetteEncoding{UTF-8}
 ---
 

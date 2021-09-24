@@ -28,19 +28,19 @@ generate_data(
 
 \item{theta}{A vector of the ability parameters range value, \code{c(min.theta,max.theta)}. It applies when the \code{randtype = "uniform"}.}
 
-\item{sdtheta}{Standard deviation which is used to generate theta values using \code{\link[stats:rnorm]{rnorm()}} with \code{n = ntheta}, \code{mean = 0}, and \code{sd = sdtheta}.It applies when the \code{randtype = "normal"}.}
+\item{sdtheta}{Standard deviation which is used to generate theta values using \code{\link[stats:Normal]{stats::rnorm()}} with \code{n = ntheta}, \code{mean = 0}, and \code{sd = sdtheta}.It applies when the \code{randtype = "normal"}.}
 
 \item{ntheta}{The number of the observations.}
 
 \item{beta}{A vector of the item difficulty parameters range value, \code{c(min.beta,max.beta)}. It applies when the \code{randtype = "uniform"}.}
 
-\item{sdbeta}{Standard deviation which is used to generate item location values using \code{\link[stats:rnorm]{rnorm()}} with \code{n = nitem}, \code{mean = 0}, and \code{sd = sdbeta}.It applies when the \code{randtype = "normal"}.}
+\item{sdbeta}{Standard deviation which is used to generate item location values using \code{\link[stats:Normal]{stats::rnorm()}} with \code{n = nitem}, \code{mean = 0}, and \code{sd = sdbeta}.It applies when the \code{randtype = "normal"}.}
 
 \item{nitem}{The number of the items in each subgroup.}
 
 \item{alpha}{A vector of the discrimination parameters apply to each items.}
 
-\item{sdlambda}{A vector of the standard deviation to simulate the testlet (local dependency) effect. The effect is added using \code{\link[stats:rnorm]{rnorm()}} with \code{n = ntheta}, \code{mean = 0}, and \code{sd = sdlambda}}
+\item{sdlambda}{A vector of the standard deviation to simulate the testlet (local dependency) effect. The effect is added using \code{\link[stats:Normal]{stats::rnorm()}} with \code{n = ntheta}, \code{mean = 0}, and \code{sd = sdlambda}}
 
 \item{ncat}{The number of the response categories}
 
@@ -62,45 +62,68 @@ This function generates simulated datasets with different attributes
 \examples{
 # 1. Multidimensional Polytomous Dataset with 0.2 Correlation
 # Generate multidimensional dataset which having correlation of 0.2 between the dimensions
-correl02_multidim <- generate_data(responseType = "multidim.withcorrel", corLevel = 0.2, seed = 2021)
+correl02_multidim <- generate_data(
+  responseType = "multidim.withcorrel", corLevel = 0.2, seed = 2021
+)
 
 # 2.  Within-item Multidimensional Polytomous Dataset
-# Generate multidimensional dataset with some items relate to more than one dimension.
-withinItem_multidim <- generate_data(responseType = "multidim.within", ndim = 3,
-                                      dim.members = list(c(1:6,13),c(3,7:12),c(5,13:18)), seed = 2021)
+# Generate multidimensional dataset with some items relate to more than one 
+# dimension.
+withinItem_multidim <- generate_data(
+  responseType = "multidim.within", ndim = 3,
+  dim.members = list(c(1:6,13),c(3,7:12),c(5,13:18)), seed = 2021
+)
 
 # 3. Multi-testlets Polytomous Dataset
-# Generate dataset which consist of two bundle items with different level of local dependency effect.
-testlets_dataset <- generate_data(responseType = "testlets", ndim = 2, sdlambda = c(0,4), seed = 2021)
+# Generate dataset which consist of two bundle items with different level of 
+# local dependency effect.
+testlets_dataset <- generate_data(
+  responseType = "testlets", ndim = 2, sdlambda = c(0,4), seed = 2021
+)
 
 # 4a. Inhomogenous Dichotomous Dataset
-# Generate dataset with binary type responses containing three subsets with different discrimination values.
+# Generate dataset with binary type responses containing three subsets 
+# with different discrimination values.
+
 # dicho_inh_dset <- generate_data(
 #   responseType = "discriminate", ncat = 2, seed = 2021,
-#   alpha = c(0.04,0.045,0.05,0.055,0.06,0.065,0.2,0.25,0.3,0.35,0.4,0.45,2.6,2.65,2.7,2.75,2.8,2.85)
+#   alpha = c(0.04,0.045,0.05,0.055,0.06,0.065,0.2,0.25,0.3,0.35,0.4,0.45,
+#             2.6,2.65,2.7,2.75,2.8,2.85)
 # )
 
 # 4b. Inhomogenous Polytomous Dataset
-# Generate dataset with polytomous responses (five categories) containing three subsets with different discrimination values.
+# Generate dataset with polytomous responses (five categories) containing 
+# three subsets with different discrimination values.
+
 # poly_inh_dset <- generate_data(
 #   responseType = "discriminate", ncat = 5, seed = 2021,
-#   alpha = c(0.04,0.045,0.05,0.055,0.06,0.065,0.2,0.25,0.3,0.35,0.4,0.45,2.6,2.65,2.7,2.75,2.8,2.85)
+#   alpha = c(0.04,0.045,0.05,0.055,0.06,0.065,0.2,0.25,0.3,0.35,0.4,0.45,
+#             2.6,2.65,2.7,2.75,2.8,2.85)
 # )
 
 # 4c. Shorter Inhomogenous Polytomous Dataset
-short_poly_data <- generate_data(alpha = c(0.02,0.5,2), nitem = 3, ndim = 3, ncat = 5,
-                                 theta = c(-6,6), beta = c(-4,4), ntheta = 151, seed = 2021)
+short_poly_data <- generate_data(
+  alpha = c(0.02,0.5,2), nitem = 3, ndim = 3, ncat = 5,
+  theta = c(-6,6), beta = c(-4,4), ntheta = 151, seed = 2021
+)
 
 # 4d. Inhomogenous Polytomous Dataset containing DIF items
-# Generate dataset with polytomous responses (five categories) containing three subsets with different discrimination values and two DIF-items.
+# Generate dataset with polytomous responses (five categories) containing 
+# three subsets with different discrimination values and two DIF-items.
 # TODO: add
 
 # 5a. Uncorrelated Multidimensional Dichotomous Dataset
-# Generate dataset with binary type responses containing three subsets which represent different uncorrelated dimensions.
-dicho_md_dset <- generate_data(responseType = "multidim.nocorrel", ncat = 2, seed = 2021)
+# Generate dataset with binary type responses containing three subsets which 
+# represent different uncorrelated dimensions.
+dicho_md_dset <- generate_data(
+  responseType = "multidim.nocorrel", ncat = 2, seed = 2021
+)
 
 # 5b. Uncorrelated Multidimensional Polytomous Dataset
-# Generate dataset with polytomous responses (five categories) containing three subsets which represent different uncorrelated dimensions.
-poly_md_dset <- generate_data(responseType = "multidim.nocorrel", ncat = 5, seed = 2021)
+# Generate dataset with polytomous responses (five categories) containing 
+# three subsets which represent different uncorrelated dimensions.
+poly_md_dset <- generate_data(
+  responseType = "multidim.nocorrel", ncat = 5, seed = 2021
+)
 
 }

@@ -23,8 +23,10 @@
 #' @examples
 #' ipoqll_score <- compute_score(short_poly_data,incl_set = c(1:3),type = "ipoqll")
 #'
+#' \dontrun{
 #' ipoqll_scores <- compute_scores(short_poly_data,incl_set = rbind(c(1:3),c(4:6)),
 #'                                 type = "ipoqll", cores = 2)
+#' }
 #'
 #' @importFrom parallel detectCores makeCluster stopCluster
 #'
@@ -360,7 +362,7 @@ compute_scores_unparalleled <- function(X, incl_sets, type = c("ipoqll","ipoqlld
 
   i <- NULL
 
-  scoreList <- foreach(i=1:nrow(incl_sets), .combine = rbind, .errorhandling = "stop", .export = c()) %dopar% {
+  scoreList <- foreach(i=1:nrow(incl_sets), .combine = rbind, .errorhandling = "stop") %dopar% {
 
     incl_set <- incl_sets[i,]
     incl_set <- incl_set[!is.na(incl_set)]
@@ -387,7 +389,7 @@ compute_scores_unparalleled <- function(X, incl_sets, type = c("ipoqll","ipoqlld
     # cat("\n length.init_iq : ",length(init_iq))
     # cat("\n length.init_oq : ",length(init_oq),"\n")
 
-    score_res <- autoRasch::compute_score(dset, incl_set = incl_set, type = type, groups_map = groups_map,
+    score_res <- compute_score(dset, incl_set = incl_set, type = type, groups_map = groups_map,
                               init_par_iq = init_iq, init_par_oq = init_oq,
                               optim_control_iq = optim_control_iq, optim_control_oq = optim_control_oq,
                               setting_par_iq = setting_par_iq, setting_par_oq = setting_par_oq)
@@ -415,7 +417,6 @@ compute_scores_unparalleled <- function(X, incl_sets, type = c("ipoqll","ipoqlld
 #' @import doParallel
 #' @import foreach
 #'
-#'
 #' @rdname compute_score
 #' @export
 compute_scores <- function(X, incl_sets, type = c("ipoqll","ipoqlldif"),
@@ -440,6 +441,8 @@ compute_scores <- function(X, incl_sets, type = c("ipoqll","ipoqlldif"),
 
 
   cl <- parallel::makeCluster(cores)
+  # oFuture::registerDoFuture()
+  # future::plan(future::cluster, workers = cl)
   doParallel::registerDoParallel(cl=cl, cores = cores)
 
   scoreList <- compute_scores_unparalleled(X = X, incl_sets = incl_sets, type = type,
