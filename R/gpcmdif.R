@@ -31,7 +31,7 @@
 #'
 #'
 #' @export
-gpcm_dif <- function(X, init_par = c(), groups_map = c(), setting = c()){
+gpcm_dif <- function(X, init_par = c(), groups_map = c(), setting = c(), method = c("fast","novel")){
 
   if(is.null(setting)){
     settingPar <- autoRaschOptions()
@@ -43,7 +43,7 @@ gpcm_dif <- function(X, init_par = c(), groups_map = c(), setting = c()){
     }
   }
 
-  settingPar$isHessian <- FALSE
+  settingPar$isHessian <- FALSE   #GPCM-DIF doesn't need to compute the Hessian for fit statistic
   settingPar$randomized <- TRUE
   if(is.null(setting$optz_method)){
     settingPar$optz_method <- "mixed"
@@ -58,7 +58,11 @@ gpcm_dif <- function(X, init_par = c(), groups_map = c(), setting = c()){
     settingPar$groups_map <- groups_map
   }
 
-  result <- pjmle(X = X, init_par = init_par, setting = settingPar)
+  if(method[1] == "novel"){
+    result <- pjmle(X = X, init_par = init_par, setting = settingPar)
+  } else {
+    result <- pjmle_fast(X = X, init_par = init_par, setting = settingPar)
+  }
 
   class(result) <- c(class(result),"armodels","gpcmdif","autoRasch")
   return(result)

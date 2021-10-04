@@ -38,7 +38,7 @@
 #'
 #' @rdname pcm
 #' @export
-pcm <- function(X, init_par = c(), setting = c()){
+pcm <- function(X, init_par = c(), setting = c(), method = c("fast","novel")){
 
   if(is.null(setting)){
     setting <- autoRaschOptions()
@@ -54,7 +54,11 @@ pcm <- function(X, init_par = c(), setting = c()){
   setting$isPenalized_delta <- FALSE
   setting$optz_method <- "optim"
 
-  result <- pjmle(X = X, init_par = init_par, setting = setting)
+  if(method[1] == "novel"){
+    result <- pjmle(X = X, init_par = init_par, setting = setting)
+  } else {
+    result <- pjmle_fast(X = X, init_par = init_par, setting = setting)
+  }
 
   class(result) <- c(class(result),"armodels","pcm","autoRasch")
 

@@ -22,7 +22,7 @@
 #' @seealso \code{\link{pcm}}, \code{\link{pcm_dif}}, \code{\link{gpcm}}, \code{\link{gpcm_dif}}
 #'
 #' @export
-pcm_dif <- function(X, init_par = c(), groups_map = c(), setting = c()){
+pcm_dif <- function(X, init_par = c(), groups_map = c(), setting = c(), method = c("fast","novel")){
 
   if(is.null(setting)){
     settingPar <- autoRaschOptions()
@@ -55,7 +55,11 @@ pcm_dif <- function(X, init_par = c(), groups_map = c(), setting = c()){
     settingPar$groups_map <- groups_map
   }
 
-  result <- pjmle(X = X, init_par = init_par, setting = settingPar)
+  if(method[1] == "novel"){
+    result <- pjmle(X = X, init_par = init_par, setting = setting)
+  } else {
+    result <- pjmle_fast(X = X, init_par = init_par, setting = setting)
+  }
 
   class(result) <- c(class(result),"armodels","pcmdif","autoRasch")
   return(result)
