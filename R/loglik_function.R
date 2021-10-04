@@ -18,64 +18,23 @@ par_map <- function(nlmPar, estPar_arr, estLength_array, fixValue, fixed_par, fi
 
   output <- list()
 
-  if(!identical(grep("delta",estPar_arr), integer(0))){
-    parNo <- grep("delta",estPar_arr)
-    if(parNo == 1){
-      output[["delta"]] <- nlmPar[c((1):(sum(estLength_array[1])))]
+  checkdata <- c("delta","gamma","beta","theta")
+
+  for(cdat in checkdata){
+    if(!identical(grep(cdat,estPar_arr), integer(0))){
+      parNo <- grep(cdat,estPar_arr)
+      if(parNo == 1){
+        output[[cdat]] <- nlmPar[c((1):(sum(estLength_array[1])))]
+      } else {
+        output[[cdat]] <- nlmPar[c((sum(estLength_array[1:(parNo-1)])+1):(sum(estLength_array[1:parNo])))]
+      }
     } else {
-      output[["delta"]] <- nlmPar[c((sum(estLength_array[1:(parNo-1)])+1):(sum(estLength_array[1:parNo])))]
-    }
-  } else {
-    parNo <- grep("delta",fixed_par)
-    if(parNo == 1){
-      output[["delta"]] <- fixValue[c((1):(sum(fixLength_arr[1])))]
-    } else {
-      output[["delta"]] <- fixValue[c((sum(fixLength_arr[1:(parNo-1)])+1):(sum(fixLength_arr[1:parNo])))]
-    }
-  }
-  if(!identical(grep("^gamma",estPar_arr), integer(0))){
-    parNo <- grep("^gamma",estPar_arr)
-    if(parNo == 1){
-      output[["gamma"]] <- nlmPar[c((1):(sum(estLength_array[1])))]
-    } else {
-      output[["gamma"]] <- nlmPar[c((sum(estLength_array[1:(parNo-1)])+1):(sum(estLength_array[1:parNo])))]
-    }
-  } else {
-    parNo <- grep("^gamma",fixed_par)
-    if(parNo == 1){
-      output[["gamma"]] <- fixValue[c((1):(sum(fixLength_arr[1])))]
-    } else {
-      output[["gamma"]] <- fixValue[c((sum(fixLength_arr[1:(parNo-1)])+1):(sum(fixLength_arr[1:parNo])))]
-    }
-  }
-  if(!identical(grep("^beta",estPar_arr), integer(0))){
-    parNo <- grep("^beta",estPar_arr)
-    if(parNo == 1){
-      output[["beta"]] <- nlmPar[c((1):(sum(estLength_array[1])))]
-    } else {
-      output[["beta"]] <- nlmPar[c((sum(estLength_array[1:(parNo-1)])+1):(sum(estLength_array[1:parNo])))]
-    }
-  } else {
-    parNo <- grep("^beta",fixed_par)
-    if(parNo == 1){
-      output[["beta"]] <- fixValue[c((1):(sum(fixLength_arr[1])))]
-    } else {
-      output[["beta"]] <- fixValue[c((sum(fixLength_arr[1:(parNo-1)])+1):(sum(fixLength_arr[1:parNo])))]
-    }
-  }
-  if(!identical(grep("theta",estPar_arr), integer(0))){
-    parNo <- grep("theta",estPar_arr)
-    if(parNo == 1){
-      output[["theta"]] <- nlmPar[c((1):(sum(estLength_array[1])))]
-    } else {
-      output[["theta"]] <- nlmPar[c((sum(estLength_array[1:(parNo-1)])+1):(sum(estLength_array[1:parNo])))]
-    }
-  } else {
-    parNo <- grep("theta",fixed_par)
-    if(parNo == 1){
-      output[["theta"]] <- fixValue[c((1):(sum(fixLength_arr[1])))]
-    } else {
-      output[["theta"]] <- fixValue[c((sum(fixLength_arr[1:(parNo-1)])+1):(sum(fixLength_arr[1:parNo])))]
+      parNo <- grep(cdat,fixed_par)
+      if(parNo == 1){
+        output[[cdat]] <- fixValue[c((1):(sum(fixLength_arr[1])))]
+      } else {
+        output[[cdat]] <- fixValue[c((sum(fixLength_arr[1:(parNo-1)])+1):(sum(fixLength_arr[1:parNo])))]
+      }
     }
   }
 
@@ -328,7 +287,7 @@ loglik_fun_fast <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, l
   theta <- map_nlmPar$theta
   beta_mat <- matrix(map_nlmPar$beta, ncol(dset), n_th, byrow = TRUE)
   gamma <- map_nlmPar$gamma
-  delta_mat <- matrix(map_nlmPar$delta, ncol(dset), ncol(groups_map), byrow = TRUE)
+  delta_mat <- matrix(map_nlmPar$delta, ncol(dset), ncol(groups_map))#, byrow = TRUE)
 
   ll_cpp(theta, gamma, delta_mat, groups_map, beta_mat, mt_vek, as.matrix(dset),
          isPenalized_gamma, isPenalized_delta, isPenalized_theta,
@@ -436,8 +395,6 @@ grad_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_d
   temp_delta_peritem <- list()
   for(j in 1:length(temp_prob_split)){
 
-    #print(length.mt_idx)
-
     if(length.mt_idx[j] > 1){
       temp_prob_part <- matrix(temp_prob_split[[j]], nrow = length.mt_idx[j])
       temp_prob_part <- apply(temp_prob_part,2,cumsum)
@@ -456,8 +413,6 @@ grad_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_d
 
       temp_delta_peritem_test <- c()
       for(k in 1:ncol(groups_map)){
-        #print(dim(temp_theta_nom_mat_part))
-        #print(dim(groups_map))
         temp_delta_temp_peritem <- t(t(temp_theta_nom_mat_part) * groups_map[,k])
         temp_delta_peritem_test <- rbind(temp_delta_peritem_test,colSums(temp_delta_temp_peritem,na.rm = TRUE))
       }
@@ -501,11 +456,6 @@ grad_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_d
     }
 
   }
-
-  #print(temp_theta_nom_part)
-
-  #print(temp_delta_peritem)
-  #print(dim(temp_delta_peritem))
 
   temp_delta_nom_part <- list()
   for(k in 1:ncol(groups_map)){
@@ -795,16 +745,16 @@ grad_fun_fast <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lam
   theta <- map_nlmPar$theta
   beta_mat <- matrix(map_nlmPar$beta, ncol(dset), n_th, byrow = TRUE)
   gamma <- map_nlmPar$gamma
-  delta_mat <- matrix(map_nlmPar$delta, ncol(dset), ncol(groups_map), byrow = TRUE)
+  delta_mat <- matrix(map_nlmPar$delta, ncol(dset), ncol(groups_map))#, byrow = TRUE)
 
   result <- grad_cpp(theta, gamma, delta_mat, groups_map, beta_mat, mt_vek, as.matrix(dset),
          isPenalized_gamma, isPenalized_delta, isPenalized_theta,
          lambda_in, lambda_out, lambda_delta, lambda_theta, eps)
-  
+
   # print(result)
-  
+
   output <- c()
-  
+
   if(!identical(grep("delta",estPar_arr), integer(0))){
     output <- c(result$grad_delta,output)
   }
@@ -817,9 +767,9 @@ grad_fun_fast <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lam
   if(!identical(grep("theta",estPar_arr), integer(0))){
     output <- c(result$grad_theta,output)
   }
-  
+
   grad_tot <- output
-  
+
   return(-grad_tot)
 }
 

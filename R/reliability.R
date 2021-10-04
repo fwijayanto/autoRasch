@@ -65,6 +65,30 @@ checkRel <- function(obj){
                                          groups_map = obj$groups_map, setting = settingRel)
 
       obj[["hessian"]] <- obj_hessian$hessian
+    } else if("gpcm" %in% class(obj)){
+
+      settingRel <- autoRaschOptions()
+
+      settingRel$isHessian <- TRUE
+      settingRel$optz_method <- "optim"
+      settingRel$optim_control <- list(maxit = 0, reltol = 1e-12)
+
+      obj_hessian <- autoRasch::gpcm(obj$X, init_par = c(obj$theta,obj$beta,obj$gamma),
+                                        setting = settingRel)
+
+      obj[["hessian"]] <- obj_hessian$hessian
+    } else if("pcm" %in% class(obj)){
+
+      settingRel <- autoRaschOptions()
+
+      settingRel$isHessian <- TRUE
+      settingRel$optz_method <- "optim"
+      settingRel$optim_control <- list(maxit = 0, reltol = 1e-12)
+
+      obj_hessian <- autoRasch::pcm(obj$X, init_par = c(obj$theta,obj$beta,obj$delta),
+                                        groups_map = obj$groups_map, setting = settingRel)
+
+      obj[["hessian"]] <- obj_hessian$hessian
     } else {
       stop("autoRasch ERROR: the separation reliability and standard error can not be computed without Hessian matrix.")
     }

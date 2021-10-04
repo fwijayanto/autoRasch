@@ -2,11 +2,25 @@
 % Please edit documentation in R/compute_score.R
 \name{compute_score}
 \alias{compute_score}
+\alias{compute_score_fast}
 \alias{compute_scores}
 \alias{summary.score}
 \title{Compute the In-plus-out-of-questionnaire log likelihood (with DIF) (IPOQ-LL(-DIF))}
 \usage{
 compute_score(
+  X,
+  incl_set,
+  type = c("ipoqll", "ipoqlldif"),
+  groups_map = c(),
+  init_par_iq = c(),
+  init_par_oq = c(),
+  optim_control_iq = c(),
+  optim_control_oq = c(),
+  setting_par_iq = c(),
+  setting_par_oq = c()
+)
+
+compute_score_fast(
   X,
   incl_set,
   type = c("ipoqll", "ipoqlldif"),
