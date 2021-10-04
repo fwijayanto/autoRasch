@@ -33,10 +33,291 @@
 #' @rdname compute_score
 #' @export
 compute_score <- function(X, incl_set, type = c("ipoqll","ipoqlldif"), groups_map = c(),
-                               init_par_iq = c(), init_par_oq = c(),
-                               optim_control_iq = c(), optim_control_oq = c(),
-                               setting_par_iq = c(), setting_par_oq = c()){
+                          init_par_iq = c(), init_par_oq = c(),
+                          optim_control_iq = c(), optim_control_oq = c(),
+                          setting_par_iq = c(), setting_par_oq = c()){
 
+  if(is.null(type)){
+    type <- "ipoqll"
+  }
+
+  if(type[1] == "ipoqll"){
+    fixed_par <- c("delta")
+    isPenalized_delta <- FALSE
+    groups_map <- NULL
+    scoreName <- "IPOQ-LL"
+  } else if(type[1] == "ipoqlldif"){
+    fixed_par <- c()
+    isPenalized_delta <- TRUE
+    if(is.null(groups_map)){
+      stop("autoRasch ERROR: to use the `ipoqlldif`, `groups_map` must be provided.")
+    }
+    groups_map <- as.matrix(groups_map)
+    scoreName <- "IPOQ-LL-DIF"
+  }
+
+  dset <- as.matrix(X)
+  incl_set <- incl_set[!is.na(incl_set)]
+  incl_resp <- dset[,incl_set]
+
+  if(length(incl_set) != ncol(dset)){
+    excl_resp <- dset[,-c(incl_set)]
+  }
+
+  if(!is.null(init_par_iq) ){
+
+    if((minCat <- min(dset,na.rm = TRUE)) != 0){  ### makes sure the response is started at 0
+      dset <- dset - minCat
+    }
+
+    mt_vek_ori <- apply(dset, 2L, max, na.rm = TRUE)
+    mt_vek_ori <- rep(max(mt_vek_ori),length(mt_vek_ori))
+
+    thetaidx_iq <- c((1):(nrow(dset)))
+    betaidx_iq <- c((nrow(dset)+1):(nrow(dset)+(max(mt_vek_ori)*length(incl_set))))
+    gammaidx_iq <- c((nrow(dset)+(max(mt_vek_ori)*length(incl_set))+1):(nrow(dset)+(max(mt_vek_ori)*length(incl_set))+ncol(incl_resp)))
+
+    mt_vek_incl <- apply(matrix(dset[,c(incl_set)],ncol = length(c(1:ncol(dset))[c(incl_set)])), 2L, max, na.rm = TRUE)
+    mt_vek_incl <- rep(max(mt_vek_incl),length(mt_vek_incl))
+
+    mt_idx_ori_incl <- rep(c(1:length(mt_vek_incl)),each = max(mt_vek_ori))
+
+
+    betalist_incl <- as.vector(unlist(tapply(init_par_iq[betaidx_iq], mt_idx_ori_incl, function(x){
+      if(max(mt_vek_ori) > max(mt_vek_incl)){
+        temp <- x[-c(max(mt_idx_ori_incl))]
+      } else {
+        temp <- x
+      }
+      return(temp)
+    })))
+
+    if(type[1] == "ipoqll"){
+      init_par_iq <- c(init_par_iq[thetaidx_iq], betalist_incl, init_par_iq[gammaidx_iq])
+    } else if(type[1] == "ipoqlldif"){
+      deltaidx_iq <- c((nrow(dset)+(max(mt_vek_ori)*length(incl_set))+ncol(incl_resp)+1):length(init_par_iq))
+      init_par_iq <- c(init_par_iq[thetaidx_iq], betalist_incl, init_par_iq[gammaidx_iq], init_par_iq[deltaidx_iq])
+    }
+
+  }
+  ######
+  if(!is.null(init_par_oq)){
+
+    if((minCat <- min(dset,na.rm = TRUE)) != 0){  ### makes sure the response is started at 0
+      dset <- dset - minCat
+    }
+
+    mt_vek_ori <- apply(dset, 2L, max, na.rm = TRUE)
+    mt_vek_ori <- rep(max(mt_vek_ori),length(mt_vek_ori))
+
+    betaidx_oq <- c((1):(max(mt_vek_ori)*ncol(excl_resp)))
+    gammaidx_oq <- c(((max(mt_vek_ori)*ncol(excl_resp))+1):((max(mt_vek_ori)*ncol(excl_resp))+ncol(excl_resp)))
+
+    mt_vek_excl <- apply(matrix(dset[,-c(incl_set)],ncol = length(c(1:ncol(dset))[-c(incl_set)])), 2L, max, na.rm = TRUE)
+    mt_vek_excl <- rep(max(mt_vek_excl),length(mt_vek_excl))
+
+    mt_idx_ori_excl <- rep(c(1:length(mt_vek_excl)),each = max(mt_vek_ori))
+
+    betalist_excl <- as.vector(unlist(tapply(init_par_oq[betaidx_oq], mt_idx_ori_excl, function(x){
+      if(max(mt_vek_ori) > max(mt_vek_excl)){
+        temp <- x[-c(max(mt_vek_ori))]
+      } else {
+        temp <- x
+      }
+      return(temp)
+    })))
+
+    if(type[1] == "ipoqll"){
+      init_par_oq <- c(betalist_excl, init_par_oq[gammaidx_oq])
+    } else if(type[1] == "ipoqlldif"){
+      deltaidx_oq <- c(((max(mt_vek_ori)*ncol(excl_resp))+ncol(excl_resp)+1):length(init_par_oq))
+      init_par_oq <- c(betalist_excl, init_par_oq[gammaidx_oq], init_par_oq[deltaidx_oq])
+    }
+
+  }
+
+  if(is.null(setting_par_iq)){
+    setting_par_iq <- autoRaschOptions()
+  } else {
+    if("aR_opt" %in% class(setting_par_iq)){
+    } else {
+      stop("The setting used should be a class of aR_opt!")
+    }
+  }
+
+  if(type[1] == "ipoqlldif"){
+    setting_par_iq$optz_method <- "mixed"
+  } else {
+    setting_par_iq$optz_method <- "optim"
+  }
+  setting_par_iq$isHessian <- FALSE
+  setting_par_iq$fixed_par <- fixed_par
+  setting_par_iq$isPenalized_delta <- isPenalized_delta
+  setting_par_iq$groups_map <- groups_map
+  setting_par_iq$randomized <- TRUE
+
+  iqll <- pjmle(incl_resp, init_par = init_par_iq, setting = setting_par_iq)
+
+  if(ncol(dset) == length(incl_set)){
+    loglik_oqll <- NA
+  } else {
+    if(is.null(setting_par_oq)){
+      setting_par_oq <- autoRaschOptions()
+    } else {
+      if("aR_opt" %in% class(setting_par_oq)){
+      } else {
+        stop("The setting used should be a class of aR_opt!")
+      }
+    }
+
+    if(type[1] == "ipoqlldif"){
+      setting_par_oq$optz_method <- "mixed"
+    } else {
+      setting_par_oq$optz_method <- "optim"
+    }
+    setting_par_oq$isHessian <- FALSE
+    setting_par_oq$fixed_par <- c("theta",fixed_par)
+    setting_par_oq$fixed_theta <- iqll$theta
+    setting_par_oq$isPenalized_delta <- isPenalized_delta
+    setting_par_oq$isPenalized_theta <- FALSE
+    setting_par_oq$groups_map <- groups_map
+    setting_par_oq$randomized <- TRUE
+
+    oqll <- pjmle(excl_resp, init_par = init_par_oq, setting = setting_par_oq)
+
+    loglik_oqll <- oqll$loglik
+  }
+
+
+  ipoqll <- sum(c(iqll$loglik,loglik_oqll),na.rm = TRUE)
+  res <- c(iqll$loglik, loglik_oqll, ipoqll)
+
+
+  if(type[1] == "ipoqlldif"){
+    n_par <- sum(nrow(dset),((1+ncol(groups_map)+(max(dset,na.rm = TRUE)-min(dset,na.rm = TRUE)))*ncol(dset)))
+
+    if((minCat <- min(dset,na.rm = TRUE)) != 0){  ### makes sure the response is started at 0
+      dset <- dset - minCat
+    }
+
+    mt_vek_ori <- apply(dset, 2L, max, na.rm = TRUE)
+    mt_vek_ori <- max(mt_vek_ori)
+
+    mt_vek_incl <- apply(matrix(dset[,c(incl_set)],ncol = length(c(1:ncol(dset))[c(incl_set)])), 2L, max, na.rm = TRUE)
+
+    mt_idx_incl <- rep(c(1:length(mt_vek_incl)),mt_vek_incl)
+    betalist_incl <- as.vector(unlist(tapply(iqll$beta, mt_idx_incl, function(x){
+      temp <- c(x,rep(0,(mt_vek_ori-length(x))))
+      return(temp)
+    })))
+
+    betalength <- sum(apply(dset,2,function(x){
+      temp <- max(x,na.rm = TRUE)-min(x,na.rm = TRUE)
+      return(temp)
+    }))
+    length(betalist_incl) <- betalength
+    gamma.ret <- iqll$gamma
+    length(gamma.ret) <- ncol(dset)
+    delta.ret <- iqll$delta
+    length(delta.ret) <- ncol(groups_map)*ncol(dset)
+
+    # iqll_params <- c(iqll$theta, betalist_incl, iqll$gamma, iqll$delta)
+    iqll_params <- c(iqll$theta, betalist_incl, gamma.ret, delta.ret)
+
+
+    if(ncol(dset) == length(incl_set)){
+      oqll_params <- NA
+    } else {
+      mt_vek_excl <- apply(matrix(dset[,-c(incl_set)],ncol = length(c(1:ncol(dset))[-c(incl_set)])), 2L, max, na.rm = TRUE)
+
+      mt_idx_excl <- rep(c(1:length(mt_vek_excl)),mt_vek_excl)
+
+      betalist_excl <- as.vector(unlist(tapply(oqll$beta, mt_idx_excl, function(x){
+        temp <- c(x,rep(0,(mt_vek_ori-length(x))))
+        return(temp)
+      })))
+
+      length(betalist_excl) <- sum(betalength)
+      gamma.ret <- oqll$gamma
+      length(gamma.ret) <- ncol(dset)
+      delta.ret <- oqll$delta
+      length(delta.ret) <- ncol(groups_map)*ncol(dset)
+
+      # oqll_params <- c(betalist_excl, oqll$gamma, oqll$delta)
+      oqll_params <- c(betalist_excl, gamma.ret, delta.ret)
+    }
+    length(iqll_params) <- n_par
+    length(oqll_params) <- n_par - nrow(dset)
+  } else {
+    n_par <- sum(nrow(dset),((1+(max(dset,na.rm = TRUE)-min(dset,na.rm = TRUE)))*ncol(dset)))
+
+    if((minCat <- min(dset,na.rm = TRUE)) != 0){  ### makes sure the response is started at 0
+      dset <- dset - minCat
+    }
+
+    mt_vek_ori <- apply(dset, 2L, max, na.rm = TRUE)
+    mt_vek_ori <- max(mt_vek_ori)
+
+    mt_vek_incl <- apply(matrix(dset[,c(incl_set)],ncol = length(c(1:ncol(dset))[c(incl_set)])), 2L, max, na.rm = TRUE)
+
+    mt_idx_incl <- rep(c(1:length(mt_vek_incl)),mt_vek_incl)
+
+    betalist_incl <- as.vector(unlist(tapply(iqll$beta, mt_idx_incl, function(x){
+      temp <- c(x,rep(0,(mt_vek_ori-length(x))))
+      return(temp)
+    })))
+
+    betalength <- sum(apply(dset,2,function(x){
+      temp <- max(x,na.rm = TRUE)-min(x,na.rm = TRUE)
+      return(temp)
+    }))
+    length(betalist_incl) <- betalength
+    gamma.ret <- iqll$gamma
+    length(gamma.ret) <- ncol(dset)
+
+    # iqll_params <- c(iqll$theta, betalist_incl, iqll$gamma)
+    iqll_params <- c(iqll$theta, betalist_incl, gamma.ret)
+
+    if(ncol(dset) == length(incl_set)){
+      oqll_params <- NA
+    } else {
+      mt_vek_excl <- apply(matrix(dset[,-c(incl_set)],ncol = length(c(1:ncol(dset))[-c(incl_set)])), 2L, max, na.rm = TRUE)
+
+      mt_idx_excl <- rep(c(1:length(mt_vek_excl)),mt_vek_excl)
+
+      betalist_excl <- as.vector(unlist(tapply(oqll$beta, mt_idx_excl, function(x){
+        temp <- c(x,rep(0,(mt_vek_ori-length(x))))
+        return(temp)
+      })))
+
+      length(betalist_excl) <- sum(betalength)
+      gamma.ret <- oqll$gamma
+      length(gamma.ret) <- ncol(dset)
+
+      # oqll_params <- c(betalist_excl, oqll$gamma)
+      oqll_params <- c(betalist_excl, gamma.ret)
+    }
+    length(iqll_params) <- n_par
+    length(oqll_params) <- n_par - nrow(dset)
+
+  }
+
+  n_par <- sum(nrow(dset),((1+(max(dset,na.rm = TRUE)-min(dset,na.rm = TRUE)))*ncol(dset)))
+  iqll_params <- c(iqll$theta, iqll$beta, iqll$gamma)
+  if(ncol(dset) == length(incl_set)){
+    oqll_params <- NA
+  } else {
+    oqll_params <- c(oqll$beta, oqll$gamma)
+  }
+  length(iqll_params) <- n_par
+  length(oqll_params) <- n_par - nrow(dset)
+
+
+  length(incl_set) <- ncol(dset)
+  res <- c(res, incl_set, iqll_params, oqll_params)
+  names(res) <- c("IQ-LL","OQ-LL",scoreName,rep("item no.",length(incl_set)),rep("iq-ll par.",length(iqll_params)),rep("oq-ll par.",length(oqll_params)))
+  class(res) <- c(class(res),"score",type[1])
+  return(res)
 }
 
 #' @rdname compute_score
