@@ -187,7 +187,7 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
     #                        opt.method = opt.method, max.iter = max.iter, abs.tol = abs.tol, scale.down = scale.down,
     #                        psi.mult.up = psi.mult.up, checkNonZero = checkNonZero, step = step, maxit = maxit,max.diff.par = max.diff.par)
 
-    score <- compute_score(X = X, incl_set = incl_set, type = criterion , groups_map = groups_map,
+    score <- compute_score_fast(X = X, incl_set = incl_set, type = criterion , groups_map = groups_map,
                            optim_control_iq = optim_control_iq, optim_control_oq = optim_control_oq,
                            setting_par_iq = setting_par_iq, setting_par_oq = setting_par_oq)
 
@@ -254,6 +254,7 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
     incl_set <- new.incl_set
     excl_set <- fullitem[-incl_set] # update the excl_set by adding the item that is removed from incl_set
 
+    print(dim(scoreMat))
 
     if(best.bck[3] > scoreMat[i,3] | is.na(scoreMat[i,3])){ ### the condition that is needed to keep the highest backward score
 
