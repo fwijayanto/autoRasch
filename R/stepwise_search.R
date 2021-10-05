@@ -770,6 +770,8 @@ plot_search <- function(obj, remOrdered = TRUE, locateMax = TRUE, ...){
     suppressWarnings(plot(x = c(1:nrow(obj)), y = obj[,3], ylab = ylab, xlab = expression('|S'['in']*'|'), ... = ...))
   } else if((is.null(dotdotdot$xlim))){
     suppressWarnings(plot(x = c(1:nrow(obj)), y = obj[,3], xlim = c(nrow(obj),1), ... = ...))
+  } else {
+    suppressWarnings(plot(x = c(1:nrow(obj)), y = obj[,3], ... = ...))
   }
 
   if(remOrdered){
