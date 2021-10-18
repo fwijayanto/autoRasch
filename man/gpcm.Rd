@@ -6,7 +6,7 @@
 \alias{print.gpcm}
 \title{Estimation of The Generalized Partial Credit Model}
 \usage{
-gpcm(X, init_par = c(), setting = c())
+gpcm(X, init_par = c(), setting = c(), method = c("fast", "novel"))
 
 \method{summary}{gpcm}(object, ...)
 

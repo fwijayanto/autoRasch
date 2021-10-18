@@ -19,12 +19,12 @@ stepwise_search(
   isTracked = TRUE,
   isContinued = FALSE,
   prevData = c(),
-  isLegacy = FALSE,
   fileOutput = FALSE,
   tempFile = "temp_stepSearch.RData",
   isConvert = FALSE,
   setting_par_iq = c(),
-  setting_par_oq = c()
+  setting_par_oq = c(),
+  method = c("fast", "novel")
 )
 
 backward_search(
@@ -43,7 +43,8 @@ backward_search(
   tempFile = "temp_backSearch.RData",
   isConvert = FALSE,
   setting_par_iq = c(),
-  setting_par_oq = c()
+  setting_par_oq = c(),
+  method = c("fast", "novel")
 )
 
 \method{summary}{search}(object, ...)
@@ -72,8 +73,6 @@ plot_search(obj, remOrdered = TRUE, locateMax = TRUE, ...)
 \item{isContinued}{A logical value whether this search is continuing another unfinished search.}
 
 \item{prevData}{The filename of the temporary .RData file of the unfinished search.}
-
-\item{isLegacy}{A logical value whether using the previous step estimated parameters as the initial parameter values for the upcoming search step.}
 
 \item{fileOutput}{The filename if it is wished to save the output results in file (.RData and .csv) and FALSE if not.}
 

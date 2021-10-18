@@ -7,7 +7,13 @@
 \alias{print.pcmdif}
 \title{Estimation of The Partial Credit Model with DIF}
 \usage{
-pcm_dif(X, init_par = c(), groups_map = c(), setting = c())
+pcm_dif(
+  X,
+  init_par = c(),
+  groups_map = c(),
+  setting = c(),
+  method = c("fast", "novel")
+)
 
 \method{fitStats}{pcmdif}(obj, isAlpha = TRUE, isTraced = FALSE)
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/compute_score.R
 \name{compute_score}
 \alias{compute_score}
-\alias{compute_score_fast}
+\alias{compute_scores_unparalleled}
 \alias{compute_scores}
 \alias{summary.score}
 \title{Compute the In-plus-out-of-questionnaire log likelihood (with DIF) (IPOQ-LL(-DIF))}
@@ -17,20 +17,23 @@ compute_score(
   optim_control_iq = c(),
   optim_control_oq = c(),
   setting_par_iq = c(),
-  setting_par_oq = c()
+  setting_par_oq = c(),
+  method = c("fast", "novel")
 )
 
-compute_score_fast(
+compute_scores_unparalleled(
   X,
-  incl_set,
+  incl_sets,
   type = c("ipoqll", "ipoqlldif"),
+  step_direct = c("fixed", "forward", "backward"),
   groups_map = c(),
   init_par_iq = c(),
   init_par_oq = c(),
   optim_control_iq = c(),
   optim_control_oq = c(),
   setting_par_iq = c(),
-  setting_par_oq = c()
+  setting_par_oq = c(),
+  method = c("fast", "novel")
 )
 
 compute_scores(
@@ -45,7 +48,8 @@ compute_scores(
   optim_control_oq = c(),
   setting_par_iq = c(),
   setting_par_oq = c(),
-  cores = NULL
+  cores = NULL,
+  method = c("fast", "novel")
 )
 
 \method{summary}{score}(object, ...)

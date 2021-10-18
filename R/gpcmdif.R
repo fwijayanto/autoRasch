@@ -58,11 +58,7 @@ gpcm_dif <- function(X, init_par = c(), groups_map = c(), setting = c(), method 
     settingPar$groups_map <- groups_map
   }
 
-  if(method[1] == "novel"){
-    result <- pjmle(X = X, init_par = init_par, setting = settingPar)
-  } else {
-    result <- pjmle_fast(X = X, init_par = init_par, setting = settingPar)
-  }
+  result <- pjmle(X = X, init_par = init_par, setting = settingPar, method = method)
 
   class(result) <- c(class(result),"armodels","gpcmdif","autoRasch")
   return(result)
@@ -134,7 +130,7 @@ summary.gpcmdif <- function(object, ...){
     cat("'*' Item has disordered thresholds.")
   }
 
-  if(is.null(par) | "gamma" %in% par){
+  if(is.null(par) | "alpha" %in% par){
     cat("\n\n")
     cat("The estimated discrimination parameters:")
     cat("\n")
@@ -149,7 +145,8 @@ summary.gpcmdif <- function(object, ...){
     # if(is.null(th_dif)){
     #   th_dif <- 1e-5
     # }
-    delta_mat <- matrix(round(obj$delta,5), ncol = ncol(obj$groups_map), dimnames = list(c(obj$itemName),c(paste("Group",c(1:ncol(obj$groups_map)),sep = ""))))
+    # delta_mat <- matrix(round(obj$delta,5), ncol = ncol(obj$groups_map), dimnames = list(c(obj$itemName),c(paste("Group",c(1:ncol(obj$groups_map)),sep = ""))))
+    delta_mat <- matrix(round(obj$delta,5), ncol = ncol(obj$groups_map), dimnames = list(c(obj$itemName),c(colnames(obj$groups_map))))
     delta_mat[which(delta_mat < th_dif)] <- ""
     delta_mat <- as.data.frame(delta_mat)
     print(delta_mat, quote = FALSE)

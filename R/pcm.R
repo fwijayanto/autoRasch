@@ -54,11 +54,7 @@ pcm <- function(X, init_par = c(), setting = c(), method = c("fast","novel")){
   setting$isPenalized_delta <- FALSE
   setting$optz_method <- "optim"
 
-  if(method[1] == "novel"){
-    result <- pjmle(X = X, init_par = init_par, setting = setting)
-  } else {
-    result <- pjmle_fast(X = X, init_par = init_par, setting = setting)
-  }
+  result <- pjmle(X = X, init_par = init_par, setting = setting, method = method)
 
   class(result) <- c(class(result),"armodels","pcm","autoRasch")
 
@@ -118,11 +114,11 @@ fitStats.pcm <- function(obj, isAlpha = TRUE, isTraced = FALSE){
   mt_vek <- obj$mt_vek
   theta <- obj$theta
   beta <- obj$beta #* obj$real_vek
-  beta <- as.vector(unlist(tapply(beta, rep(1:length(mt_vek),mt_vek), function(x){
-      y <- x[which(!is.na(x))]
-      return(y)
-    })))
-  n.th <- max(mt_vek)
+  # beta <- as.vector(unlist(tapply(beta, rep(1:length(mt_vek),mt_vek), function(x){
+  #     y <- x[which(!is.na(x))]
+  #     return(y)
+  #   })))
+  # n.th <- max(mt_vek)
 
   # mt_vek <- as.vector(tapply(obj$real_vek, rep(1:length(mt_vek),mt_vek), sum, na.rm = TRUE))
   mt_idx <- rep(1:length(mt_vek), mt_vek)
@@ -306,6 +302,7 @@ summary.pcm <- function(object, ...){
     cat("There are",ntd_items,"items which have disordered thresholds.")
     cat("\n")
     cat("'*' Item has disordered thresholds.")
+    cat("\n")
   }
 }
 

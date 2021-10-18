@@ -55,11 +55,8 @@ pcm_dif <- function(X, init_par = c(), groups_map = c(), setting = c(), method =
     settingPar$groups_map <- groups_map
   }
 
-  if(method[1] == "novel"){
-    result <- pjmle(X = X, init_par = init_par, setting = setting)
-  } else {
-    result <- pjmle_fast(X = X, init_par = init_par, setting = setting)
-  }
+
+  result <- pjmle(X = X, init_par = init_par, setting = settingPar, method = method)
 
   class(result) <- c(class(result),"armodels","pcmdif","autoRasch")
   return(result)
@@ -171,13 +168,13 @@ fitStats.pcmdif <- function(obj, isAlpha = TRUE, isTraced = FALSE){
   })
 
   mt_vek0 <- mt_vek + 1
-  allcat0 <- sum(mt_vek0)
+  allcat0 <- sum(mt_vek0, na.rm = TRUE)
 
   temp.l1 <- matrix(temp.l1,nrow = allcat0)
 
   temp.l2 <- apply(per.cat.list, 2, function(x){
     l2.peritem <- tapply(x, mt_idx, function(y){
-      temp <- sum(exp(cumsum(y)))
+      temp <- sum(exp(cumsum(y)), na.rm = TRUE)
       temp
     })
     l2.temp <- unlist(l2.peritem)
@@ -203,7 +200,7 @@ fitStats.pcmdif <- function(obj, isAlpha = TRUE, isTraced = FALSE){
   Emat <- matrix(Emat, nrow = (allcat0))
   Emat <- apply(Emat, 2, function(x){
     Emat.peritem <- tapply(x, mt_idx0, function(y){
-      temp <- sum(y)
+      temp <- sum(y, na.rm = TRUE)
       temp
     })
     Emat.temp <- unlist(Emat.peritem)
@@ -217,7 +214,7 @@ fitStats.pcmdif <- function(obj, isAlpha = TRUE, isTraced = FALSE){
   Vmat.cat <- matrix(Vvect.cat, nrow = (allcat0))
   Vmat <- apply(Vmat.cat, 2, function(x){
     Vmat.peritem <- tapply(x, mt_idx0, function(y){
-      temp <- sum(y)
+      temp <- sum(y, na.rm = TRUE)
       temp
     })
     Vmat.temp <- unlist(Vmat.peritem)
@@ -229,7 +226,7 @@ fitStats.pcmdif <- function(obj, isAlpha = TRUE, isTraced = FALSE){
   Cmat.cat <- matrix(Cvect.cat, nrow = (allcat0))
   Cmat <- apply(Cmat.cat, 2, function(x){
     Cmat.peritem <- tapply(x, mt_idx0, function(y){
-      temp <- sum(y)
+      temp <- sum(y, na.rm = TRUE)
       temp
     })
     Cmat.temp <- unlist(Cmat.peritem)
@@ -424,14 +421,6 @@ print.pcmdif <- function(x, ...){
     cat("$beta")
     cat("\n")
     print(obj$beta)
-    cat("\n")
-  }
-
-  if(is.null(par) | "gamma" %in% par){
-    cat("\n")
-    cat("$gamma")
-    cat("\n")
-    print(obj$gamma)
     cat("\n")
   }
 

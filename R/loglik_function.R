@@ -69,10 +69,8 @@ par_map <- function(nlmPar, estPar_arr, estLength_array, fixValue, fixed_par, fi
 # isPenalized_delta : It is a logical parameter whether, in the estimation procedure, delta is penalized or not.
 #
 ##########################################################################################
-loglik_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_delta,
-                       estPar_arr, fixed_par, fixValue, fixLength_arr, estLength_array,
-                       groups_map, mt_vek, mt_idx, dimResp, allcat, n_th, XN, XNA, eps = 0,
-                       isPenalized_gamma, isPenalized_theta, isPenalized_delta){
+loglik_fun <- function(nlmPar, dset, opts, dataPrep,
+                       estPar_arr, fixed_par, fixValue, fixLength_arr, estLength_array){
 
 
   # map the nlmPar
@@ -86,10 +84,10 @@ loglik_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda
 
   # get the value of alpha, i.e. exp(gamma)
   exp_gamma <- exp(gamma)
-  exp_gamma <- rep.int(exp_gamma, mt_vek)
+  exp_gamma <- rep.int(exp_gamma, dataPrep$mt_vek)
 
   # groups_map should be formed as matrix, size is V x G
-  groups_map <- as.matrix(groups_map)
+  groups_map <- as.matrix(dataPrep$groups_map)
 
   # takes the total of DIF effect for all group for beta
   # here we iterate over V, delta is a vector of length I X G, where the rows are stacked
@@ -106,27 +104,27 @@ loglik_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda
   # - vec(beta), size I x J, is repeated V times, for which the columns of beta (length J) are stacked ?!
   # # !! stacked on J first and then on I
   # # idx = I * J * (v - 1) + J * (i - 1) + (j - 1) + 1
-  delta_tot_rep <- rep.int((delta_tot), rep.int(mt_vek,nrow(groups_map)))
+  delta_tot_rep <- rep.int((delta_tot), rep.int(dataPrep$mt_vek,nrow(groups_map)))
 
   # compute the theta - (beta+delta)
-  t_diff <- rep(theta,each = allcat) - rep.int(beta,length(theta))
+  t_diff <- rep(theta,each = dataPrep$allcat) - rep.int(beta,length(theta))
   t_diff <- t_diff - delta_tot_rep
 
   # multiplied by exp(gamma)
   disc_diff <- t_diff * exp_gamma
 
   # map the corresponding NA value of the dataset to the matrix
-  disc_diff <- XNA * disc_diff
-  disc_diff <- matrix(disc_diff, nrow = allcat)
+  disc_diff <- dataPrep$XNA * disc_diff
+  disc_diff <- matrix(disc_diff, nrow = dataPrep$allcat)
 
   # compute the first part of the log-likelihood (simple addition part)
-  l1 <- sum((XN * disc_diff), na.rm = TRUE)
+  l1 <- sum((dataPrep$XN * disc_diff), na.rm = TRUE)
 
   ### compute the second part of the log-likelohood (with log)
   ### begin
 
-  length.mt_idx <- table(mt_idx)
-  temp_prob_split <- split(disc_diff,mt_idx)
+  length.mt_idx <- table(dataPrep$mt_idx)
+  temp_prob_split <- split(disc_diff,dataPrep$mt_idx)
 
   temp_l2 <- c()
   for(j in 1:length(temp_prob_split)){
@@ -145,18 +143,18 @@ loglik_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda
 
   lnL <- st1st2[1] - st1st2[2]
 
-  if(isPenalized_theta){
-    lnL <- lnL - (lambda_theta*(sum(theta^2)))
+  if(opts$isPenalized_theta){
+    lnL <- lnL - (opts$lambda_theta*(sum(theta^2)))
   }
 
-  if(isPenalized_gamma & isPenalized_theta){
-    lnL <- lnL - (lambda_in*(sum(gamma^2)))
-  } else if(isPenalized_gamma){
-    lnL <- lnL - (lambda_out*(sum(gamma^2)))
+  if(opts$isPenalized_gamma & opts$isPenalized_theta){
+    lnL <- lnL - (opts$lambda_in*(sum(gamma^2)))
+  } else if(opts$isPenalized_gamma){
+    lnL <- lnL - (opts$lambda_out*(sum(gamma^2)))
   }
 
-  if(isPenalized_delta){
-    lnL <- lnL - (lambda_delta*(sum(abs(delta)^(1+eps))))
+  if(opts$isPenalized_delta){
+    lnL <- lnL - (opts$lambda_delta*(sum(abs(delta)^(1+opts$eps))))
   }
 
   return(-lnL)
@@ -275,38 +273,54 @@ loglik_fun_novel <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, 
 }
 
 # Wrapper for the Rcpp implementation of the log-likelihood function
-loglik_fun_fast <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_delta,
-                        estPar_arr, fixed_par, fixValue, fixLength_arr, estLength_array,
-                        groups_map, mt_vek, mt_idx, dimResp, allcat, n_th, XN, XNA, eps = 0,
-                        isPenalized_gamma, isPenalized_theta, isPenalized_delta) {
+loglik_fun_fast <- function(nlmPar, dset, estPar_arr, fixed_par, fixValue, fixLength_arr, estLength_array,
+                            opts, dataPrep) {
 
   # TODO: implement XNA part
 
   map_nlmPar <- par_map(nlmPar, estPar_arr = estPar_arr, estLength_array = estLength_array,
                         fixValue = fixValue, fixed_par = fixed_par, fixLength_arr = fixLength_arr)
   theta <- map_nlmPar$theta
-  beta_mat <- matrix(map_nlmPar$beta, ncol(dset), n_th, byrow = TRUE)
+  beta_mat <- matrix(map_nlmPar$beta, ncol(dset), dataPrep$n_th, byrow = TRUE)
   gamma <- map_nlmPar$gamma
-  delta_mat <- matrix(map_nlmPar$delta, ncol(dset), ncol(groups_map))#, byrow = TRUE)
+  delta_mat <- matrix(map_nlmPar$delta, ncol(dset), ncol(dataPrep$groups_map))#, byrow = TRUE)
 
-  ll_cpp(theta, gamma, delta_mat, groups_map, beta_mat, mt_vek, as.matrix(dset),
-         isPenalized_gamma, isPenalized_delta, isPenalized_theta,
-         lambda_in, lambda_out, lambda_delta, lambda_theta, eps)
+  ll_cpp(theta, gamma, delta_mat, dataPrep$groups_map, beta_mat, dataPrep$mt_vek, as.matrix(dset),
+         opts$isPenalized_gamma, opts$isPenalized_delta, opts$isPenalized_theta,
+         opts$lambda_in, opts$lambda_out, opts$lambda_delta, opts$lambda_theta, opts$eps)
 }
+
+
+# loglik_fun_fast <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_delta,
+#                             estPar_arr, fixed_par, fixValue, fixLength_arr, estLength_array,
+#                             groups_map, mt_vek, mt_idx, dimResp, allcat, n_th, XN, XNA, eps = 0,
+#                             isPenalized_gamma, isPenalized_theta, isPenalized_delta) {
+#
+#   # TODO: implement XNA part
+#
+#   map_nlmPar <- par_map(nlmPar, estPar_arr = estPar_arr, estLength_array = estLength_array,
+#                         fixValue = fixValue, fixed_par = fixed_par, fixLength_arr = fixLength_arr)
+#   theta <- map_nlmPar$theta
+#   beta_mat <- matrix(map_nlmPar$beta, ncol(dset), n_th, byrow = TRUE)
+#   gamma <- map_nlmPar$gamma
+#   delta_mat <- matrix(map_nlmPar$delta, ncol(dset), ncol(groups_map))#, byrow = TRUE)
+#
+#   ll_cpp(theta, gamma, delta_mat, groups_map, beta_mat, mt_vek, as.matrix(dset),
+#          isPenalized_gamma, isPenalized_delta, isPenalized_theta,
+#          lambda_in, lambda_out, lambda_delta, lambda_theta, eps)
+# }
 
 ############################################################################
 #
 #THE GRADIENT FUNCTION
 #
 ############################################################################
-grad_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_delta,
-                     estPar_arr, fixed_par, fixValue, fixLength_arr, estLength_array,
-                     groups_map, mt_vek, mt_idx, dimResp, allcat, n_th, XN, XNA, eps = 0,
-                     isPenalized_gamma, isPenalized_theta, isPenalized_delta){
+grad_fun <- function(nlmPar, dset, opts, dataPrep,
+                     estPar_arr, fixed_par, fixValue, fixLength_arr, estLength_array){
 
-  lambda_theta <- lambda_theta*2
-  lambda_in <- lambda_in*2
-  lambda_out <- lambda_out*2
+  lambda_theta <- opts$lambda_theta*2
+  lambda_in <- opts$lambda_in*2
+  lambda_out <- opts$lambda_out*2
 
   map_nlmPar <- par_map(nlmPar, estPar_arr = estPar_arr, estLength_array = estLength_array,
                         fixValue = fixValue, fixed_par = fixed_par, fixLength_arr = fixLength_arr)
@@ -318,50 +332,50 @@ grad_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_d
   deltagamma <- map_nlmPar$deltagamma
 
   exp_gamma <- exp(gamma)
-  exp_gamma <- rep.int(exp_gamma, mt_vek)
-  t_exp_gamma_mat <- rep.int(1,(length(XN)))*exp_gamma
+  exp_gamma <- rep.int(exp_gamma, dataPrep$mt_vek)
+  t_exp_gamma_mat <- rep.int(1,(length(dataPrep$XN)))*exp_gamma
 
-  groups_map <- as.matrix(groups_map)
+  groups_map <- as.matrix(dataPrep$groups_map)
 
   delta_tot <- 0
   for(i in 1:ncol(groups_map)){
     delta_tot <- delta_tot + outer(delta[(((i-1)*ncol(dset))+1):(i*ncol(dset))],groups_map[,i],"*")
   }
-  delta_tot_rep <- rep.int((delta_tot), rep.int(mt_vek,nrow(groups_map)))
+  delta_tot_rep <- rep.int((delta_tot), rep.int(dataPrep$mt_vek,nrow(groups_map)))
 
   total_alpha_mat <- rep(exp_gamma,length(theta))
 
-  t_diff <- rep(theta,each = allcat) - rep.int(beta,length(theta))
+  t_diff <- rep(theta,each = dataPrep$allcat) - rep.int(beta,length(theta))
 
   t_diff <- t_diff - delta_tot_rep          #delta.tot.rep is total delta which has been replicated to every categoory
   disc_diff <- t_diff * total_alpha_mat
-  disc_diff <- XNA * disc_diff
-  disc_diff <- matrix(disc_diff, nrow = allcat)
+  disc_diff <- dataPrep$XNA * disc_diff
+  disc_diff <- matrix(disc_diff, nrow = dataPrep$allcat)
 
   ##### first part of gradient ###
 
   ## theta ##
-  t1_theta_mat <- (XN) * total_alpha_mat
-  t1_theta_mat <- matrix(t1_theta_mat, nrow = allcat)
+  t1_theta_mat <- (dataPrep$XN) * total_alpha_mat
+  t1_theta_mat <- matrix(t1_theta_mat, nrow = dataPrep$allcat)
   t1_theta <- colSums(t1_theta_mat, na.rm = TRUE)
 
   ## beta ##
   t1_beta_mat <- t1_theta_mat
-  t1_beta_mat <- matrix(t1_beta_mat, nrow = allcat)
+  t1_beta_mat <- matrix(t1_beta_mat, nrow = dataPrep$allcat)
   t1_beta <- rowSums(t1_beta_mat, na.rm = TRUE)
 
   ## gamma ##
   t1_gamma_mat <- t_diff * t1_beta_mat
-  t1_gamma_mat <- matrix(t1_gamma_mat, nrow = allcat)
+  t1_gamma_mat <- matrix(t1_gamma_mat, nrow = dataPrep$allcat)
   t1_gamma <- rowSums(t1_gamma_mat, na.rm = TRUE)
-  t1_gamma <- tapply(t1_gamma, mt_idx, sum, na.rm = TRUE)
+  t1_gamma <- tapply(t1_gamma, dataPrep$mt_idx, sum, na.rm = TRUE)
 
   t1_delta <- c()
   for(i in 1:ncol(groups_map)){
     ## delta ##
     t1_delta_mat <- t(t(t1_theta_mat) * groups_map[,i])
     t1_delta_temp <- rowSums(t1_delta_mat, na.rm = TRUE)
-    t1_delta_temp <- tapply(t1_delta_temp, mt_idx, sum, na.rm = TRUE)
+    t1_delta_temp <- tapply(t1_delta_temp, dataPrep$mt_idx, sum, na.rm = TRUE)
     t1_delta <- c(t1_delta, t1_delta_temp)
   }
 
@@ -369,7 +383,7 @@ grad_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_d
 
   # make them as a vector
 
-  total_alpha_mat <- matrix(total_alpha_mat, nrow = allcat)
+  total_alpha_mat <- matrix(total_alpha_mat, nrow = dataPrep$allcat)
 
   temp_denom <- c()
   temp_gamma <- c()
@@ -377,13 +391,13 @@ grad_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_d
   temp_theta_nom <- c()
   temp_gamma_nom <- c()
 
-  length.mt_idx <- table(mt_idx)
+  length.mt_idx <- table(dataPrep$mt_idx)
 
-  temp_prob_split <- split(disc_diff,mt_idx)
+  temp_prob_split <- split(disc_diff,dataPrep$mt_idx)
 
   # print(length(temp_prob_split))
 
-  temp_gamma_split <- split(total_alpha_mat, mt_idx)
+  temp_gamma_split <- split(total_alpha_mat, dataPrep$mt_idx)
 
   temp_denom_part <- c()
   temp_gamma_part <- c()
@@ -474,11 +488,11 @@ grad_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_d
   temp_beta_nom <- temp_tot * total_alpha_mat
 
   Nom_theta <- matrix(temp_theta_nom_part,nrow = ncol(dset))
-  Nom_beta <- matrix(temp_beta_nom,nrow = allcat)
+  Nom_beta <- matrix(temp_beta_nom,nrow = dataPrep$allcat)
   Nom_gamma <- matrix(temp_gamma_nom_part,nrow = ncol(dset))
 
   Denom <- matrix(temp_denom_part,nrow = ncol(dset))+1
-  Denom_mat <- matrix(rep(Denom, rep(mt_vek,dimResp[1])), nrow = allcat)
+  Denom_mat <- matrix(rep(Denom, rep(dataPrep$mt_vek,dataPrep$dimResp[1])), nrow = dataPrep$allcat)
 
   t2_theta_mat <- (Nom_theta/Denom)
   t2_theta <- colSums(t2_theta_mat, na.rm = TRUE)
@@ -517,7 +531,7 @@ grad_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_d
   # print(t1_delta)
   #print(t2_delta)
 
-  if(isPenalized_theta){
+  if(opts$isPenalized_theta){
     # grad_theta <- t1_theta - t2_theta - (0.1*theta)
     grad_theta <- t1_theta - t2_theta - (lambda_theta*theta)
   } else {
@@ -525,22 +539,22 @@ grad_fun <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_d
   }
 
   # NOTE: this doesn't really do anything, no if statement necessary
-  if(isPenalized_theta){
+  if(opts$isPenalized_theta){
     grad_beta <- (-t1_beta) + t2_beta
   } else {
     grad_beta <- (-t1_beta) + t2_beta
   }
 
-  if(isPenalized_gamma & isPenalized_theta){
+  if(opts$isPenalized_gamma & opts$isPenalized_theta){
     grad_gamma <- t1_gamma - t2_gamma - (lambda_in*(gamma))
-  }else if(isPenalized_gamma){
+  }else if(opts$isPenalized_gamma){
     grad_gamma <- t1_gamma - t2_gamma - (lambda_out*(gamma))
   }else {
     grad_gamma <- t1_gamma - t2_gamma
   }
 
-  if(isPenalized_delta){
-    grad_delta <- (-t1_delta) + t2_delta - (lambda_delta*(1+eps)*sign(delta)*(abs(delta)^eps))
+  if(opts$isPenalized_delta){
+    grad_delta <- (-t1_delta) + t2_delta - (opts$lambda_delta*(1+opts$eps)*sign(delta)*(abs(delta)^opts$eps))
   } else {
     grad_delta <- (-t1_delta) + t2_delta
   }
@@ -733,23 +747,21 @@ grad_fun_novel <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, la
 # isPenalized_delta = opts$isPenalized_delta)
 
 # Wrapper for the Rcpp implementation of the gradient function
-grad_fun_fast <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_delta,
-                            estPar_arr, fixed_par, fixValue, fixLength_arr, estLength_array,
-                            groups_map, mt_vek, mt_idx, dimResp, allcat, n_th, XN, XNA, eps = 0,
-                            isPenalized_gamma, isPenalized_theta, isPenalized_delta) {
+grad_fun_fast <- function(nlmPar, dset, estPar_arr, fixed_par, fixValue, fixLength_arr, estLength_array,
+                          opts, dataPrep) {
 
   # TODO: implement XNA part
 
   map_nlmPar <- par_map(nlmPar, estPar_arr = estPar_arr, estLength_array = estLength_array,
                         fixValue = fixValue, fixed_par = fixed_par, fixLength_arr = fixLength_arr)
   theta <- map_nlmPar$theta
-  beta_mat <- matrix(map_nlmPar$beta, ncol(dset), n_th, byrow = TRUE)
+  beta_mat <- matrix(map_nlmPar$beta, ncol(dset), dataPrep$n_th, byrow = TRUE)
   gamma <- map_nlmPar$gamma
-  delta_mat <- matrix(map_nlmPar$delta, ncol(dset), ncol(groups_map))#, byrow = TRUE)
+  delta_mat <- matrix(map_nlmPar$delta, ncol(dset), ncol(dataPrep$groups_map))#, byrow = TRUE)
 
-  result <- grad_cpp(theta, gamma, delta_mat, groups_map, beta_mat, mt_vek, as.matrix(dset),
-         isPenalized_gamma, isPenalized_delta, isPenalized_theta,
-         lambda_in, lambda_out, lambda_delta, lambda_theta, eps)
+  result <- grad_cpp(theta, gamma, delta_mat, dataPrep$groups_map, beta_mat, dataPrep$mt_vek, as.matrix(dset),
+         opts$isPenalized_gamma, opts$isPenalized_delta, opts$isPenalized_theta,
+         opts$lambda_in, opts$lambda_out, opts$lambda_delta, opts$lambda_theta, opts$eps)
 
   # print(result)
 
@@ -772,6 +784,46 @@ grad_fun_fast <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lam
 
   return(-grad_tot)
 }
+
+# grad_fun_fast <- function(nlmPar, dset, lambda_theta, lambda_in, lambda_out, lambda_delta,
+#                           estPar_arr, fixed_par, fixValue, fixLength_arr, estLength_array,
+#                           groups_map, mt_vek, mt_idx, dimResp, allcat, n_th, XN, XNA, eps = 0,
+#                           isPenalized_gamma, isPenalized_theta, isPenalized_delta) {
+#
+#   # TODO: implement XNA part
+#
+#   map_nlmPar <- par_map(nlmPar, estPar_arr = estPar_arr, estLength_array = estLength_array,
+#                         fixValue = fixValue, fixed_par = fixed_par, fixLength_arr = fixLength_arr)
+#   theta <- map_nlmPar$theta
+#   beta_mat <- matrix(map_nlmPar$beta, ncol(dset), n_th, byrow = TRUE)
+#   gamma <- map_nlmPar$gamma
+#   delta_mat <- matrix(map_nlmPar$delta, ncol(dset), ncol(groups_map))#, byrow = TRUE)
+#
+#   result <- grad_cpp(theta, gamma, delta_mat, groups_map, beta_mat, mt_vek, as.matrix(dset),
+#                      isPenalized_gamma, isPenalized_delta, isPenalized_theta,
+#                      lambda_in, lambda_out, lambda_delta,lambda_theta, eps)
+#
+#   # print(result)
+#
+#   output <- c()
+#
+#   if(!identical(grep("delta",estPar_arr), integer(0))){
+#     output <- c(result$grad_delta,output)
+#   }
+#   if(!identical(grep("^gamma",estPar_arr), integer(0))){
+#     output <- c(result$grad_gamma,output)
+#   }
+#   if(!identical(grep("^beta",estPar_arr), integer(0))){
+#     output <- c(result$grad_beta,output)
+#   }
+#   if(!identical(grep("theta",estPar_arr), integer(0))){
+#     output <- c(result$grad_theta,output)
+#   }
+#
+#   grad_tot <- output
+#
+#   return(-grad_tot)
+# }
 
 
 GPCMDIF_LL <- function(dset = c(), fixValue.theta, fixValue.beta, fixValue.gamma, fixValue.delta, lambda_theta = 0.05, lambda_in = 50, lambda_out = 5e-3, lambda_delta = 17, lambda_deltagamma = 100000, eps = 0, resp.info = c(), resp.th = c(1,1), isPenalized_gamma = TRUE, isPenalized_theta = TRUE, isPenalized_delta = TRUE, mt_vek_init = c()){

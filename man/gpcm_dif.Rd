@@ -6,7 +6,13 @@
 \alias{print.gpcmdif}
 \title{Estimation of The Generalized Partial Credit Model with DIF}
 \usage{
-gpcm_dif(X, init_par = c(), groups_map = c(), setting = c())
+gpcm_dif(
+  X,
+  init_par = c(),
+  groups_map = c(),
+  setting = c(),
+  method = c("fast", "novel")
+)
 
 \method{summary}{gpcmdif}(object, ...)
 

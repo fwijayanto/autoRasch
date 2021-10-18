@@ -44,11 +44,7 @@ gpcm <- function(X, init_par = c(), setting = c(), method = c("fast","novel")){
   setting$isPenalized_delta <- FALSE
   setting$optz_method <- "optim"
 
-  if(method[1] == "novel"){
-    result <- pjmle(X = X, init_par = init_par, setting = setting)
-  } else {
-    result <- pjmle_fast(X = X, init_par = init_par, setting = setting)
-  }
+  result <- pjmle(X = X, init_par = init_par, setting = setting, method = method)
 
   class(result) <- c(class(result),"armodels","gpcm","autoRasch")
   return(result)
@@ -120,13 +116,13 @@ summary.gpcm <- function(object, ...){
     print(alpha_mat, quote = FALSE, ... = ...)
   }
 
-  if(is.null(par) | "gamma" %in% par){
-    cat("\n\n")
-    cat("The estimated discrimination parameters:")
-    cat("\n")
-    alpha_mat <- matrix((obj$gamma), ncol = 1, dimnames = list(c(obj$itemName),c("alpha")))
-    print(alpha_mat, quote = FALSE)
-  }
+  # if(is.null(par) | "gamma" %in% par){
+  #   cat("\n\n")
+  #   cat("The estimated discrimination parameters:")
+  #   cat("\n")
+  #   alpha_mat <- matrix((obj$gamma), ncol = 1, dimnames = list(c(obj$itemName),c("alpha")))
+  #   print(alpha_mat, quote = FALSE)
+  # }
 }
 
 #' @param x The object of class \code{'gpcm'}.

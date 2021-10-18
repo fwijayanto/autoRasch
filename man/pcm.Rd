@@ -7,7 +7,7 @@
 \alias{print.pcm}
 \title{Estimation of The Partial Credit Model (PCM)}
 \usage{
-pcm(X, init_par = c(), setting = c())
+pcm(X, init_par = c(), setting = c(), method = c("fast", "novel"))
 
 \method{fitStats}{pcm}(obj, isAlpha = TRUE, isTraced = FALSE)
 

@@ -40,6 +40,8 @@
 checkRel <- function(obj){
 
 
+  beta <- obj$beta[which(!is.na(obj$beta))]
+
   if(is.null(obj$hessian)){
     if("gpcmdif" %in% class(obj)){
 
@@ -49,8 +51,8 @@ checkRel <- function(obj){
       settingRel$optz_method <- "optim"
       settingRel$optim_control <- list(maxit = 0, reltol = 1e-12)
 
-      obj_hessian <- autoRasch::gpcm_dif(obj$X, init_par = c(obj$theta,obj$beta,obj$gamma,obj$delta),
-                                         groups_map = obj$groups_map, setting = settingRel)
+      obj_hessian <- autoRasch::gpcm_dif(obj$X, init_par = c(obj$theta,beta,obj$gamma,obj$delta),
+                                         groups_map = obj$groups_map, setting = settingRel, method = "novel")
 
       obj[["hessian"]] <- obj_hessian$hessian
     } else if("pcmdif" %in% class(obj)){
@@ -61,8 +63,8 @@ checkRel <- function(obj){
       settingRel$optz_method <- "optim"
       settingRel$optim_control <- list(maxit = 0, reltol = 1e-12)
 
-      obj_hessian <- autoRasch::pcm_dif(obj$X, init_par = c(obj$theta,obj$beta,obj$delta),
-                                         groups_map = obj$groups_map, setting = settingRel)
+      obj_hessian <- autoRasch::pcm_dif(obj$X, init_par = c(obj$theta,beta,obj$delta),
+                                         groups_map = obj$groups_map, setting = settingRel, method = "novel")
 
       obj[["hessian"]] <- obj_hessian$hessian
     } else if("gpcm" %in% class(obj)){
@@ -73,8 +75,8 @@ checkRel <- function(obj){
       settingRel$optz_method <- "optim"
       settingRel$optim_control <- list(maxit = 0, reltol = 1e-12)
 
-      obj_hessian <- autoRasch::gpcm(obj$X, init_par = c(obj$theta,obj$beta,obj$gamma),
-                                        setting = settingRel)
+      obj_hessian <- autoRasch::gpcm(obj$X, init_par = c(obj$theta,beta,obj$gamma),
+                                        setting = settingRel, method = "novel")
 
       obj[["hessian"]] <- obj_hessian$hessian
     } else if("pcm" %in% class(obj)){
@@ -85,8 +87,8 @@ checkRel <- function(obj){
       settingRel$optz_method <- "optim"
       settingRel$optim_control <- list(maxit = 0, reltol = 1e-12)
 
-      obj_hessian <- autoRasch::pcm(obj$X, init_par = c(obj$theta,obj$beta,obj$delta),
-                                        groups_map = obj$groups_map, setting = settingRel)
+      obj_hessian <- autoRasch::pcm(obj$X, init_par = c(obj$theta,beta,obj$delta),
+                                        setting = settingRel, method = "novel")
 
       obj[["hessian"]] <- obj_hessian$hessian
     } else {
