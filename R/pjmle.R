@@ -233,7 +233,6 @@ downCoding <- function(X){
   dataaftercheck <- c()
 
   for(i in 1:nitem){
-    print(i)
     tempResp <- datebeforecheck[,i]
     maxResp <- max(tempResp,na.rm = TRUE)
     minResp <- min(tempResp,na.rm = TRUE)

@@ -69,7 +69,7 @@ compute_score <- function(X, incl_set, type = c("ipoqll","ipoqlldif"), groups_ma
   #   if((minCat <- min(dset,na.rm = TRUE)) != 0){  ### makes sure the response is started at 0
   #     dset <- dset - minCat
   #   }
-  #
+  #1
   #   mt_vek_ori <- apply(dset, 2L, max, na.rm = TRUE)
   #   mt_vek_ori <- rep(max(mt_vek_ori),length(mt_vek_ori))
   #
