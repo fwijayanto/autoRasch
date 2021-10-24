@@ -122,6 +122,8 @@ Rcpp::List grad_cpp(arma::vec theta, arma::vec gamma, arma::mat delta, arma::mat
   arma::mat delta_group = groups * delta.t();
   arma::cube Psi(V, I, max_J + 1);
 
+  // std::cout << "in 1" << std::endl;
+
   for (size_t i = 0; i < I; ++i) {
     J = m_cat[i];
     // std::cout << "J = " << J << std::endl;
@@ -137,6 +139,8 @@ Rcpp::List grad_cpp(arma::vec theta, arma::vec gamma, arma::mat delta, arma::mat
 
     }
   }
+
+  // std::cout << "in 2" << std::endl;
 
   arma::cube exp_Psi = exp(Psi);
   arma::mat cumul_Psi(V, I);
@@ -182,6 +186,8 @@ Rcpp::List grad_cpp(arma::vec theta, arma::vec gamma, arma::mat delta, arma::mat
       }
     }
   }
+
+  // std::cout << "in 3" << std::endl;
 
   // std::cout << "beta delta" << std::endl;
 
@@ -230,11 +236,15 @@ Rcpp::List grad_cpp(arma::vec theta, arma::vec gamma, arma::mat delta, arma::mat
   // std::cout << "t2 gamma" << std::endl;
   // std::cout << t2_gamma << std::endl;
 
+  // std::cout << "in 4" << std::endl;
+
   arma::mat grad_delta_temp = - arma::diagmat(exp_gamma) * X_wo_NA.t();
   arma::vec grad_delta_temp2 = arma::vectorise(arma::sum(delta_Psi, 0));
   arma::mat grad_delta_temp3 = arma::sum(delta_Psi, 0);
 
   arma::mat grad_delta = arma::vectorise(- arma::diagmat(exp_gamma) * X_wo_NA.t() * groups) + arma::vectorise(arma::sum(delta_Psi, 0));
+
+  // std::cout << "in 5" << std::endl;
 
 
   // arma::mat grad_delta = - arma::diagmat(exp_gamma) * X.t() * groups + arma::vectorise(arma::sum(delta_Psi, 0));
@@ -272,9 +282,15 @@ Rcpp::List grad_cpp(arma::vec theta, arma::vec gamma, arma::mat delta, arma::mat
   // std::cout << "penalty gamma" << std::endl;
   // std::cout << grad_gamma << std::endl;
 
+
+
   if (delta_penalized) {
-    grad_delta -= lambda_delta * (1 + eps) * (arma::sign(delta) % arma::pow(arma::abs(delta), eps));
+    // grad_delta -= lambda_delta * (1 + eps) * (arma::sign(delta) % arma::pow(arma::abs(delta), eps));
+    grad_delta -= lambda_delta * (1 + eps) * arma::vectorise((arma::sign(delta)) % (arma::pow(arma::abs(delta), eps)));
   }
+
+  // std::cout << "in 6" << std::endl;
+
 
   return Rcpp::List::create(
     Rcpp::Named("grad_theta") = grad_theta,
