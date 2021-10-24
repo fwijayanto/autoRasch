@@ -40,7 +40,9 @@
 checkRel <- function(obj){
 
 
-  beta <- obj$beta[which(!is.na(obj$beta))]
+  # beta <- obj$beta[which(!is.na(obj$beta))]
+  beta <- obj$beta.raw
+  # beta[which(is.na(beta))] <- 0
 
   if(is.null(obj$hessian)){
     if("gpcmdif" %in% class(obj)){
@@ -49,52 +51,56 @@ checkRel <- function(obj){
 
       settingRel$isHessian <- TRUE
       settingRel$optz_method <- "optim"
-      settingRel$optim_control <- list(maxit = 0, reltol = 1e-12)
+      settingRel$optim_control <- list(maxit = 0, reltol = 1e-12, fnscale = 1)
 
       obj_hessian <- autoRasch::gpcm_dif(obj$X, init_par = c(obj$theta,beta,obj$gamma,obj$delta),
-                                         groups_map = obj$groups_map, setting = settingRel, method = "novel")
+                                         groups_map = obj$groups_map, setting = settingRel, method = "fast")
 
-      obj[["hessian"]] <- obj_hessian$hessian
     } else if("pcmdif" %in% class(obj)){
 
       settingRel <- autoRaschOptions()
 
       settingRel$isHessian <- TRUE
       settingRel$optz_method <- "optim"
-      settingRel$optim_control <- list(maxit = 0, reltol = 1e-12)
+      settingRel$optim_control <- list(maxit = 0, reltol = 1e-12, fnscale = 1)
 
-      obj_hessian <- autoRasch::pcm_dif(obj$X, init_par = c(obj$theta,beta,obj$delta),
-                                         groups_map = obj$groups_map, setting = settingRel, method = "novel")
+      init_par <- c(obj$theta,beta,obj$gamma,obj$delta)
+      obj_hessian <- autoRasch::pcm_dif(obj$X, init_par = init_par,
+                                         groups_map = obj$groups_map, setting = settingRel, method = "fast")
 
-      obj[["hessian"]] <- obj_hessian$hessian
+
     } else if("gpcm" %in% class(obj)){
 
       settingRel <- autoRaschOptions()
 
       settingRel$isHessian <- TRUE
       settingRel$optz_method <- "optim"
-      settingRel$optim_control <- list(maxit = 0, reltol = 1e-12)
+      settingRel$optim_control <- list(maxit = 0, reltol = 1e-12, fnscale = 1)
 
       obj_hessian <- autoRasch::gpcm(obj$X, init_par = c(obj$theta,beta,obj$gamma),
-                                        setting = settingRel, method = "novel")
+                                        setting = settingRel, method = "fast")
 
-      obj[["hessian"]] <- obj_hessian$hessian
     } else if("pcm" %in% class(obj)){
 
       settingRel <- autoRaschOptions()
 
       settingRel$isHessian <- TRUE
       settingRel$optz_method <- "optim"
-      settingRel$optim_control <- list(maxit = 0, reltol = 1e-12)
+      settingRel$optim_control <- list(maxit = 0, reltol = 1e-12, fnscale = 1)
 
       obj_hessian <- autoRasch::pcm(obj$X, init_par = c(obj$theta,beta,obj$delta),
-                                        setting = settingRel, method = "novel")
+                                        setting = settingRel, method = "fast")
 
-      obj[["hessian"]] <- obj_hessian$hessian
     } else {
       stop("autoRasch ERROR: the separation reliability and standard error can not be computed without Hessian matrix.")
     }
+
+    NAvek <- which(is.na(obj$real_vek)) + length(obj$theta)
+    obj[["hessian"]] <- obj_hessian$hessian[-c(NAvek),-c(NAvek)]
+
   }
+
+  # View(obj$hessian)
 
   rmseroor <- stdError(obj)
 
@@ -106,7 +112,7 @@ checkRel <- function(obj){
   p_rel_idx <- (true_pvar)/(p_var)
 
   rmse_item <- rmseroor$rmsse_item
-  i_var <- var(obj$beta)
+  i_var <- var(beta)
   true_ivar <- i_var - (rmse_item^2)
   true_isd <- sqrt(true_ivar)
   i_sep_coeff <- true_isd/rmse_item
@@ -119,12 +125,19 @@ checkRel <- function(obj){
 
 stdError <- function(obj){
 
+  test <- (diag(solve(obj$hessian)))
+  # print(test)
+
   hess_theta <- obj$hessian[1:length(obj$theta),1:length(obj$theta)]
   varerr_p <- (diag(solve(hess_theta)))
+  # print(varerr_p)
   stderr_p <- sqrt(varerr_p)
   rmse_p <- sqrt(mean(varerr_p))
-  hess_beta <- obj$hessian[(length(obj$theta)+1):(length(obj$theta)+length(which(!is.na(obj$real_vek)))),(length(obj$theta)+1):(length(obj$theta)+length(which(!is.na(obj$real_vek))))]
+  # hess_beta <- obj$hessian[(length(obj$theta)+1):(length(obj$theta)+length(which(!is.na(obj$real_vek)))),(length(obj$theta)+1):(length(obj$theta)+length(which(!is.na(obj$real_vek))))]
+  hess_beta <- obj$hessian[(length(obj$theta)+1):(length(obj$theta)+length(obj$beta)),(length(obj$theta)+1):(length(obj$theta)+length(obj$beta))]
+  # hess_beta <- hess_beta[-c(which(is.na(diag(hess_beta)))),-c(which(is.na(diag(hess_beta))))]
   varerr_i <- (diag(solve(hess_beta)))
+  varerr_i <- varerr_i[c(which(!is.na(obj$real_vek)))]
   stderr_i <- sqrt(varerr_i)
   rmse_i <- sqrt(mean(varerr_i))
 
