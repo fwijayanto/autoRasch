@@ -32,19 +32,24 @@
 #' @export
 gpcm <- function(X, init_par = c(), setting = c(), method = c("fast","novel")){
   if(is.null(setting)){
-    setting <- autoRaschOptions()
+    settingPar <- autoRaschOptions()
   } else {
     if("aR_opt" %in% class(setting)){
+      settingPar <- setting
     } else {
       stop("The setting used should be a class of aR_opt!")
     }
   }
 
-  setting$fixed_par <- c("delta")
-  setting$isPenalized_delta <- FALSE
-  setting$optz_method <- "optim"
+  settingPar$fixed_par <- c("delta")
+  settingPar$isPenalized_delta <- FALSE
+  settingPar$optz_method <- "optim"
 
-  result <- pjmle(X = X, init_par = init_par, setting = setting, method = method)
+  if(!is.null(setting$optim_control)){
+    settingPar$optim_control <- setting$optim_control
+  }
+
+  result <- pjmle(X = X, init_par = init_par, setting = settingPar, method = method)
 
   class(result) <- c(class(result),"armodels","gpcm","autoRasch")
   return(result)

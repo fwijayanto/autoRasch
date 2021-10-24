@@ -58,6 +58,10 @@ gpcm_dif <- function(X, init_par = c(), groups_map = c(), setting = c(), method 
     settingPar$groups_map <- groups_map
   }
 
+  if(!is.null(setting$optim_control)){
+    settingPar$optim_control <- setting$optim_control
+  }
+
   result <- pjmle(X = X, init_par = init_par, setting = settingPar, method = method)
 
   class(result) <- c(class(result),"armodels","gpcmdif","autoRasch")

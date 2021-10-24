@@ -47,6 +47,11 @@ pcm_dif <- function(X, init_par = c(), groups_map = c(), setting = c(), method =
   } else {
     settingPar$optz_method <- setting$optz_method
   }
+
+  if(!is.null(setting$optim_control)){
+    settingPar$optim_control <- setting$optim_control
+  }
+
   if(is.null(groups_map)){
     if(is.null(settingPar$groups_map)){
       stop("groups_map must be designed to use the PCM-DIF!")
@@ -54,7 +59,6 @@ pcm_dif <- function(X, init_par = c(), groups_map = c(), setting = c(), method =
   } else {
     settingPar$groups_map <- groups_map
   }
-
 
   result <- pjmle(X = X, init_par = init_par, setting = settingPar, method = method)
 

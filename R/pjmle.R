@@ -120,7 +120,8 @@ pjmle <- function(X, init_par = c(), setting = c(), method = c("novel","fast")){
     (minRes <- optim(nlmPar, ll_fun, gr = gr_fun, hessian = opts$isHessian, dset = dataPrep$dset,
                      estPar_arr = estPar_arr, estLength_array = estLength_array, dataPrep = dataPrep, opts = opts,
                      fixLength_arr = fixLength_arr, fixValue = fixValue, fixed_par = opts$fixed_par,
-                     method = "BFGS", control = opts$optim_control))
+                     method = "BFGS", control = list(maxit = opts$optim_control$maxit, reltol =  opts$optim_control$reltol,
+                                                     fnscale = opts$optim_control$fnscale)))
 
     est <- minRes$par
     output[["loglik"]] <- -minRes$value
@@ -152,6 +153,7 @@ pjmle <- function(X, init_par = c(), setting = c(), method = c("novel","fast")){
         output[[cd]] <- est[c((sum(estLength_array[1:(parNo-1)])+1):(sum(estLength_array[1:parNo])))]
       }
       if(method[1] == "fast" & cd == "beta"){
+        output[["beta.raw"]] <- output[[cd]]
         output[[cd]] <- output[[cd]]*dataPrep$na_catVec
       }
     }
