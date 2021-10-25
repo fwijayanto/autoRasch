@@ -157,8 +157,6 @@ loglik_fun <- function(nlmPar, dset, opts, dataPrep,
     lnL <- lnL - (opts$lambda_delta*(sum(abs(delta)^(1+opts$eps))))
   }
 
-  print(-lnL)
-
   return(-lnL)
 }
 
