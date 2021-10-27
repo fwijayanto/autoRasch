@@ -70,7 +70,7 @@ checkRel <- function(obj){
       settingRel$optz_method <- "optim"
       settingRel$optim_control <- list(maxit = 0, reltol = 1e-12, fnscale = 1)
 
-      init_par <- c(obj$theta,beta,obj$gamma,obj$delta)
+      init_par <- c(obj$theta,beta,obj$delta)
       obj_hessian <- autoRasch::pcm_dif(obj$X, init_par = init_par,
                                          groups_map = obj$groups_map, setting = settingRel, method = method)
 
@@ -94,7 +94,7 @@ checkRel <- function(obj){
       settingRel$optz_method <- "optim"
       settingRel$optim_control <- list(maxit = 0, reltol = 1e-12, fnscale = 1)
 
-      obj_hessian <- autoRasch::pcm(obj$X, init_par = c(obj$theta,beta,obj$delta),
+      obj_hessian <- autoRasch::pcm(obj$X, init_par = c(obj$theta,beta),
                                         setting = settingRel, method = method)
 
     } else {
@@ -102,15 +102,17 @@ checkRel <- function(obj){
     }
 
     if(method == "fast"){
-      NAvek <- which(is.na(obj$real_vek)) + length(obj$theta)
-      obj[["hessian"]] <- obj_hessian$hessian[-c(NAvek),-c(NAvek)]
+      if(NA %in% obj$real_vek){
+        NAvek <- which(is.na(obj$real_vek)) + length(obj$theta)
+        obj[["hessian"]] <- obj_hessian$hessian[-c(NAvek),-c(NAvek)]
+      } else {
+        obj[["hessian"]] <- obj_hessian$hessian
+      }
     } else {
       obj[["hessian"]] <- obj_hessian$hessian
     }
 
   }
-
-  # View(obj$hessian)
 
   rmseroor <- stdError(obj)
 
@@ -134,9 +136,6 @@ checkRel <- function(obj){
 }
 
 stdError <- function(obj){
-
-  test <- (diag(solve(obj$hessian)))
-  # print(test)
 
   hess_theta <- obj$hessian[1:length(obj$theta),1:length(obj$theta)]
   varerr_p <- (diag(solve(hess_theta)))
