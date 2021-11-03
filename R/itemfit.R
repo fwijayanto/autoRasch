@@ -166,9 +166,9 @@ plot_fitStats <- function(objFit, toPlot = c("alpha","infit"), useName = FALSE, 
   }
 
   if(useName){
-    suppressWarnings(text(plotx, ploty, labels = text, font = font.text))
+    suppressWarnings(text(plotx, ploty, labels = text, ... = ...))
   } else {
-    suppressWarnings(text(plotx, ploty, font = font.text))
+    suppressWarnings(text(plotx, ploty, ... = ...))
   }
 
 }
