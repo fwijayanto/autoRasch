@@ -40,15 +40,15 @@
 #' @export
 pcm <- function(X, init_par = c(), setting = c(), method = c("fast","novel")){
 
-  # if(is.null(setting)){
+  if(is.null(setting)){
     settingPar <- autoRaschOptions()
-  # } else {
+  } else {
     if("aR_opt" %in% class(setting)){
       settingPar <- setting
     } else {
       stop("The setting used should be a class of aR_opt!")
     }
-  # }
+  }
 
   settingPar$fixed_par <- c("gamma","delta")
   settingPar$isPenalized_gamma <- FALSE
@@ -59,7 +59,9 @@ pcm <- function(X, init_par = c(), setting = c(), method = c("fast","novel")){
     settingPar$optim_control <- setting$optim_control
   }
 
-  result <- pjmle(X = X, init_par = init_par, setting = setting, method = method)
+  print(settingPar)
+
+  result <- pjmle(X = X, init_par = init_par, setting = settingPar, method = method)
 
   class(result) <- c(class(result),"armodels","pcm","autoRasch")
 
