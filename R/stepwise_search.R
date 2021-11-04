@@ -35,6 +35,7 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
                             prevData = c(), fileOutput = FALSE, tempFile = "temp_stepSearch.RData",
                             isConvert = FALSE, setting_par_iq = c(), setting_par_oq = c(), method = c("fast","novel")){
 
+  isLegacy <- FALSE
   namecsv <- paste(paste(strsplit(tempFile, "(\\.)")[[1]][1:(length(strsplit(tempFile, "(\\.)")[[1]])-1)],collapse = "."),".csv",sep = "")
   fullitem <- c(1:ncol(X))
 
