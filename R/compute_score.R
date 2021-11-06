@@ -353,8 +353,10 @@ compute_score <- function(X, incl_set, type = c("ipoqll","ipoqlldif"), groups_ma
 
 
   length(incl_set) <- ncol(dset)
-  res <- c(res, incl_set, iqll_params, oqll_params)
-  names(res) <- c("IQ-LL","OQ-LL",scoreName,rep("item no.",length(incl_set)),rep("iq-ll par.",length(iqll_params)),rep("oq-ll par.",length(oqll_params)))
+  # res <- c(res, incl_set, iqll_params, oqll_params)
+  # names(res) <- c("IQ-LL","OQ-LL",scoreName,rep("item no.",length(incl_set)),rep("iq-ll par.",length(iqll_params)),rep("oq-ll par.",length(oqll_params)))
+  res <- c(res, incl_set)
+  names(res) <- c("IQ-LL","OQ-LL",scoreName, rep("item no.",ncol(dset)))
   class(res) <- c(class(res),"score",type[1])
   return(res)
 
