@@ -750,7 +750,7 @@ plot_search <- function(obj, remOrdered = TRUE, locateMax = TRUE, ...){
       } else {
         labels <- labels.rem
       }
-      text(i,obj[i,3], pos = 1, labels = labels, cex = ifelse(!is.null(dotdotdot$cex),(0.8*dotdotdot$cex),(0.8)))
+      text(i,obj[i,3], pos = 1, labels = labels, cex = ifelse(!is.null(dotdotdot$cex),(0.9*dotdotdot$cex),(0.8)))
     }
   }
 
