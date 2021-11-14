@@ -103,10 +103,10 @@ autoRasch_options_default <- function(){
     lambda_out = 1,
     lambda_delta = 10,
     eps = 0.0,
-    randomized = FALSE,
+    randomized = TRUE,
     random.init.th = 1e-2,
     isHessian = TRUE,
-    cd_control = list("init.step" = 1, scale.down = 0.5, maxit.cd.higher = 500, maxit.cd.lower = 500, maxit.optim = 1e+4,
+    cd_control = list("init.step" = 0.7, scale.down = 0.15, maxit.cd.higher = 500, maxit.cd.lower = 500, maxit.optim = 1e+4,
                       abs.tol = 1e-12, max.diff.par = 1e-8)
   )
 
