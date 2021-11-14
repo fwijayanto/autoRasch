@@ -769,11 +769,13 @@ compute_scores_unparalleled <- function(X, incl_sets, type = c("ipoqll","ipoqlld
     # cat("\n length.init_oq : ",length(init_oq),"\n")
 
     # if(method[1] == "novel"){
+      log <- capture.output(
         score_res <- compute_score(dset, incl_set = incl_set, type = type, groups_map = groups_map,
                               init_par_iq = init_iq, init_par_oq = init_oq,
                               optim_control_iq = optim_control_iq, optim_control_oq = optim_control_oq,
                               setting_par_iq = setting_par_iq, setting_par_oq = setting_par_oq,
                               method = method)
+      )
     # } else {
     #   score_res <- compute_score_fast(dset, incl_set = incl_set, type = type, groups_map = groups_map,
     #                              init_par_iq = init_iq, init_par_oq = init_oq,
@@ -781,6 +783,7 @@ compute_scores_unparalleled <- function(X, incl_sets, type = c("ipoqll","ipoqlld
     #                              setting_par_iq = setting_par_iq, setting_par_oq = setting_par_oq)
     # }
 
+    print(i)
     length(incl_set) <- ncol(dset)
     res <- c(score_res)
     return(res)
@@ -827,10 +830,15 @@ compute_scores <- function(X, incl_sets, type = c("ipoqll","ipoqlldif"),
   }
 
 
-  cl <- parallel::makeCluster(cores)
-  # oFuture::registerDoFuture()
-  # future::plan(future::cluster, workers = cl)
-  doParallel::registerDoParallel(cl=cl, cores = cores)
+  checkOS <- Sys.info()
+  if(checkOS['sysname'] == "Linux"){
+    doParallel::registerDoParallel(cores = cores)
+  } else {
+    cl <- parallel::makeCluster(cores)
+    # oFuture::registerDoFuture()
+    # future::plan(future::cluster, workers = cl)
+    doParallel::registerDoParallel(cl=cl, cores = cores)
+  }
 
   scoreList <- compute_scores_unparalleled(X = X, incl_sets = incl_sets, type = type,
                                            step_direct = step_direct, groups_map = groups_map,
@@ -838,7 +846,12 @@ compute_scores <- function(X, incl_sets, type = c("ipoqll","ipoqlldif"),
                                           optim_control_iq = optim_control_iq, optim_control_oq = optim_control_oq,
                                           setting_par_iq = setting_par_iq, setting_par_oq = setting_par_oq, method = method)
 
-  parallel::stopCluster(cl)
+  checkOS <- Sys.info()
+  if(checkOS['sysname'] == "Linux"){
+    doParallel::stopImplicitCluster()
+  } else {
+    parallel::stopCluster(cl)
+  }
   foreach::registerDoSEQ()
 
   res <- scoreList
