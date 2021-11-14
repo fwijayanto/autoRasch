@@ -137,53 +137,67 @@ compute_score <- function(X, incl_set, type = c("ipoqll","ipoqlldif"), groups_ma
   # }
 
   if(is.null(setting_par_iq)){
-    setting_par_iq <- autoRaschOptions()
+    setting_iq <- autoRaschOptions()
+    if(type[1] == "ipoqlldif"){
+      setting_iq$optz_method <- "mixed"
+    } else {
+      setting_iq$optz_method <- "optim"
+    }
   } else {
     if("aR_opt" %in% class(setting_par_iq)){
+      setting_iq <- setting_par_iq
     } else {
       stop("The setting used should be a class of aR_opt!")
     }
   }
 
-  if(type[1] == "ipoqlldif"){
-    setting_par_iq$optz_method <- "mixed"
-  } else {
-    setting_par_iq$optz_method <- "optim"
-  }
-  setting_par_iq$isHessian <- FALSE
-  setting_par_iq$fixed_par <- fixed_par
-  setting_par_iq$isPenalized_delta <- isPenalized_delta
-  setting_par_iq$groups_map <- groups_map
-  setting_par_iq$randomized <- TRUE
 
-  iqll <- pjmle(incl_resp, init_par = init_par_iq, setting = setting_par_iq, method = method)
+
+  # if(type[1] == "ipoqlldif"){
+  #   setting_par_iq$optz_method <- "mixed"
+  # } else {
+  #   setting_par_iq$optz_method <- "optim"
+  # }
+  setting_iq$isHessian <- FALSE
+  setting_iq$fixed_par <- fixed_par
+  setting_iq$isPenalized_delta <- isPenalized_delta
+  setting_iq$groups_map <- groups_map
+  setting_iq$randomized <- TRUE
+
+  iqll <- pjmle(incl_resp, init_par = init_par_iq, setting = setting_iq, method = method)
 
   if(ncol(dset) == length(incl_set)){
     loglik_oqll <- NA
   } else {
     if(is.null(setting_par_oq)){
-      setting_par_oq <- autoRaschOptions()
+      setting_oq <- autoRaschOptions()
+      if(type[1] == "ipoqlldif"){
+        setting_oq$optz_method <- "mixed"
+      } else {
+        setting_oq$optz_method <- "optim"
+      }
     } else {
       if("aR_opt" %in% class(setting_par_oq)){
+        setting_oq <- setting_par_oq
       } else {
         stop("The setting used should be a class of aR_opt!")
       }
     }
 
-    if(type[1] == "ipoqlldif"){
-      setting_par_oq$optz_method <- "mixed"
-    } else {
-      setting_par_oq$optz_method <- "optim"
-    }
-    setting_par_oq$isHessian <- FALSE
-    setting_par_oq$fixed_par <- c("theta",fixed_par)
-    setting_par_oq$fixed_theta <- iqll$theta
-    setting_par_oq$isPenalized_delta <- isPenalized_delta
-    setting_par_oq$isPenalized_theta <- FALSE
-    setting_par_oq$groups_map <- groups_map
-    setting_par_oq$randomized <- TRUE
+    # if(type[1] == "ipoqlldif"){
+    #   setting_par_oq$optz_method <- "mixed"
+    # } else {
+    #   setting_par_oq$optz_method <- "optim"
+    # }
+    setting_oq$isHessian <- FALSE
+    setting_oq$fixed_par <- c("theta",fixed_par)
+    setting_oq$fixed_theta <- iqll$theta
+    setting_oq$isPenalized_delta <- isPenalized_delta
+    setting_oq$isPenalized_theta <- FALSE
+    setting_oq$groups_map <- groups_map
+    setting_oq$randomized <- TRUE
 
-    oqll <- pjmle(excl_resp, init_par = init_par_oq, setting = setting_par_oq, method = method)
+    oqll <- pjmle(excl_resp, init_par = init_par_oq, setting = setting_oq, method = method)
 
     loglik_oqll <- oqll$loglik
   }
