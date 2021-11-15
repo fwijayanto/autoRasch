@@ -702,7 +702,7 @@ compute_score <- function(X, incl_set, type = c("ipoqll","ipoqlldif"), groups_ma
 compute_scores_unparalleled <- function(X, incl_sets, type = c("ipoqll","ipoqlldif"),
                                         step_direct = c("fixed","forward","backward"), groups_map = c(),
                                         init_par_iq = c(), init_par_oq = c(), optim_control_iq = c(), optim_control_oq = c(),
-                                        setting_par_iq = c(), setting_par_oq = c(), method = c("fast","novel")){
+                                        setting_par_iq = c(), setting_par_oq = c(), method = c("fast","novel"), timeLimit = 3600){
 
 
   dset <- as.matrix(X)
@@ -770,11 +770,18 @@ compute_scores_unparalleled <- function(X, incl_sets, type = c("ipoqll","ipoqlld
 
     # if(method[1] == "novel"){
       log <- capture.output(
-        score_res <- compute_score(dset, incl_set = incl_set, type = type, groups_map = groups_map,
-                              init_par_iq = init_iq, init_par_oq = init_oq,
-                              optim_control_iq = optim_control_iq, optim_control_oq = optim_control_oq,
-                              setting_par_iq = setting_par_iq, setting_par_oq = setting_par_oq,
-                              method = method)
+        withCallingHandlers({
+          setTimeLimit(elapsed = timeLimit)
+          score_res <- compute_score(dset, incl_set = incl_set, type = type, groups_map = groups_map,
+                                init_par_iq = init_iq, init_par_oq = init_oq,
+                                optim_control_iq = optim_control_iq, optim_control_oq = optim_control_oq,
+                                setting_par_iq = setting_par_iq, setting_par_oq = setting_par_oq,
+                                method = method)
+          res <- c(score_res)
+        },
+          error = function(e){
+
+        })
       )
     # } else {
     #   score_res <- compute_score_fast(dset, incl_set = incl_set, type = type, groups_map = groups_map,
@@ -785,7 +792,7 @@ compute_scores_unparalleled <- function(X, incl_sets, type = c("ipoqll","ipoqlld
 
     print(i)
     length(incl_set) <- ncol(dset)
-    res <- c(score_res)
+
     return(res)
   }
 
@@ -813,7 +820,7 @@ compute_scores <- function(X, incl_sets, type = c("ipoqll","ipoqlldif"),
                            step_direct = c("fixed","forward","backward"), groups_map = c(),
                            init_par_iq = c(), init_par_oq = c(), optim_control_iq = c(), optim_control_oq = c(),
                            setting_par_iq = c(), setting_par_oq = c(),
-                           cores = NULL, method = c("fast","novel")){
+                           cores = NULL, method = c("fast","novel"), timeLimit = 3600){
 
 
   incl_sets <- as.matrix(incl_sets)
@@ -844,7 +851,7 @@ compute_scores <- function(X, incl_sets, type = c("ipoqll","ipoqlldif"),
                                            step_direct = step_direct, groups_map = groups_map,
                                           init_par_iq = init_par_iq, init_par_oq = init_par_oq,
                                           optim_control_iq = optim_control_iq, optim_control_oq = optim_control_oq,
-                                          setting_par_iq = setting_par_iq, setting_par_oq = setting_par_oq, method = method)
+                                          setting_par_iq = setting_par_iq, setting_par_oq = setting_par_oq, method = method, timeLimit = timeLimit)
 
   checkOS <- Sys.info()
   if(checkOS['sysname'] == "Linux"){
