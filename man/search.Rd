@@ -38,7 +38,6 @@ backward_search(
   isTracked = TRUE,
   isContinued = FALSE,
   prevData = c(),
-  isLegacy = FALSE,
   fileOutput = FALSE,
   tempFile = "temp_backSearch.RData",
   isConvert = FALSE,
@@ -83,6 +82,8 @@ plot_search(obj, remOrdered = TRUE, locateMax = TRUE, ...)
 \item{setting_par_iq}{a list of the optimization control setting parameters for the included set. See \code{setting} parameter in \code{\link[autoRasch:autoRaschOptions]{autoRaschOptions()}}.}
 
 \item{setting_par_oq}{a list of the optimization control setting parameters for the included set. See \code{setting} parameter in \code{\link[autoRasch:autoRaschOptions]{autoRaschOptions()}}.}
+
+\item{method}{The implementation option of log likelihood function. \code{fast} using a \code{c++} implementation and \code{novel} using an \code{R} implementation.}
 
 \item{object}{The object of class \code{'search'}.}
 

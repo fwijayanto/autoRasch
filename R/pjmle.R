@@ -277,9 +277,11 @@ coord.descent <- function(nlmPar, dset, dataPrep, opts, fixed_par = c(), step.ve
   delta.vector <- c()
   for(n.par in n.par.idx){
     stepsize <- step.vec[n.par]
+
     ll.val.old <- ll_fun(nlmpar.new, dset = dataPrep$dset, estPar_arr = estPar_arr, estLength_array = estLength_array,
                          fixLength_arr = fixLength_arr, fixed_par = fixed_par, fixValue = fixValue, opts = opts,
                          dataPrep = dataPrep)
+
     ll.val.baseline <- ll.val.old
     nlmpar.old <- nlmpar.newminus <- nlmpar.newplus <- nlmpar.new
 

@@ -2,7 +2,6 @@
 % Please edit documentation in R/compute_score.R
 \name{compute_score}
 \alias{compute_score}
-\alias{compute_scores_unparalleled}
 \alias{compute_scores}
 \alias{summary.score}
 \title{Compute the In-plus-out-of-questionnaire log likelihood (with DIF) (IPOQ-LL(-DIF))}
@@ -11,21 +10,6 @@ compute_score(
   X,
   incl_set,
   type = c("ipoqll", "ipoqlldif"),
-  groups_map = c(),
-  init_par_iq = c(),
-  init_par_oq = c(),
-  optim_control_iq = c(),
-  optim_control_oq = c(),
-  setting_par_iq = c(),
-  setting_par_oq = c(),
-  method = c("fast", "novel")
-)
-
-compute_scores_unparalleled(
-  X,
-  incl_sets,
-  type = c("ipoqll", "ipoqlldif"),
-  step_direct = c("fixed", "forward", "backward"),
   groups_map = c(),
   init_par_iq = c(),
   init_par_oq = c(),
@@ -49,7 +33,8 @@ compute_scores(
   setting_par_iq = c(),
   setting_par_oq = c(),
   cores = NULL,
-  method = c("fast", "novel")
+  method = c("fast", "novel"),
+  timeLimit = 3600
 )
 
 \method{summary}{score}(object, ...)
@@ -75,6 +60,8 @@ compute_scores(
 
 \item{setting_par_oq}{The coordinate descent optimisation setting of the excluded set. See \code{\link[autoRasch:autoRaschOptions]{autoRasch::autoRaschOptions()}} \code{cd_control} parameter.}
 
+\item{method}{The implementation option of log likelihood function. \code{fast} using a \code{c++} implementation and \code{novel} using an \code{R} implementation.}
+
 \item{incl_sets}{A matrix as a results of a \code{rbind} of \code{incl_set}.}
 
 \item{step_direct}{How will you compute the criterion score. \code{fixed} for the given itemset,
@@ -82,6 +69,8 @@ compute_scores(
 \code{backward}  computes all the scores of the possible combination of items if an item is removed to the given set.}
 
 \item{cores}{Number of cores that is used in the paralellization.}
+
+\item{timeLimit}{The maximum excution time to compute the criterion score. Exceeding the setting time, the computation will be halted.}
 
 \item{object}{The object from the class \code{score}. The result of the score computation.}
 

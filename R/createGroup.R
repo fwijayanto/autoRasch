@@ -7,7 +7,7 @@
 #' @param contMethod The method of how to handle a continuous variable (e.g., mean, median, etc). This parameter is passing a function used to split the variable into binary. The default is \code{mean}.
 #'
 #' @return
-#' A binary matrix that maps respondents to the groups that they belongs to.
+#' A binary matrix that maps respondents to the groups that the respondents belongs to.
 #'
 #' @export
 createGroup <- function(backInfo, idxUsed = NULL, contMethod = "mean"){

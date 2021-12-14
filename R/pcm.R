@@ -8,6 +8,7 @@
 #' rows represent individuals, columns represent items.
 #' @param init_par a vector of initial values of the estimated parameters.
 #' @param setting a list of the optimization control setting parameters. See \code{\link[autoRasch:autoRaschOptions]{autoRaschOptions()}.}
+#' @param method The implementation option of log likelihood function. \code{fast} using a \code{c++} implementation and \code{novel} using an \code{R} implementation.
 #'
 #' @return
 #' \strong{\code{pcm()} will return a \code{\link[base:list]{list}} which contains:}
@@ -58,8 +59,6 @@ pcm <- function(X, init_par = c(), setting = c(), method = c("fast","novel")){
   if(!is.null(setting$optim_control)){
     settingPar$optim_control <- setting$optim_control
   }
-
-  print(settingPar)
 
   result <- pjmle(X = X, init_par = init_par, setting = settingPar, method = method)
 

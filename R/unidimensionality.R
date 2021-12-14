@@ -27,9 +27,10 @@ check.unidim <- function(x, is.polychor = TRUE, se = "robust", estimator = "WLSM
 
   model <- paste('dimension  =~',var.names)
   if(is.polychor){
-    unidim <- cfa(model, data=resid, ordered = c(var.name), missing = "listwise", se = se, estimator = estimator, test=test,
-                  optim.method = "nlminb",optim.force.converged = TRUE, optim.dx.tol = 1e-3,check.gradient = FALSE,
-                  bootstrap = 1000, start = "Mplus")
+    # unidim <- cfa(model, data=resid, ordered = c(var.name), missing = "listwise", se = se, estimator = estimator, test=test,
+    #               optim.method = "optim",optim.force.converged = TRUE, optim.dx.tol = 1e-3,check.gradient = FALSE,
+    #               bootstrap = 1000, start = "Mplus")
+    unidim <- cfa(model, data=resid, ordered = c(var.name), se = se, estimator = estimator, test=test)
   }else {
     unidim <- cfa(model, data=resid, missing = "pairwise", se = se, estimator = estimator, test=test)
   }

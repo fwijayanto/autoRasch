@@ -31,6 +31,8 @@ rows represent individuals, columns represent items.}
 
 \item{setting}{a list of the optimization control setting parameters.See \code{\link[autoRasch:autoRaschOptions]{autoRaschOptions()}}}
 
+\item{method}{The implementation option of log likelihood function. \code{fast} using a \code{c++} implementation and \code{novel} using an \code{R} implementation.}
+
 \item{obj}{The object of class \code{'pcmdif'}.}
 
 \item{isAlpha}{Boolean value that indicates whether the discrimination parameters is needed to be estimated or not.

@@ -14,7 +14,7 @@ createGroup(backInfo, idxUsed = NULL, contMethod = "mean")
 \item{contMethod}{The method of how to handle a continuous variable (e.g., mean, median, etc). This parameter is passing a function used to split the variable into binary. The default is \code{mean}.}
 }
 \value{
-A binary matrix that maps respondents to the groups that they belongs to.
+A binary matrix that maps respondents to the groups that the respondents belongs to.
 }
 \description{
 This function automatically create a mapping matrix based on the existing DIF inducing covariates.

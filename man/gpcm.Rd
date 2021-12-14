@@ -20,6 +20,8 @@ rows represent individuals, columns represent items.}
 
 \item{setting}{a list of the optimization control setting parameters. See \code{\link[autoRasch:autoRaschOptions]{autoRaschOptions()}.}}
 
+\item{method}{The implementation option of log likelihood function. \code{fast} using a \code{c++} implementation and \code{novel} using an \code{R} implementation.}
+
 \item{object}{The object of class \code{'gpcm'}.}
 
 \item{...}{Further arguments to be passed.}

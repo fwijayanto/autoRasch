@@ -8,6 +8,7 @@
 #' @param init_par a vector of initial values of the estimated parameters.
 #' @param groups_map Binary matrix. Respondents membership to DIF groups; rows represent individuals, column represent group partitions.
 #' @param setting a list of the optimization control setting parameters.See \code{\link[autoRasch:autoRaschOptions]{autoRaschOptions()}}
+#' @param method The implementation option of log likelihood function. \code{fast} using a \code{c++} implementation and \code{novel} using an \code{R} implementation.
 #'
 #' @return
 #' \strong{\code{pcm_dif()} will return a \code{\link[base:list]{list}} which contains:}

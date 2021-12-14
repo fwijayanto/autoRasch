@@ -14,7 +14,8 @@ Imports:
 Suggests: 
     testthat (>= 3.0.0),
     knitr,
-    rmarkdown
+    rmarkdown,
+    markdown
 Description: This package helps user to do Rasch analysis (semi-)automatically which is comparable to the standard Rasch analysis using common statistics.
 License: GPL-2
 VignetteBuilder: knitr

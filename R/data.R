@@ -1,6 +1,6 @@
 #' The Inhomogenous Polytomous Dataset
 #'
-#' The artificial dataset of a polytomous responses (five categories) which 
+#' The artificial dataset of a polytomous responses (five categories) which
 #' contains three subsets with different discrimination values.
 #' To reproduce this dataset: \cr
 #' \code{poly_inh_dset <- generate_data(responseType = "discriminate", ncat = 5, alpha = c(0.04,0.045,0.05,0.055,0.06,0.065,0.2,0.25,0.3,0.35,0.4,0.45,2.6,2.65,2.7,2.75,2.8,2.85,2.9))}
@@ -16,7 +16,7 @@
 
 #' A Shorter Inhomogenous Polytomous Dataset
 #'
-#' The artificial dataset of a polytomous responses (three categories) which 
+#' The artificial dataset of a polytomous responses (three categories) which
 #' contains three subsets with different discrimination values.
 #' To reproduce this dataset: \cr
 #' \code{short_poly_data <- generate_data(alpha = c(0.02,0.5,2), nitem = 3, ndim = 3,ncat = 5, theta = c(-6,6), beta = c(-4,4), ntheta = 151)}
@@ -29,10 +29,22 @@
 #' @rdname short_poly_data
 "short_poly_data"
 
+#' A Shorter Polytomous Dataset with DIF
+#'
+#' The artificial dataset of a polytomous responses (three categories) which
+#' contains three non-DIF items and a DIF item.
+#'
+#' @docType data
+#'
+#' @usage data(shortDIF)
+#'
+#' @rdname shortDIF
+"shortDIF"
+
 
 #' The Inhomogenous Polytomous Dataset containing DIF items
 #'
-#' The artificial data set of a polytomous responses (five categories) which 
+#' The artificial data set of a polytomous responses (five categories) which
 #' contains three subsets with different discrimination values and two DIF-items.
 #'
 #' @docType data
@@ -94,8 +106,8 @@
 
 
 #' Inhomogenous Dichotomous Data Set
-#' 
-#' Data set with binary type responses containing three subsets 
+#'
+#' Data set with binary type responses containing three subsets
 #' with different discrimination values.
 #'
 #' @docType data
@@ -107,8 +119,8 @@
 
 
 #' Uncorrelated Multidimensional Dichotomous Data Set
-#' 
-#' Data set with binary type responses containing three subsets which 
+#'
+#' Data set with binary type responses containing three subsets which
 #' represent different uncorrelated dimensions.
 #'
 #' @docType data
@@ -120,8 +132,8 @@
 
 
 #' Uncorrelated Multidimensional Polytomous Data Set
-#' 
-#' Data set with polytomous responses (five categories) containing 
+#'
+#' Data set with polytomous responses (five categories) containing
 #' three subsets which represent different uncorrelated dimensions.
 #'
 #' @docType data
@@ -133,8 +145,8 @@
 
 
 #' Multi-testlets Polytomous Data Set
-#' 
-#' Generate data set which consist of two bundle items with different level of 
+#'
+#' Generate data set which consist of two bundle items with different level of
 #' local dependency effect.
 #'
 #' @docType data
@@ -146,8 +158,8 @@
 
 
 #' Within-item Multidimensional Polytomous Data Set
-#' 
-#' Generate multidimensional dataset with some items relate to more than one 
+#'
+#' Generate multidimensional dataset with some items relate to more than one
 #' dimension.
 #'
 #' @docType data

@@ -17,6 +17,7 @@
 #' @param isConvert A logical value whether it is wanted to recompute the score of the search results using IPOQ-LL-DIF criterion.
 #' @param setting_par_iq a list of the optimization control setting parameters for the included set. See \code{setting} parameter in \code{\link[autoRasch:autoRaschOptions]{autoRaschOptions()}}.
 #' @param setting_par_oq a list of the optimization control setting parameters for the included set. See \code{setting} parameter in \code{\link[autoRasch:autoRaschOptions]{autoRaschOptions()}}.
+#' @param method The implementation option of log likelihood function. \code{fast} using a \code{c++} implementation and \code{novel} using an \code{R} implementation.
 #'
 #' @return
 #' A matrix of the itemsets that obtain the highest scores for each number of items in the included set and it scores (IQ-LL,OQ-LL, and IPOQ-LL).
@@ -416,11 +417,13 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
 #' @export
 backward_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = c(), groups_map = c(), cores = NULL,
                             optim_control_iq = c(), optim_control_oq = c(), isTracked = TRUE, isContinued = FALSE,
-                            prevData = c(), isLegacy = FALSE, fileOutput = FALSE, tempFile = "temp_backSearch.RData",
+                            prevData = c(), fileOutput = FALSE, tempFile = "temp_backSearch.RData",
                             isConvert = FALSE, setting_par_iq = c(), setting_par_oq = c(), method = c("fast","novel")){
 
   namecsv <- paste(paste(strsplit(tempFile, "(\\.)")[[1]][1:(length(strsplit(tempFile, "(\\.)")[[1]])-1)],collapse = "."),".csv",sep = "")
   fullitem <- c(1:ncol(X))
+
+  isLegacy <- FALSE
 
   # if(isLegacy){
   #   optim_control_iq <- list(maxit=5e+2, reltol=1e-21, fnscale = 10)
