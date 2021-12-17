@@ -185,7 +185,7 @@ generate_data <- function(responseType = "multidim.nocorrel", theta = c(-3,3), s
   if(!is.null(dim.members)){
 
     test.mat <- c()
-    for(i in 1:length(dim.members)){
+    for(i in seq_along(dim.members)){
       temp <- rep(0,(nitem*ndim))
       temp[dim.members[[i]]] <- 1
       temp <- rep(temp, each=(ncat-1))
@@ -234,7 +234,7 @@ generate_data <- function(responseType = "multidim.nocorrel", theta = c(-3,3), s
   D.mult <- matrix(rep(diag(1,nrow = nthres)%*%D.mult,ntheta), nrow = nthres)
 
   mt_vek <- ncol(D.mat)
-  mt_ind <- rep(1:nrow(D.mat),each = mt_vek)
+  mt_ind <- rep(seq_len(nrow(D.mat)),each = mt_vek)
 
   if(length(alpha) < (nitem*ndim)){
     if(length(alpha) == 1){
@@ -259,7 +259,7 @@ generate_data <- function(responseType = "multidim.nocorrel", theta = c(-3,3), s
 
   if(responseType == "testlet"){
     mat.lambda <- c()
-    for(i in 1:length(sdlambda)){
+    for(i in seq_along(sdlambda)){
       lambda <- rnorm(ntheta, mean = 0, sd = sdlambda[i])
       lambda <- rep(lambda, (nitem*(ncat-1)))
       mat.lambda.temp <- matrix(lambda, nrow = ntheta, ncol = (nitem*(ncat-1)))
@@ -270,7 +270,7 @@ generate_data <- function(responseType = "multidim.nocorrel", theta = c(-3,3), s
   }
 
   if(ncat > 2){
-    pmat.l <- tapply(1L:length(D.vector), mt_ind, function(xin){
+    pmat.l <- tapply(seq_along(D.vector), mt_ind, function(xin){
 
       discr.diff <- t(diff[,xin])*(alphas[xin])
 
@@ -297,7 +297,7 @@ generate_data <- function(responseType = "multidim.nocorrel", theta = c(-3,3), s
 
     pmat <- matrix(unlist(pmat.l), nrow = length(B), byrow = FALSE)
 
-    mt_ind <- rep(1:nrow(D.mat),each = (mt_vek+1))
+    mt_ind <- rep(seq_len(nrow(D.mat)), each = (mt_vek+1))
 
     datagen <- apply(pmat, 1, function(pmat.r) {                       #runs over missing structures
       pmat.t <- pmat.r
@@ -332,7 +332,7 @@ generate_data <- function(responseType = "multidim.nocorrel", theta = c(-3,3), s
       disc.diff <- exp(t(diff[,idx])*alphas[idx])
       Pr <- disc.diff/(1+disc.diff)
 
-      for(i in 1:length(Pr)){
+      for(i in seq_along(Pr)){
         X <- cbind(X,rbinom(1,1,Pr[i]))
       }
 

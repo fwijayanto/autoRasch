@@ -15,7 +15,7 @@ createGroup <- function(backInfo, idxUsed = NULL, contMethod = "mean"){
   bckInfo <- as.matrix(backInfo)
   rownum <- nrow(bckInfo)
   if(is.null(idxUsed)){
-    difCov <- c(1:ncol(bckInfo))
+    difCov <- seq_len(ncol(bckInfo))
   } else {
     difCov <- idxUsed
   }
@@ -23,7 +23,7 @@ createGroup <- function(backInfo, idxUsed = NULL, contMethod = "mean"){
   contThMethod <- contMethod
   tempMap <- c()
 
-  for(i in 1:length(difCov)){
+  for(i in seq_along(difCov)){
     tempLevel <- levels(factor(bckInfo[,difCov[i]]))
     tempFact <- length(tempLevel)
     ### For continuous variables ###

@@ -38,10 +38,10 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
 
   isLegacy <- FALSE
   namecsv <- paste(paste(strsplit(tempFile, "(\\.)")[[1]][1:(length(strsplit(tempFile, "(\\.)")[[1]])-1)],collapse = "."),".csv",sep = "")
-  fullitem <- c(1:ncol(X))
+  fullitem <- seq_len(ncol(X))
 
   if(is.null(incl_set)){
-    incl_set <- c(1:ncol(X))
+    incl_set <- seq_len(ncol(X))
   }
 
   # if(isLegacy){
@@ -421,7 +421,7 @@ backward_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
                             isConvert = FALSE, setting_par_iq = c(), setting_par_oq = c(), method = c("fast","novel")){
 
   namecsv <- paste(paste(strsplit(tempFile, "(\\.)")[[1]][1:(length(strsplit(tempFile, "(\\.)")[[1]])-1)],collapse = "."),".csv",sep = "")
-  fullitem <- c(1:ncol(X))
+  fullitem <- seq_len(ncol(X))
 
   isLegacy <- FALSE
 
@@ -726,18 +726,18 @@ plot_search <- function(obj, remOrdered = TRUE, locateMax = TRUE, ...){
     } else if("ipoqlldif" %in% class(obj)){
       ylab <- "IPOQ-LL-DIF"
     }
-    suppressWarnings(plot(x = c(1:nrow(obj)), y = obj[,3], ylab = ylab, xlab = expression('|S'['in']*'|'), xlim = c(nrow(obj),1), ... = ...))
+    suppressWarnings(plot(x = seq_len(nrow(obj)), y = obj[,3], ylab = ylab, xlab = expression('|S'['in']*'|'), xlim = c(nrow(obj),1), ... = ...))
   } else if((is.null(dotdotdot$xlab) | is.null(dotdotdot$ylab))){
     if("ipoqll" %in% class(obj)){
       ylab <- "IPOQ-LL"
     } else if("ipoqlldif" %in% class(obj)){
       ylab <- "IPOQ-LL-DIF"
     }
-    suppressWarnings(plot(x = c(1:nrow(obj)), y = obj[,3], ylab = ylab, xlab = expression('|S'['in']*'|'), ... = ...))
+    suppressWarnings(plot(x = seq_len(nrow(obj)), y = obj[,3], ylab = ylab, xlab = expression('|S'['in']*'|'), ... = ...))
   } else if((is.null(dotdotdot$xlim))){
-    suppressWarnings(plot(x = c(1:nrow(obj)), y = obj[,3], xlim = c(nrow(obj),1), ... = ...))
+    suppressWarnings(plot(x = seq_len(nrow(obj)), y = obj[,3], xlim = c(nrow(obj),1), ... = ...))
   } else {
-    suppressWarnings(plot(x = c(1:nrow(obj)), y = obj[,3], ... = ...))
+    suppressWarnings(plot(x = seq_len(nrow(obj)), y = obj[,3], ... = ...))
   }
 
   if(remOrdered){

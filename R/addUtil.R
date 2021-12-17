@@ -66,7 +66,7 @@ rescore <- function(X, itemno, collapseCat){
   nfactor <- factor(tempResp)
   catLevel <- levels(nfactor)
 
-  for(j in 1:length(catLevel)){
+  for(j in seq_along(catLevel)){
     tempResp[which(tempResp >= as.numeric(catLevel[j]))] <- tempResp[which(tempResp >= as.numeric(catLevel[j]))] - (as.numeric(catLevel[j]) - (minResp+(j-1)))
     nfactor <- factor(tempResp)
     catLevel <- levels(nfactor)

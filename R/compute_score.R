@@ -138,9 +138,9 @@ compute_score <- function(X, incl_set, type = c("ipoqll","ipoqlldif"), groups_ma
       mt_vek_ori <- apply(dset, 2L, max, na.rm = TRUE)
       mt_vek_ori <- max(mt_vek_ori)
 
-      mt_vek_incl <- apply(matrix(dset[,c(incl_set)],ncol = length(c(1:ncol(dset))[c(incl_set)])), 2L, max, na.rm = TRUE)
+      mt_vek_incl <- apply(matrix(dset[,c(incl_set)],ncol = length(seq_len(ncol(dset))[c(incl_set)])), 2L, max, na.rm = TRUE)
 
-      mt_idx_incl <- rep(c(1:length(mt_vek_incl)),mt_vek_incl)
+      mt_idx_incl <- rep(seq_along(mt_vek_incl),mt_vek_incl)
       betalist_incl <- as.vector(unlist(tapply(iqll$beta, mt_idx_incl, function(x){
         temp <- c(x,rep(0,(mt_vek_ori-length(x))))
         return(temp)
@@ -173,9 +173,9 @@ compute_score <- function(X, incl_set, type = c("ipoqll","ipoqlldif"), groups_ma
     } else {
       if(method[1] == "novel"){
 
-        mt_vek_excl <- apply(matrix(dset[,-c(incl_set)],ncol = length(c(1:ncol(dset))[-c(incl_set)])), 2L, max, na.rm = TRUE)
+        mt_vek_excl <- apply(matrix(dset[,-c(incl_set)],ncol = length(seq_len(ncol(dset))[-c(incl_set)])), 2L, max, na.rm = TRUE)
 
-        mt_idx_excl <- rep(c(1:length(mt_vek_excl)),mt_vek_excl)
+        mt_idx_excl <- rep(seq_along(mt_vek_excl), mt_vek_excl)
 
         betalist_excl <- as.vector(unlist(tapply(oqll$beta, mt_idx_excl, function(x){
           temp <- c(x,rep(0,(mt_vek_ori-length(x))))
@@ -211,9 +211,9 @@ compute_score <- function(X, incl_set, type = c("ipoqll","ipoqlldif"), groups_ma
       mt_vek_ori <- apply(dset, 2L, max, na.rm = TRUE)
       mt_vek_ori <- max(mt_vek_ori)
 
-      mt_vek_incl <- apply(matrix(dset[,c(incl_set)],ncol = length(c(1:ncol(dset))[c(incl_set)])), 2L, max, na.rm = TRUE)
+      mt_vek_incl <- apply(matrix(dset[,c(incl_set)],ncol = length(seq_len(ncol(dset))[c(incl_set)])), 2L, max, na.rm = TRUE)
 
-      mt_idx_incl <- rep(c(1:length(mt_vek_incl)),mt_vek_incl)
+      mt_idx_incl <- rep(seq_along(mt_vek_incl), mt_vek_incl)
 
       betalist_incl <- as.vector(unlist(tapply(iqll$beta, mt_idx_incl, function(x){
         temp <- c(x,rep(0,(mt_vek_ori-length(x))))
@@ -245,9 +245,9 @@ compute_score <- function(X, incl_set, type = c("ipoqll","ipoqlldif"), groups_ma
 
       if(method[1] == "novel"){
 
-        mt_vek_excl <- apply(matrix(dset[,-c(incl_set)],ncol = length(c(1:ncol(dset))[-c(incl_set)])), 2L, max, na.rm = TRUE)
+        mt_vek_excl <- apply(matrix(dset[,-c(incl_set)],ncol = length(seq_len(ncol(dset))[-c(incl_set)])), 2L, max, na.rm = TRUE)
 
-        mt_idx_excl <- rep(c(1:length(mt_vek_excl)),mt_vek_excl)
+        mt_idx_excl <- rep(seq_along(mt_vek_incl), mt_vek_incl)
 
         betalist_excl <- as.vector(unlist(tapply(oqll$beta, mt_idx_excl, function(x){
           temp <- c(x,rep(0,(mt_vek_ori-length(x))))
@@ -319,7 +319,7 @@ compute_scores_unparalleled <- function(X, incl_sets, type = c("ipoqll","ipoqlld
   }
 
   if(step_direct[1] == "forward"){
-    excl_set <- c(1:ncol(dset))[-c(incl_sets)]
+    excl_set <- seq_len(ncol(dset))[-c(incl_sets)]
     add_items <- t(combn(excl_set,1))
     rep_itemsets <- matrix(rep.int(incl_sets,length(add_items)), nrow = length(add_items), byrow = TRUE)
     incl_sets <- cbind(rep_itemsets,add_items)
@@ -335,7 +335,7 @@ compute_scores_unparalleled <- function(X, incl_sets, type = c("ipoqll","ipoqlld
 
   i <- NULL
 
-  scoreList <- foreach(i=1:nrow(incl_sets), .combine = rbind, .errorhandling = "stop") %dopar% {
+  scoreList <- foreach(i=seq_len(nrow(incl_sets)), .combine = rbind, .errorhandling = "stop") %dopar% {
 
     incl_set <- incl_sets[i,]
     incl_set <- incl_set[!is.na(incl_set)]
@@ -480,8 +480,8 @@ iqll_init <- function(dset, prev_incl_set, prev_par_iq, prev_par_oq, incl_set, d
   nlmPar.old.iq <- prev_par_iq
   nlmPar.new.iq <- c()
 
-  old.set.oq <- c(1:ncol(dset))[-c(prev_incl_set)]
-  new.set.oq <- c(1:ncol(dset))[-c(incl_set)]
+  old.set.oq <- seq_len(ncol(dset))[-c(prev_incl_set)]
+  new.set.oq <- seq_len(ncol(dset))[-c(incl_set)]
   old.dataset.oq <- as.matrix(dset[,old.set.oq])
   nlmPar.old.oq <- prev_par_oq
 
@@ -544,8 +544,8 @@ oqll_init <- function(dset, prev_incl_set, prev_par_iq, prev_par_oq, incl_set, d
   }
   nlmPar.old.iq <- prev_par_iq
 
-  old.set.oq <- c(1:ncol(dset))[-c(prev_incl_set)]
-  new.set.oq <- c(1:ncol(dset))[-c(incl_set)]
+  old.set.oq <- seq_len(ncol(dset))[-c(prev_incl_set)]
+  new.set.oq <- seq_len(ncol(dset))[-c(incl_set)]
   old.dataset.oq <- as.matrix(dset[,old.set.oq])
   nlmPar.old.oq <- prev_par_oq
   nlmPar.new.oq <- c()
@@ -602,7 +602,7 @@ oqll_init <- function(dset, prev_incl_set, prev_par_iq, prev_par_oq, incl_set, d
 
 insert.at <- function(a, pos, max.nlmpar){
   addLast <- FALSE
-  pos <- (c(pos)-c(1:length(pos)))
+  pos <- (c(pos)-c(seq_along(pos)))
 
   if(pos[length(pos)] == (max.nlmpar-length(pos))){
     pos <- pos[-c(length(pos))]

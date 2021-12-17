@@ -126,11 +126,11 @@ fitStats.pcm <- function(obj, isAlpha = TRUE, isTraced = FALSE){
   #   })))
   # n.th <- max(mt_vek)
 
-  # mt_vek <- as.vector(tapply(obj$real_vek, rep(1:length(mt_vek),mt_vek), sum, na.rm = TRUE))
-  mt_idx <- rep(1:length(mt_vek), mt_vek)
+  # mt_vek <- as.vector(tapply(obj$real_vek, rep(seq_along(mt_vek),mt_vek), sum, na.rm = TRUE))
+  mt_idx <- rep(seq_along(mt_vek), mt_vek)
 
   mult_mt_vek <- rep(mt_vek, nrow(X))
-  mult_mt_idx <- rep(1:length(mult_mt_vek), mult_mt_vek)
+  mult_mt_idx <- rep(seq_along(mult_mt_vek), mult_mt_vek)
 
   xna.mat <- matrix(1,nrow = nrow(X), ncol = ncol(X))
   idx <- which(is.na(X))
@@ -175,7 +175,7 @@ fitStats.pcm <- function(obj, isAlpha = TRUE, isTraced = FALSE){
   Emat <- pmat * mt_seq
 
   mult_mt_vek0 <- rep(mt_vek0, nrow(X))
-  mult_mt_idx0 <- rep(1:length(mult_mt_vek0), mult_mt_vek0)
+  mult_mt_idx0 <- rep(seq_along(mult_mt_vek0), mult_mt_vek0)
 
   Emat <- as.vector(tapply(as.vector(Emat), mult_mt_idx0, function(y){
     temp <- sum((y),na.rm = TRUE)
@@ -285,7 +285,7 @@ summary.pcm <- function(object, ...){
     cat("\n\n")
     cat("The estimated difficulty scores:")
     cat("\n")
-    reported_beta <- unlist(tapply(obj$beta,rep(1:length(obj$mt_vek),obj$mt_vek),function(x){
+    reported_beta <- unlist(tapply(obj$beta,rep(seq_along(obj$mt_vek),obj$mt_vek),function(x){
       if(length(x) < max(obj$mt_vek)){
         x <- c(x,rep(NA,(max(obj$mt_vek)-length(x))))
         x

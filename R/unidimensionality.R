@@ -20,7 +20,7 @@ check.unidim <- function(x, is.polychor = TRUE, se = "robust", estimator = "WLSM
   resid <- x
 
   if(is.null(dim(resid))){
-    resid <- matrix(resid,ncol = 1,dimnames = list(c(1:length(resid)), c("item")))
+    resid <- matrix(resid,ncol = 1,dimnames = list(seq_along(resid), c("item")))
   }
   var.name <- names(as.data.frame(resid))
   var.names <- substr(paste(paste(var.name,"+",sep = ""),collapse = ""),1,nchar(paste(paste(var.name,"+",sep = ""),collapse = ""))-1)

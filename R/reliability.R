@@ -137,7 +137,7 @@ checkRel <- function(obj){
 
 stdError <- function(obj){
 
-  hess_theta <- obj$hessian[1:length(obj$theta),1:length(obj$theta)]
+  hess_theta <- obj$hessian[seq_along(obj$theta), seq_along(obj$theta)]
   varerr_p <- (diag(solve(hess_theta)))
   # print(varerr_p)
   stderr_p <- sqrt(varerr_p)

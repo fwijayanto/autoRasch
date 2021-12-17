@@ -170,7 +170,7 @@ emat_compute <- function(obj, theta.lim = c(-10,10)){
     gamma <- rep(0,length(obj$mt_vek))
   }
 
-  beta.init <- unlist(tapply(obj$beta,rep(1:length(obj$mt_vek),obj$mt_vek),function(x){
+  beta.init <- unlist(tapply(obj$beta,rep(seq_along(obj$mt_vek),obj$mt_vek),function(x){
     if(length(x) < max(obj$mt_vek)){
       x <- c(x,rep(NA,(max(obj$mt_vek)-length(x))))
       x
@@ -290,7 +290,7 @@ plot_PImap <- function(obj, main = NULL, xlab = NULL, cex = NULL, cex.lab = NULL
   layout(matrix(c(1,2,3,4), 2, 2, byrow = TRUE), widths=c(8,2), heights=c(1,3))
 
   # reported_beta <- obj$beta * obj$real_vek
-  reported_beta <- unlist(tapply(obj$beta,rep(1:length(obj$mt_vek),obj$mt_vek),function(x){
+  reported_beta <- unlist(tapply(obj$beta,rep(seq_along(obj$mt_vek),obj$mt_vek),function(x){
     if(length(x) < max(obj$mt_vek)){
       x <- c(x,rep(NA,(max(obj$mt_vek)-length(x))))
       x
@@ -308,7 +308,7 @@ plot_PImap <- function(obj, main = NULL, xlab = NULL, cex = NULL, cex.lab = NULL
 
   if("pcmdif" %in% class(obj)){
     delta_mat <- matrix(obj$delta, ncol = ncol(obj$groups_map))
-    for(i in 1:ncol(obj$groups_map)){
+    for(i in seq_len(ncol(obj$groups_map))) {
       idx <- which(abs(delta_mat[,i]) > th_dif)
       for(j in idx){
         # tempName <- paste(rownames(beta_mat)[j],"_",letters[i],sep = "")
@@ -358,7 +358,7 @@ plot_PImap <- function(obj, main = NULL, xlab = NULL, cex = NULL, cex.lab = NULL
 
   par(mar = c(5, 1, 0, 0))
   plot(c(1:1),c(1:1),xlim = c(x_minbound,x_maxbound) ,ylim = c(0,nrow(beta_mat)+1), type = "n", yaxt='n', main = "", xlab = xlab, ylab = "", cex.lab = cex.lab, cex.axis = cex.axis)
-  for(i in 1:nrow(beta_mat)){
+  for(i in seq_len(nrow(beta_mat))) {
     if(max(obj$mt_vek) > 1){
       if(beta_mat[i,(max(obj$mt_vek,na.rm = TRUE)+2)] == "*"){
         col <- "red"
@@ -374,7 +374,7 @@ plot_PImap <- function(obj, main = NULL, xlab = NULL, cex = NULL, cex.lab = NULL
   }
   par(mar = c(5, 0, 0, 1))
   plot(c(1:1),c(1:1),xlim = c(0,10),ylim = c(0,nrow(beta_mat)+1), type = "n", yaxt='n', xaxt = 'n', main = "", xlab = "", ylab = "", bty = "n")
-  for(i in 1:nrow(beta_mat)){
+  for(i in seq_len(nrow(beta_mat))) {
     if(max(obj$mt_vek) > 1){
       if(beta_mat[i,(max(obj$mt_vek,na.rm = TRUE)+2)] == "*"){
         col <- "red"
@@ -404,7 +404,7 @@ plot_PImap <- function(obj, main = NULL, xlab = NULL, cex = NULL, cex.lab = NULL
 #   layout(matrix(c(1,2,3,4), 2, 2, byrow = TRUE), widths=c(8,2), heights=c(1,3))
 #
 #   # reported_beta <- obj$beta * obj$real_vek
-#   reported_beta <- unlist(tapply(obj$beta,rep(1:length(obj$mt_vek),obj$mt_vek),function(x){
+#   reported_beta <- unlist(tapply(obj$beta,rep(seq_along(obj$mt_vek),obj$mt_vek),function(x){
 #     if(length(x) < max(obj$mt_vek)){
 #       x <- c(x,rep(NA,(max(obj$mt_vek)-length(x))))
 #       x

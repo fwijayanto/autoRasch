@@ -77,7 +77,7 @@ summary.fit <- function(object, ...){
 
   if(is.null(type) | "person" %in% type){
     p.mat <- cbind(obj$p.fit$p.outfitMSQ, obj$p.fit$p.infitMSQ, obj$p.fit$p.outfitZ, obj$p.fit$p.infitZ)
-    dimnames(p.mat) <- list(c(paste("P",c(1:length(obj$p.fit$p.outfitMSQ)),sep = "")), c("OutfitMSQ","InfitMSQ","OutfitZ","InfitZ"))
+    dimnames(p.mat) <- list(c(paste("P", seq_along(obj$p.fit$p.outfitMSQ),sep = "")), c("OutfitMSQ","InfitMSQ","OutfitZ","InfitZ"))
     cat("Person Fit Statistics:")
     cat("\n\n")
     print(round(p.mat,2))

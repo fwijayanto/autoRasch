@@ -196,7 +196,7 @@ data_prep <- function(dset, fixed_par, groups_map, method){
   }
   allcat <- sum(mt_vek)                             ### number of items * categories (assumption : item has the same number of categories)
 
-  mt_idx <- rep(c(1:length(mt_vek)),mt_vek)
+  mt_idx <- rep(seq_along(mt_vek), mt_vek)
   dimResp <- dim(dset)
 
   ### Create the xn.mat (matrix of x_ni) and the xna.mat (matrix of missing value) to map the responses and the missing values
@@ -241,7 +241,7 @@ downCoding <- function(X){
     nfactor <- factor(tempResp)
     catLevel <- levels(nfactor)
     tempCatLevel <- catLevel
-    for(j in 1:length(catLevel)){
+    for(j in seq_along(catLevel)) {
       tempResp[which(tempResp >= as.numeric(catLevel[j]))] <- tempResp[which(tempResp >= as.numeric(catLevel[j]))] - (as.numeric(catLevel[j]) - (j-1))
       tempnfactor <- factor(tempResp)
       tempCatLevel <- levels(tempnfactor)
@@ -266,7 +266,7 @@ coord.descent <- function(nlmPar, dset, dataPrep, opts, fixed_par = c(), step.ve
     ll_fun <- loglik_fun_fast
   }
 
-  n.par.idx <- c(1:length(nlmPar))
+  n.par.idx <- seq_along(nlmPar)
 
   if(is.null(step.vec)){
     step.vec <- rep(opts$cd_control$init.step,length(nlmPar))

@@ -109,7 +109,7 @@ summary.gpcmdif <- function(object, ...){
     cat("The estimated difficulty scores:")
     cat("\n")
     # reported_beta <- obj$beta * obj$real_vek
-    reported_beta <- unlist(tapply(obj$beta,rep(1:length(obj$mt_vek),obj$mt_vek),function(x){
+    reported_beta <- unlist(tapply(obj$beta,rep(seq_along(obj$mt_vek),obj$mt_vek),function(x){
       if(length(x) < max(obj$mt_vek)){
         x <- c(x,rep(NA,(max(obj$mt_vek)-length(x))))
         x

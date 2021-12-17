@@ -133,7 +133,7 @@ fitStats.pcmdif <- function(obj, isAlpha = TRUE, isTraced = FALSE){
 
 
   delta.tot <- 0
-  for(i in 1:ncol(groups_map)){
+  for(i in seq_len(ncol(groups_map))) {
     delta.tot <- delta.tot + outer(delta[(((i-1)*ncol(X))+1):(i*ncol(X))],groups_map[,i],"*")
   }
   delta.tot.rep <- rep.int((delta.tot), rep.int(obj$mt_vek,nrow(groups_map)))       #delta.tot.rep is total delta which has been replicated to every categoory
@@ -160,7 +160,7 @@ fitStats.pcmdif <- function(obj, isAlpha = TRUE, isTraced = FALSE){
   #   temp.l2 <- temp.l2 + (exp(temp.prob[,i]))
   # }
 
-  mt_idx <- rep(c(1:length(mt_vek)),mt_vek)
+  mt_idx <- rep(seq_along(mt_vek), mt_vek)
 
   per.cat.list <- matrix(disc.diff, nrow = allcat)
 
@@ -194,7 +194,7 @@ fitStats.pcmdif <- function(obj, isAlpha = TRUE, isTraced = FALSE){
   pmat <- l1/l2
 
   mt_vek0 <- mt_vek + 1
-  mt_idx0 <- rep(c(1:length(mt_vek0)),mt_vek0)
+  mt_idx0 <- rep(seq_along(mt_vek0),mt_vek0)
   mt_seq <- sequence(mt_vek0)-1
 
   # stop()
@@ -337,7 +337,7 @@ summary.pcmdif <- function(object, ...){
     cat("The estimated difficulty scores (beta):")
     cat("\n")
     # reported_beta <- obj$beta * obj$real_vek
-    reported_beta <- unlist(tapply(obj$beta,rep(1:length(obj$mt_vek),obj$mt_vek),function(x){
+    reported_beta <- unlist(tapply(obj$beta,rep(seq_along(obj$mt_vek), obj$mt_vek),function(x){
       if(length(x) < max(obj$mt_vek)){
         x <- c(x,rep(NA,(max(obj$mt_vek)-length(x))))
         x

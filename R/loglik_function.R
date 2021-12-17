@@ -95,7 +95,7 @@ loglik_fun <- function(nlmPar, dset, opts, dataPrep,
   # delta_tot is written as an I x V matrix, as the outer product of delta (I x G) and k / groups_map (G x V)
   # !alternatively delta_tot <- delta %*% t(groups_map)
   delta_tot <- 0
-  for(i in 1:ncol(groups_map)){
+  for(i in seq_len(ncol(groups_map))) {
     delta_tot <- delta_tot + outer(delta[(((i-1)*ncol(dset))+1):(i*ncol(dset))],groups_map[,i],"*")
   }
 
@@ -127,7 +127,7 @@ loglik_fun <- function(nlmPar, dset, opts, dataPrep,
   temp_prob_split <- split(disc_diff,dataPrep$mt_idx)
 
   temp_l2 <- c()
-  for(j in 1:length(temp_prob_split)){
+  for(j in seq_along(temp_prob_split)){
     if(length.mt_idx[j] > 1){
       temp_l2 <- rbind(temp_l2,colSums(exp(apply(matrix(temp_prob_split[[j]], nrow = length.mt_idx[j]),2,cumsum)), na.rm = TRUE))
     } else {
@@ -338,7 +338,7 @@ grad_fun <- function(nlmPar, dset, opts, dataPrep,
   groups_map <- as.matrix(dataPrep$groups_map)
 
   delta_tot <- 0
-  for(i in 1:ncol(groups_map)){
+  for(i in seq_len(ncol(groups_map))) {
     delta_tot <- delta_tot + outer(delta[(((i-1)*ncol(dset))+1):(i*ncol(dset))],groups_map[,i],"*")
   }
   delta_tot_rep <- rep.int((delta_tot), rep.int(dataPrep$mt_vek,nrow(groups_map)))
@@ -371,7 +371,7 @@ grad_fun <- function(nlmPar, dset, opts, dataPrep,
   t1_gamma <- tapply(t1_gamma, dataPrep$mt_idx, sum, na.rm = TRUE)
 
   t1_delta <- c()
-  for(i in 1:ncol(groups_map)){
+  for(i in seq_len(ncol(groups_map))) {
     ## delta ##
     t1_delta_mat <- t(t(t1_theta_mat) * groups_map[,i])
     t1_delta_temp <- rowSums(t1_delta_mat, na.rm = TRUE)
@@ -407,7 +407,7 @@ grad_fun <- function(nlmPar, dset, opts, dataPrep,
   temp_theta_nom_part <- c()
   temp_gamma_nom_part <- c()
   temp_delta_peritem <- list()
-  for(j in 1:length(temp_prob_split)){
+  for(j in seq_along(temp_prob_split)){
 
     if(length.mt_idx[j] > 1){
       temp_prob_part <- matrix(temp_prob_split[[j]], nrow = length.mt_idx[j])
@@ -426,7 +426,7 @@ grad_fun <- function(nlmPar, dset, opts, dataPrep,
       temp_gamma_nom_part <- rbind(temp_gamma_nom_part,colSums(temp_gamma_nom_mat_part,na.rm = TRUE))
 
       temp_delta_peritem_test <- c()
-      for(k in 1:ncol(groups_map)){
+      for(k in seq_len(ncol(groups_map))) {
         temp_delta_temp_peritem <- t(t(temp_theta_nom_mat_part) * groups_map[,k])
         temp_delta_peritem_test <- rbind(temp_delta_peritem_test,colSums(temp_delta_temp_peritem,na.rm = TRUE))
       }
@@ -454,7 +454,7 @@ grad_fun <- function(nlmPar, dset, opts, dataPrep,
       temp_gamma_nom_part <- rbind(temp_gamma_nom_part,temp_gamma_nom_mat_part)
 
       temp_delta_peritem_test <- c()
-      for(k in 1:ncol(groups_map)){
+      for(k in seq_len(ncol(groups_map))) {
         temp_delta_temp_peritem <- temp_theta_nom_mat_part * groups_map[,k]
         temp_delta_peritem_test <- rbind(temp_delta_peritem_test,temp_delta_temp_peritem)
       }
@@ -472,9 +472,9 @@ grad_fun <- function(nlmPar, dset, opts, dataPrep,
   }
 
   temp_delta_nom_part <- list()
-  for(k in 1:ncol(groups_map)){
+  for(k in seq_len(ncol(groups_map))) {
     temp <- c()
-    for(i in 1:length(temp_delta_peritem)){
+    for(i in seq_along(temp_delta_peritem)){
       temp <- rbind(temp, temp_delta_peritem[[i]][k,])
     }
     temp_delta_nom_part[[k]] <- temp
@@ -509,7 +509,7 @@ grad_fun <- function(nlmPar, dset, opts, dataPrep,
   t2_gamma <- rowSums(t2_gamma_mat, na.rm = TRUE)
 
   t2_delta <- c()
-  for(k in 1:ncol(groups_map)){
+  for(k in seq_len(ncol(groups_map))) {
     Nom_delta <- matrix(temp_delta_nom_part[[k]],nrow = ncol(dset))
     t2_delta_mat <- (Nom_delta/Denom)
     # print(Denom)
@@ -898,7 +898,7 @@ GPCMDIF_LL <- function(dset = c(), fixValue.theta, fixValue.beta, fixValue.gamma
   ### take the total of DIF effect for every group for beta or gamma
   delta_tot <- 0
   deltagamma_tot <- 0
-  for(i in 1:ncol(groups_map)){
+  for(i in seq_len(ncol(groups_map))) {
     delta_tot <- delta_tot + outer(delta[(((i-1)*ncol(dset))+1):(i*ncol(dset))],groups_map[,i],"*")
     deltagamma_tot <- deltagamma_tot + outer(deltagamma[(((i-1)*ncol(dset))+1):(i*ncol(dset))],groups_map[,i],"*")
   }
