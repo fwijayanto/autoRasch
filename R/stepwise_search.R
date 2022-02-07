@@ -224,7 +224,6 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
                                                                init_par_iq = init_par_iq, init_par_oq = init_par_oq, optim_control_iq = optim_control_iq,
                                                                optim_control_oq = optim_control_oq, setting_par_iq = setting_par_iq, setting_par_oq = setting_par_oq,
                                                                method = method))
-
     best.bck <- res.bck[order(res.bck[,3],decreasing = TRUE),][1,] ### keep information of the highest ipoq-ll
     new.incl_set <- best.bck[4:(3+i)]                              ### store the items of the included itemset
     incl_set <- new.incl_set
@@ -383,9 +382,9 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
   }
 
   if(criterion[1] == "ipoqlldif"){
-    class(res_search) <- c(class(res_search),"search", "ipoqlldif", "autoRasch")
+    class(res_search) <- c("search", "ipoqlldif", "autoRasch",class(res_search))
   } else {
-    class(res_search) <- c(class(res_search),"search", "ipoqll", "autoRasch")
+    class(res_search) <- c("search", "ipoqll", "autoRasch",class(res_search))
   }
 
   # If saved in file

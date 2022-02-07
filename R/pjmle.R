@@ -5,7 +5,7 @@
 # init_par is a vector contains the initial values of the estimated parameters
 # setting contains the parameter setting used  in the estimation. See autoRaschOptions().
 
-pjmle <- function(X, init_par = c(), setting = c(), method = c("novel","fast")){
+pjmle <- function(X, init_par = c(), setting = c(), method = c("fast","novel")){
 
   dset <- as.data.frame(X)                          ### makes sure that the dataset has a matrix format
   dset <- downCoding(dset)
@@ -14,6 +14,17 @@ pjmle <- function(X, init_par = c(), setting = c(), method = c("novel","fast")){
     opts <- autoRaschOptions()
   } else {
     opts <- setting
+  }
+
+  oriGroupsMap <- opts$groups_map
+  if(!is.null(opts$groups_map)){
+    exclRespIdx <- which(is.na(opts$groups_map[,1]))
+    if(length(exclRespIdx) != 0){
+      dset <- as.matrix(dset[-c(exclRespIdx),])
+      opts$groups_map <- opts$groups_map[-c(exclRespIdx),]
+    }
+  } else {
+    exclRespIdx <- NULL
   }
 
   ### preprocessing the data
@@ -98,12 +109,19 @@ pjmle <- function(X, init_par = c(), setting = c(), method = c("novel","fast")){
 
   ### Maximizing the loglikelihood function ###
   nameCol <- colnames(as.data.frame(X))
+  exclResp <- NULL
+  if(length(exclRespIdx) != 0){
+    # totalResp <- c(1:nrow(X))
+    # rownames(dset) <- totalResp[-c(exclRespIdx)]
+    exclResp <- exclRespIdx
+  }
   output <- list("X" = X, "mt_vek" = dataPrep$mt_vek, "real_vek" = dataPrep$na_catVec, "itemName" = nameCol,
                  "penalty.coeff" = list("lambda_theta" = opts$lambda_theta,"lambda_in" = opts$lambda_in,
-                                        "lambda_out" = opts$lambda_out,"lambda_delta" = opts$lambda_delta))
+                                        "lambda_out" = opts$lambda_out,"lambda_delta" = opts$lambda_delta),
+                 "exclResp" = exclResp)
 
   if(!is.null(opts$groups_map)){
-    output[["groups_map"]] <- dataPrep$groups_map
+    output[["groups_map"]] <- oriGroupsMap
   }
 
   print("Estimation starts...")
@@ -201,26 +219,31 @@ data_prep <- function(dset, fixed_par, groups_map, method){
 
   ### Create the xn.mat (matrix of x_ni) and the xna.mat (matrix of missing value) to map the responses and the missing values
   ### XNA is infused to XN
-  xn.vec <- xna.vec <- c()
-  for(rIdx in 1:dimResp[1]){
-    for(cIdx in 1:dimResp[2]){
-      if(is.na(dset[rIdx,cIdx])){
-        xn.cell <- xna.cell <- rep(NA,mt_vek[cIdx])
-      } else {
-        xn.cell <- c(rep(1,dset[rIdx,cIdx]),rep(0,(mt_vek[cIdx]-dset[rIdx,cIdx])))
-        xna.cell <- rep(1,(mt_vek[cIdx]))
+  if(method[1] == "novel"){
+      xn.vec <- xna.vec <- c()
+      for(rIdx in 1:dimResp[1]){
+        for(cIdx in 1:dimResp[2]){
+          if(is.na(dset[rIdx,cIdx])){
+            xn.cell <- xna.cell <- rep(NA,mt_vek[cIdx])
+          } else {
+            xn.cell <- c(rep(1,dset[rIdx,cIdx]),rep(0,(mt_vek[cIdx]-dset[rIdx,cIdx])))
+            xna.cell <- rep(1,(mt_vek[cIdx]))
+          }
+          xn.vec <- c(xn.vec,xn.cell)
+          xna.vec <- c(xna.vec,xna.cell)
+        }
       }
-      xn.vec <- c(xn.vec,xn.cell)
-      xna.vec <- c(xna.vec,xna.cell)
-    }
+      xn.mat <- matrix(xn.vec, nrow = dimResp[1], byrow = TRUE)
+      xna.mat <- matrix(xna.vec, nrow = dimResp[1], byrow = TRUE)
+
+      XN <- as.vector(t(xn.mat))
+      XNA <- as.vector(t(xna.mat))
+
+      ret <- list("dset" = dset, "mt_vek" = mt_vek, "mt_idx" = mt_idx, "dimResp" = dimResp, "groups_map" = groups_map, "n_th" = n_th, "na_catVec" = na_catVec, "allcat" = allcat, "XN" = XN, "XNA" = XNA)#,"XREAL" = XREAL)
+
+  } else {
+    ret <- list("dset" = dset, "mt_vek" = mt_vek, "mt_idx" = mt_idx, "dimResp" = dimResp, "groups_map" = groups_map, "n_th" = n_th, "na_catVec" = na_catVec, "allcat" = allcat)#, "XN" = XN, "XNA" = XNA)#,"XREAL" = XREAL)
   }
-  xn.mat <- matrix(xn.vec, nrow = dimResp[1], byrow = TRUE)
-  xna.mat <- matrix(xna.vec, nrow = dimResp[1], byrow = TRUE)
-
-  XN <- as.vector(t(xn.mat))
-  XNA <- as.vector(t(xna.mat))
-
-  ret <- list("dset" = dset, "mt_vek" = mt_vek, "mt_idx" = mt_idx, "dimResp" = dimResp, "groups_map" = groups_map, "n_th" = n_th, "na_catVec" = na_catVec, "allcat" = allcat, "XN" = XN, "XNA" = XNA)#,"XREAL" = XREAL)
 
   return(ret)
 

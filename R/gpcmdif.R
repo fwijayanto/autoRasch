@@ -90,7 +90,7 @@ summary.gpcmdif <- function(object, ...){
   if(!is.null(dotdotdot$th_dif)){
     th_dif <- dotdotdot$th_dif
   } else {
-    th_dif <- NULL
+    th_dif <- 1e-5
   }
 
   if(is.null(par) | "theta" %in% par){
@@ -102,6 +102,8 @@ summary.gpcmdif <- function(object, ...){
     cat("The highest ability score: ",round(max(obj$theta,na.rm = TRUE),4))
     cat("\n")
     cat("The lowest ability score: ",round(min(obj$theta,na.rm = TRUE),4))
+    cat("\n")
+    cat("Respondent(s) no. ",paste(obj$exclResp,collapse = ",")," are excluded due to missing (incomplete) background information.")
   }
 
   if(is.null(par) | "beta" %in% par){

@@ -82,6 +82,8 @@ double ll_cpp(arma::vec theta, arma::vec gamma, arma::mat delta, arma::mat group
     ll -= lambda_delta * arma::as_scalar(arma::accu(arma::pow(arma::abs(delta), 1 + eps)));
   }
 
+  //std::cout << -ll << std::endl;
+
   return -ll;
 }
 

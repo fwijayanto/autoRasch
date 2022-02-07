@@ -63,6 +63,7 @@ compute_score <- function(X, incl_set, type = c("ipoqll","ipoqlldif"), groups_ma
 
   if(length(incl_set) != ncol(dset)){
     excl_resp <- dset[,-c(incl_set)]
+    excl_resp <- as.matrix(excl_resp)
   }
 
   if(is.null(setting_par_iq)){
@@ -335,7 +336,7 @@ compute_scores_unparalleled <- function(X, incl_sets, type = c("ipoqll","ipoqlld
 
   i <- NULL
 
-  scoreList <- foreach(i=seq_len(nrow(incl_sets)), .combine = rbind, .errorhandling = "stop") %dopar% {
+  scoreList <- foreach(i=seq_len(nrow(incl_sets)), .combine = rbind, .errorhandling = "remove") %dopar% {
 
     incl_set <- incl_sets[i,]
     incl_set <- incl_set[!is.na(incl_set)]
@@ -357,23 +358,23 @@ compute_scores_unparalleled <- function(X, incl_sets, type = c("ipoqll","ipoqlld
       init_iq <- c()
       init_oq <- c()
     # }
-      checkOS <- Sys.info()
-      if(checkOS['sysname'] == "Linux"){
-      log <- utils::capture.output(
-        withCallingHandlers({
-          setTimeLimit(elapsed = timeLimit)
-          score_res <- compute_score(dset, incl_set = incl_set, type = type, groups_map = groups_map,
-                                init_par_iq = init_iq, init_par_oq = init_oq,
-                                optim_control_iq = optim_control_iq, optim_control_oq = optim_control_oq,
-                                setting_par_iq = setting_par_iq, setting_par_oq = setting_par_oq,
-                                method = method)
-          res <- c(score_res)
-        },
-          error = function(e){
-
-        })
-      )
-      } else {
+      # checkOS <- Sys.info()
+      # if(checkOS['sysname'] == "Linux"){
+      # log <- utils::capture.output(
+      #   withCallingHandlers({
+      #     setTimeLimit(elapsed = timeLimit)
+      #     score_res <- compute_score(dset, incl_set = incl_set, type = type, groups_map = groups_map,
+      #                           init_par_iq = init_iq, init_par_oq = init_oq,
+      #                           optim_control_iq = optim_control_iq, optim_control_oq = optim_control_oq,
+      #                           setting_par_iq = setting_par_iq, setting_par_oq = setting_par_oq,
+      #                           method = method)
+      #     res <- c(score_res)
+      #   },
+      #     error = function(e){
+      #
+      #   })
+      # )
+      # } else {
         withCallingHandlers({
           setTimeLimit(elapsed = timeLimit)
           score_res <- compute_score(dset, incl_set = incl_set, type = type, groups_map = groups_map,
@@ -386,7 +387,7 @@ compute_scores_unparalleled <- function(X, incl_sets, type = c("ipoqll","ipoqlld
         error = function(e){
 
         })
-      }
+      # }
 
 
     # print(i)
@@ -437,15 +438,15 @@ compute_scores <- function(X, incl_sets, type = c("ipoqll","ipoqlldif"),
   }
 
 
-  checkOS <- Sys.info()
-  if(checkOS['sysname'] == "Linux"){
-    doParallel::registerDoParallel(cores = cores)
-  } else {
+  # checkOS <- Sys.info()
+  # if(checkOS['sysname'] == "Linux"){
+  #   doParallel::registerDoParallel(cores = cores)
+  # } else {
     cl <- parallel::makeCluster(cores)
     # oFuture::registerDoFuture()
     # future::plan(future::cluster, workers = cl)
     doParallel::registerDoParallel(cl=cl, cores = cores)
-  }
+  # }
 
   scoreList <- compute_scores_unparalleled(X = X, incl_sets = incl_sets, type = type,
                                            step_direct = step_direct, groups_map = groups_map,
@@ -453,12 +454,12 @@ compute_scores <- function(X, incl_sets, type = c("ipoqll","ipoqlldif"),
                                           optim_control_iq = optim_control_iq, optim_control_oq = optim_control_oq,
                                           setting_par_iq = setting_par_iq, setting_par_oq = setting_par_oq, method = method, timeLimit = timeLimit)
 
-  checkOS <- Sys.info()
-  if(checkOS['sysname'] == "Linux"){
-    doParallel::stopImplicitCluster()
-  } else {
+  # checkOS <- Sys.info()
+  # if(checkOS['sysname'] == "Linux"){
+  #   doParallel::stopImplicitCluster()
+  # } else {
     parallel::stopCluster(cl)
-  }
+  # }
   foreach::registerDoSEQ()
 
   res <- scoreList

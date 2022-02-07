@@ -213,7 +213,7 @@ plot_fitStats <- function(objFit, toPlot = c("alpha","infit"), useName = FALSE, 
 #' @rdname ld
 #'
 #' @export
-resid_corr <- function(objFit){
+residCor <- function(objFit){
   # if(!is.object(objFit$traceMat)){
   #   stop("Please compute Fitness object using isTrace = TRUE!")
   # }

@@ -28,6 +28,7 @@ remotes::install_github("fwijayanto/autoRasch", build_manual = TRUE, build_vigne
 
 ```{r setup}
 library(autoRasch)
+library(doParallel)
 ```
 
 

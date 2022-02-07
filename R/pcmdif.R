@@ -123,6 +123,11 @@ fitStats.pcmdif <- function(obj, isAlpha = TRUE, isTraced = FALSE){
   X <- obj$X - min.x
   groups_map <- as.matrix(obj$groups_map)
 
+  if(!is.null(obj$exclResp)){
+    X <- X[-c(obj$exclResp),]
+    groups_map <- groups_map[-c(obj$exclResp),]
+  }
+
   # Map the parameters
   theta <- obj$theta
   beta <- obj$beta
@@ -188,7 +193,7 @@ fitStats.pcmdif <- function(obj, isAlpha = TRUE, isTraced = FALSE){
   l2 <- (temp.l2+1)
 
   l1 <- as.vector((temp.l1))
-  mult.mt_vek <- rep(mt_vek,nrow(obj$X))+1
+  mult.mt_vek <- rep(mt_vek,nrow(X))+1
   l2 <- rep(l2, mult.mt_vek)
 
   pmat <- l1/l2
@@ -318,7 +323,7 @@ summary.pcmdif <- function(object, ...){
   if(!is.null(dotdotdot$th_dif)){
     th_dif <- dotdotdot$th_dif
   } else {
-    th_dif <- 1e-1
+    th_dif <- 1e-5
   }
 
   if(is.null(par) | "theta" %in% par){
@@ -330,6 +335,8 @@ summary.pcmdif <- function(object, ...){
     cat("The highest ability score: ",round(max(obj$theta,na.rm = TRUE),2))
     cat("\n")
     cat("The lowest ability score: ",round(min(obj$theta,na.rm = TRUE),2))
+    cat("\n")
+    cat("Respondent(s) no. ",paste(obj$exclResp,collapse = ",")," are excluded due to missing (incomplete) background information.")
   }
 
   if(is.null(par) | "beta" %in% par){

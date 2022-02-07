@@ -6,6 +6,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // ll_cpp
 double ll_cpp(arma::vec theta, arma::vec gamma, arma::mat delta, arma::mat groups, arma::mat beta, arma::vec m_cat, arma::mat X, bool gamma_penalized, bool delta_penalized, bool theta_penalized, double lambda_in, double lambda_out, double lambda_delta, double lambda_theta, double eps);
 RcppExport SEXP _autoRasch_ll_cpp(SEXP thetaSEXP, SEXP gammaSEXP, SEXP deltaSEXP, SEXP groupsSEXP, SEXP betaSEXP, SEXP m_catSEXP, SEXP XSEXP, SEXP gamma_penalizedSEXP, SEXP delta_penalizedSEXP, SEXP theta_penalizedSEXP, SEXP lambda_inSEXP, SEXP lambda_outSEXP, SEXP lambda_deltaSEXP, SEXP lambda_thetaSEXP, SEXP epsSEXP) {
