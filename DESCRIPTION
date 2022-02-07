@@ -1,8 +1,8 @@
 Package: autoRasch
-Version: 0.1.3
+Version: 0.1.4
 Date: 2022-02-07
 Title: Semi-Automated Rasch Analysis
-Description: Performs Rasch analysis (semi-)automatically, which has been shown to be comparable with the standard Rasch analysis (Feri Wijayanto et al. (2021) <doi:10.1111/bmsp.12218>, Feri Wijayanto et al. (2022) <PsyArXiv:erxuh>).
+Description: Performs Rasch analysis (semi-)automatically, which has been shown to be comparable with the standard Rasch analysis (Feri Wijayanto et al. (2021) <doi:10.1111/bmsp.12218>, Feri Wijayanto et al. (2022) <https://psyarxiv.com/erxuh/>).
 Authors@R: 
   c(person(given = "Feri",
            family = "Wijayanto",
