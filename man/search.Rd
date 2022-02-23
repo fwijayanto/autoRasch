@@ -98,7 +98,7 @@ plot_search(obj, remOrdered = TRUE, locateMax = TRUE, ...)
 \item{locateMax}{A logical statement whether the location of the maximum score is needed to be marked or not.}
 }
 \value{
-A matrix of the itemsets that obtain the highest scores for each number of items in the included set and it scores (IQ-LL,OQ-LL, and IPOQ-LL).
+Matrix of the highest scores (IQ-LL, OQ-LL, and IPOQ-LL) for every number of items in the included set in the set along with the corresponding itemset.
 }
 \description{
 To search itemset that give maximum value of the criterion
@@ -107,7 +107,7 @@ To search itemset that give maximum value of the criterion
 To search the itemset that give the maximum score.
 }
 \examples{
-#search_res <- backward_search(short_poly_data,criterion = "ipoqll", incl_set = c(1:9), cores = 2)
-#plot_search(search_res,type="l")
+search_res <- backward_search(shortDIF,criterion = "ipoqll", incl_set = c(1:4), cores = 2)
+plot_search(search_res, type="l")
 
 }

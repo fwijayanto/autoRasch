@@ -80,8 +80,7 @@ will automatically transforms the PCM to the Rasch model.
 \code{fitStats} compute the fit statistics (e.g., Outfit and Infit) of the PCM model estimation (items and persons).
 }
 \examples{
-# TODO: generate polydif_inh_dset here
-pcm_res <- pcm(polydif_inh_dset[,c(14:17,19)])
+pcm_res <- pcm(shortDIF)
 summary(pcm_res)
 
 #To summarize only for beta parameters
@@ -89,7 +88,7 @@ summary(pcm_res, par="beta")
 fit_res <- fitStats(pcm_res, isTraced = TRUE)
 itemfit(fit_res)
 personfit(fit_res)
-plot_fitStats(fit_res, toPlot = c("alpha","outfit"), useName = TRUE, type = "n")
+plot_fitStats(fit_res, toPlot = c("alpha","outfit"), useName = TRUE)
 
 }
 \references{

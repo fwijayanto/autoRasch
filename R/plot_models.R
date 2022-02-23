@@ -14,10 +14,12 @@
 #' @param lty a vector of line types.
 #' @param ... Further arguments to be passed.
 #'
+#' @return
+#' There are no values to return. Instead, it plots expected values from the model.
+#'
 #' @examples
 #' res <- pcm(short_poly_data)
 #' plot_EVC(res, itemno = 4)
-#' plot_ICC(res, itemno = 4)
 #'
 #' @export
 plot_EVC <- function(obj = c(), itemno = 5, xlab = NULL, ylab = NULL, xlim = c(-10,10),
@@ -87,6 +89,13 @@ plot_EVC <- function(obj = c(), itemno = 5, xlab = NULL, ylab = NULL, xlim = c(-
 #' @param lty a vector of line types.
 #' @param ... Further arguments to be passed.
 #' @param main String. Plot title.
+#'
+#' @return
+#' There are no values to return. Instead, it plots item characteristic from the model.
+#'
+#' @examples
+#' res <- pcm(short_poly_data)
+#' plot_ICC(res, itemno = 4)
 #'
 #' @export
 plot_ICC <- function(obj, itemno = 5, xlab = NULL, ylab = NULL, xlim = c(-10,10),
@@ -274,17 +283,30 @@ emat_compute <- function(obj, theta.lim = c(-10,10)){
 #' @param lwd The line width, a positive number, defaulting to 1;
 #' see \code{\link[graphics:par]{par()}}.
 #' @param v Variable names used
+#' @param th_dif The threshold at which a DIF effect is still considered a DIF.
+#'
+#' @return
+#' There are no values to return. Instead, it shows a graphical map of the estimated ability and the estimated difficulty on the same scale.
+#'
+#' @examples
+#' groupsMap <- matrix(c(rep(1,50),rep(0,50)),ncol = 1, dimnames = list(c(1:100),c("V1")))
+#' pcmdif_res <- pcm_dif(shortDIF, groups_map = groupsMap)
+#' plot_PImap(pcmdif_res)
 #'
 #' @export
 plot_PImap <- function(obj, main = NULL, xlab = NULL, cex = NULL, cex.lab = NULL,
-                       cex.axis = NULL, cex.main = NULL, lwd = NULL, v = NULL){
+                       cex.axis = NULL, cex.main = NULL, lwd = NULL, v = NULL, th_dif = 1e-5){
 
   if(("pcm" %in% class(obj)) | ("pcmdif" %in% class(obj))){
   } else {
     stop("autoRasch ERROR: person-item map only for \"pcm\" or \"pcmdif\" object.")
   }
 
-  th_dif <- 1e-2
+  if(is.null(th_dif)){
+    th_dif <- 1e-5
+  }
+
+  oldpar <- par(no.readonly = TRUE)
 
   par(mar = c(0, 1, 3, 0), oma = c(0, 0,0, 0))
   layout(matrix(c(1,2,3,4), 2, 2, byrow = TRUE), widths=c(8,2), heights=c(1,3))
@@ -388,6 +410,8 @@ plot_PImap <- function(obj, main = NULL, xlab = NULL, cex = NULL, cex.lab = NULL
   }
 
   par(mfrow = c(1,1))
+
+  on.exit(par(oldpar))
 }
 
 # plot_PImap <- function(obj, main = NULL, xlab = NULL, cex = NULL, cex.lab = NULL,

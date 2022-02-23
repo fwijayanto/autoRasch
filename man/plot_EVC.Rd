@@ -34,12 +34,14 @@ see \code{\link[graphics:plot.default]{plot.default()}}}
 
 \item{...}{Further arguments to be passed.}
 }
+\value{
+There are no values to return. Instead, it plots expected values from the model.
+}
 \description{
 This function plots the curve(s) of the estimated ability parameters against its expected responses.
 }
 \examples{
 res <- pcm(short_poly_data)
 plot_EVC(res, itemno = 4)
-plot_ICC(res, itemno = 4)
 
 }

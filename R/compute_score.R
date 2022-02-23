@@ -22,10 +22,10 @@
 #' and the estimated items' parameters in the excluded set, sequentially.
 #'
 #' @examples
-#' ipoqll_score <- compute_score(short_poly_data,incl_set = c(1:3),type = "ipoqll")
+#' ipoqll_score <- compute_score(shortDIF,incl_set = c(1:3),type = "ipoqll")
 #'
 #' \dontrun{
-#' ipoqll_scores <- compute_scores(short_poly_data,incl_set = rbind(c(1:3),c(4:6)),
+#' ipoqll_scores <- compute_scores(shortDIF,incl_set = rbind(c(1:3),c(2:4)),
 #'                                 type = "ipoqll", cores = 2)
 #' }
 #'

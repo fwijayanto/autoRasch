@@ -58,12 +58,12 @@ pcm_dif <- function(X, init_par = c(), groups_map = c(), setting = c(), method =
       stop("groups_map must be designed to use the PCM-DIF!")
     }
   } else {
-    settingPar$groups_map <- groups_map
+    settingPar$groups_map <- as.matrix(groups_map)
   }
 
   result <- pjmle(X = X, init_par = init_par, setting = settingPar, method = method)
 
-  class(result) <- c(class(result),"armodels","pcmdif","autoRasch")
+  class(result) <- c("pcmdif","armodels","autoRasch",class(result))
   return(result)
 }
 
@@ -103,14 +103,11 @@ pcm_dif <- function(X, init_par = c(), groups_map = c(), setting = c(), method =
 #'
 #'
 #' @examples
-#' \dontrun{
-#' # TODO: generate polydif_inh_dset here
-#' pcmdif_res <- pcm_dif(polydif_inh_dset[,c(14:17,19)], groups_map = c(rep(1,245),rep(0,245)))
+#' pcmdif_res <- pcm_dif(shortDIF, groups_map = c(rep(1,50),rep(0,50)))
 #' fit_res <- fitStats(pcmdif_res)
 #' itemfit(fit_res)
 #' personfit(fit_res)
-#' plot_fitStats(fit_res, toPlot = c("alpha","outfit"), useName = FALSE, type = "n")
-#' }
+#' plot_fitStats(fit_res, toPlot = c("alpha","outfit"), useName = FALSE)
 #'
 #' @rdname pcm_dif
 #' @export

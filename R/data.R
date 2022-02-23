@@ -183,6 +183,7 @@
 #' @rdname ieps
 "ieps"
 
+
 #' The Interdisciplinary Education Perception Scale (IEPS) Dataset with 4 Covariates
 #'
 #' The pre-processed version of the IEPS dataset in (Vaughan, 2019).
@@ -196,6 +197,7 @@
 #'
 #' @rdname full_ieps
 "full_ieps"
+
 
 #' The Osteopathy Clinical Teaching Questionnaire (OCTQ) Dataset
 #'

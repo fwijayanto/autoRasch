@@ -152,6 +152,8 @@ plot_fitStats <- function(objFit, toPlot = c("alpha","infit"), useName = FALSE, 
     # x.lab <- expression(paste("alpha (",alpha,")"))
     # x.lab <- expression(paste("estimated ",alpha[i]))
     x.lab <- expression(hat(alpha))
+  } else {
+    stop("Wrong value toPlot!")
   }
   if(ploty == "outfit"){
     ploty <- x$i.fit$i.outfitMSQ
@@ -168,6 +170,8 @@ plot_fitStats <- function(objFit, toPlot = c("alpha","infit"), useName = FALSE, 
   } else if(ploty == "alpha"){
     ploty <- obj$alpha
     y.lab <- expression(hat(alpha))
+  } else {
+    stop("Wrong value toPlot!")
   }
 
 
@@ -184,16 +188,18 @@ plot_fitStats <- function(objFit, toPlot = c("alpha","infit"), useName = FALSE, 
     y.lab <- dotdotdot$ylab
   }
 
+
+
   if(!is.null(dotdotdot$xlab) | !is.null(dotdotdot$ylab)){
-    plot(plotx, ploty, ... = ...)
+    suppressWarnings({plot(plotx, ploty, type = "n", ... = ...)})
   } else {
-    suppressWarnings(plot(plotx, ploty, xlab = x.lab, ylab = y.lab, ... = ...))
+    suppressWarnings({plot(plotx, ploty, xlab = x.lab, ylab = y.lab, type = "n", ... = ...)})
   }
 
   if(useName){
-    suppressWarnings(text(plotx, ploty, labels = text, ... = ...))
+    suppressWarnings({text(plotx, ploty, labels = text, ... = ...)})
   } else {
-    suppressWarnings(text(plotx, ploty, ... = ...))
+    suppressWarnings({text(plotx, ploty, ... = ...)})
   }
 
 }

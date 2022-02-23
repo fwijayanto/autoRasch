@@ -26,8 +26,7 @@
 #' Wright, B. D., & Masters, G. N. (1982). Rating Scale Analysis. Chicago: MESA Press.
 #'
 #' @examples
-#' # TODO: generate polydif_inh_dset here
-#' pcm_res <- pcm(polydif_inh_dset[,c(14:17,19)])
+#' pcm_res <- pcm(shortDIF)
 #' summary(pcm_res)
 #'
 #' #To summarize only for beta parameters
@@ -35,7 +34,7 @@
 #' fit_res <- fitStats(pcm_res, isTraced = TRUE)
 #' itemfit(fit_res)
 #' personfit(fit_res)
-#' plot_fitStats(fit_res, toPlot = c("alpha","outfit"), useName = TRUE, type = "n")
+#' plot_fitStats(fit_res, toPlot = c("alpha","outfit"), useName = TRUE)
 #'
 #' @rdname pcm
 #' @export

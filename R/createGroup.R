@@ -4,13 +4,13 @@
 
 #' @param backInfo A matrix of person background information (e.g., gender, country, age, etc);
 #' @param idxUsed The column number of \code{backInfo} that is used for creating the mapping matrix.
-#' @param contMethod The method of how to handle a continuous variable (e.g., mean, median, etc). This parameter is passing a function used to split the variable into binary. The default is \code{mean}.
+#' @param contMethod The method of how to handle a continuous variable (e.g., mean, median). This parameter is passing a function used to split the variable into binary. The default is \code{mean}.
 #'
 #' @return
 #' A binary matrix that maps respondents to the groups that the respondents belongs to.
 #'
 #' @export
-createGroup <- function(backInfo, idxUsed = NULL, contMethod = "mean"){
+createGroup <- function(backInfo, idxUsed = NULL, contMethod = c("mean","median")){
 
   bckInfo <- as.matrix(backInfo)
   rownum <- nrow(bckInfo)
@@ -20,7 +20,7 @@ createGroup <- function(backInfo, idxUsed = NULL, contMethod = "mean"){
     difCov <- idxUsed
   }
   tempName <- c()
-  contThMethod <- contMethod
+  contThMethod <- contMethod[1]
   tempMap <- c()
 
   for(i in seq_along(difCov)){

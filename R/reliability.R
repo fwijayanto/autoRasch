@@ -2,7 +2,7 @@
 #'
 #' This function computes the reliability index, separation and the standard error of the models estimation.
 #'
-#' @param obj Object that resulted from any models estimation, e.g., \code{PCM}, \code{GPCM}, \code{PCMDIF}, and \code{GPCMDIF}.
+#' @param obj Object that resulted from any models estimation, e.g., \code{pcm}, \code{gpcm}, \code{pcmdif}, and \code{gpcmdif}.
 #'
 #' @return
 #' A list of two objects, the reliability and the standard error.
@@ -30,10 +30,9 @@
 #' Person reliability index
 #'
 #' @examples
-#' # TODO: generate poly_inh_dset here
-#' # pcmObject <- pcm(poly_inh_dset)
-#' # rel <- checkRel(pcmObject)
-#' # summary(rel)
+#' pcmObject <- pcm(shortDIF)
+#' rel <- checkRel(pcmObject)
+#' summary(rel)
 #'
 #' @rdname reliability
 #' @export

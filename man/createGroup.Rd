@@ -4,14 +4,14 @@
 \alias{createGroup}
 \title{Create Mapping Matrix of DIF Groups}
 \usage{
-createGroup(backInfo, idxUsed = NULL, contMethod = "mean")
+createGroup(backInfo, idxUsed = NULL, contMethod = c("mean", "median"))
 }
 \arguments{
 \item{backInfo}{A matrix of person background information (e.g., gender, country, age, etc);}
 
 \item{idxUsed}{The column number of \code{backInfo} that is used for creating the mapping matrix.}
 
-\item{contMethod}{The method of how to handle a continuous variable (e.g., mean, median, etc). This parameter is passing a function used to split the variable into binary. The default is \code{mean}.}
+\item{contMethod}{The method of how to handle a continuous variable (e.g., mean, median). This parameter is passing a function used to split the variable into binary. The default is \code{mean}.}
 }
 \value{
 A binary matrix that maps respondents to the groups that the respondents belongs to.

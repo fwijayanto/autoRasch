@@ -20,8 +20,7 @@
 #' @param method The implementation option of log likelihood function. \code{fast} using a \code{c++} implementation and \code{novel} using an \code{R} implementation.
 #'
 #' @return
-#' A matrix of the itemsets that obtain the highest scores for each number of items in the included set and it scores (IQ-LL,OQ-LL, and IPOQ-LL).
-#'
+#' Matrix of the highest scores (IQ-LL, OQ-LL, and IPOQ-LL) for every number of items in the included set in the set along with the corresponding itemset.
 #'
 #' @details
 #' To search the itemset that give the maximum score.
@@ -405,8 +404,8 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
 }
 
 #' @examples
-#' #search_res <- backward_search(short_poly_data,criterion = "ipoqll", incl_set = c(1:9), cores = 2)
-#' #plot_search(search_res,type="l")
+#' search_res <- backward_search(shortDIF,criterion = "ipoqll", incl_set = c(1:4), cores = 2)
+#' plot_search(search_res, type="l")
 #'
 #' @rdname search
 #'

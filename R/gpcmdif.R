@@ -23,11 +23,8 @@
 #' @seealso \code{\link{pcm}}, \code{\link{pcm_dif}}, \code{\link{gpcm}}, \code{\link{gpcm_dif}}
 #'
 #' @examples
-#' \dontrun{
-#' # TODO: generate polydif_inh_dset here
-#' gpcmdif_res <- gpcm_dif(polydif_inh_dset[,c(14:17,19)], groups_map = c(rep(1,245),rep(0,245)))
+#' gpcmdif_res <- gpcm_dif(shortDIF, groups_map = c(rep(1,50),rep(0,50)))
 #' summary(gpcmdif_res, par="delta")
-#' }
 #'
 #'
 #' @export
@@ -55,7 +52,7 @@ gpcm_dif <- function(X, init_par = c(), groups_map = c(), setting = c(), method 
       stop("groups_map must be designed to use the PCM-DIF!")
     }
   } else {
-    settingPar$groups_map <- groups_map
+    settingPar$groups_map <- as.matrix(groups_map)
   }
 
   if(!is.null(setting$optim_control)){
@@ -64,7 +61,7 @@ gpcm_dif <- function(X, init_par = c(), groups_map = c(), setting = c(), method 
 
   result <- pjmle(X = X, init_par = init_par, setting = settingPar, method = method)
 
-  class(result) <- c(class(result),"armodels","gpcmdif","autoRasch")
+  class(result) <- c("gpcmdif","armodels","autoRasch",class(result))
   return(result)
 
 }
@@ -153,9 +150,29 @@ summary.gpcmdif <- function(object, ...){
     # }
     # delta_mat <- matrix(round(obj$delta,5), ncol = ncol(obj$groups_map), dimnames = list(c(obj$itemName),c(paste("Group",c(1:ncol(obj$groups_map)),sep = ""))))
     delta_mat <- matrix(round(obj$delta,5), ncol = ncol(obj$groups_map), dimnames = list(c(obj$itemName),c(colnames(obj$groups_map))))
-    delta_mat[which(delta_mat < th_dif)] <- ""
+    delta_mat[which(abs(delta_mat) < th_dif)] <- ""
     delta_mat <- as.data.frame(delta_mat)
-    print(delta_mat, quote = FALSE)
+    remRowIdx <- which(unlist(
+      lapply(
+        apply(delta_mat,1,function(x){
+          which(x != "")
+        }),
+        function(x){
+          if(length(x)!=0){
+            return(1)
+          } else {
+            return(0)
+          }
+        }
+      )
+    ) == 1)
+
+    delta_mat <- as.data.frame(delta_mat)[remRowIdx, , drop = FALSE]
+    if(nrow(delta_mat) == 0){
+      cat("There is no differential functioning in items found.")
+    } else {
+      print(delta_mat, quote = FALSE)
+    }
     cat("\n")
     # cat("DIF effect threshold =",th_dif)
   }

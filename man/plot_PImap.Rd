@@ -13,7 +13,8 @@ plot_PImap(
   cex.axis = NULL,
   cex.main = NULL,
   lwd = NULL,
-  v = NULL
+  v = NULL,
+  th_dif = 1e-05
 )
 }
 \arguments{
@@ -39,7 +40,18 @@ see \code{\link[graphics:par]{par()}}.}
 see \code{\link[graphics:par]{par()}}.}
 
 \item{v}{Variable names used}
+
+\item{th_dif}{The threshold at which a DIF effect is still considered a DIF.}
+}
+\value{
+There are no values to return. Instead, it shows a graphical map of the estimated ability and the estimated difficulty on the same scale.
 }
 \description{
 This function maps the distribution of the persons' abilities and the items difficulties along the latent continuum.
+}
+\examples{
+groupsMap <- matrix(c(rep(1,50),rep(0,50)),ncol = 1, dimnames = list(c(1:100),c("V1")))
+pcmdif_res <- pcm_dif(shortDIF, groups_map = groupsMap)
+plot_PImap(pcmdif_res)
+
 }
