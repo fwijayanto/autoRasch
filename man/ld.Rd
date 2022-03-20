@@ -2,12 +2,19 @@
 % Please edit documentation in R/itemfit.R
 \name{residCor}
 \alias{residCor}
+\alias{summary.ld}
 \title{Residual Correlation}
 \usage{
 residCor(objFit)
+
+\method{summary}{ld}(object, ...)
 }
 \arguments{
 \item{objFit}{object of class "fit", the output of \code{fitStats()}.}
+
+\item{object}{The object of class \code{'ld'}.}
+
+\item{...}{Further arguments to be passed.}
 }
 \value{
 \item{ld_correl}{  Correlation matrix of the standradized residual.}

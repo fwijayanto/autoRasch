@@ -91,7 +91,7 @@ plot_EVC <- function(obj = c(), itemno = 5, xlab = NULL, ylab = NULL, xlim = c(-
 #' @param main String. Plot title.
 #'
 #' @return
-#' There are no values to return. Instead, it plots item characteristic from the model.
+#' There are no values to return. Instead, it plots the curve of item characteristics from the model.
 #'
 #' @examples
 #' res <- pcm(short_poly_data)
@@ -289,9 +289,11 @@ emat_compute <- function(obj, theta.lim = c(-10,10)){
 #' There are no values to return. Instead, it shows a graphical map of the estimated ability and the estimated difficulty on the same scale.
 #'
 #' @examples
+#' \dontrun{
 #' groupsMap <- matrix(c(rep(1,50),rep(0,50)),ncol = 1, dimnames = list(c(1:100),c("V1")))
 #' pcmdif_res <- pcm_dif(shortDIF, groups_map = groupsMap)
 #' plot_PImap(pcmdif_res)
+#' }
 #'
 #' @export
 plot_PImap <- function(obj, main = NULL, xlab = NULL, cex = NULL, cex.lab = NULL,
