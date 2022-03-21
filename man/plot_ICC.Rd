@@ -38,7 +38,7 @@ see \code{\link[graphics:plot.default]{plot.default()}}}
 \item{...}{Further arguments to be passed.}
 }
 \value{
-There are no values to return. Instead, it plots item characteristic from the model.
+There are no values to return. Instead, it plots the curve of item characteristics from the model.
 }
 \description{
 This function plots the curve(s) of the estimated ability parameters against the probabilities of responses.

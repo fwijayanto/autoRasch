@@ -56,9 +56,10 @@ In the discrimination parameters estimation, instead of estimating the discrimin
 we are estimating the natural logarithm of the parameters to avoid negative values, \eqn{\alpha = exp(\gamma)}.
 }
 \examples{
+\dontrun{
 gpcmdif_res <- gpcm_dif(shortDIF, groups_map = c(rep(1,50),rep(0,50)))
 summary(gpcmdif_res, par="delta")
-
+}
 
 }
 \seealso{

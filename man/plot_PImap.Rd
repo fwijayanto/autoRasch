@@ -50,8 +50,10 @@ There are no values to return. Instead, it shows a graphical map of the estimate
 This function maps the distribution of the persons' abilities and the items difficulties along the latent continuum.
 }
 \examples{
+\dontrun{
 groupsMap <- matrix(c(rep(1,50),rep(0,50)),ncol = 1, dimnames = list(c(1:100),c("V1")))
 pcmdif_res <- pcm_dif(shortDIF, groups_map = groupsMap)
 plot_PImap(pcmdif_res)
+}
 
 }

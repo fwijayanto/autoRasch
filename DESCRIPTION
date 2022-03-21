@@ -1,6 +1,6 @@
 Package: autoRasch
-Version: 0.1.5
-Date: 2022-02-07
+Version: 0.1.6
+Date: 2022-03-21
 Title: Semi-Automated Rasch Analysis
 Description: Performs Rasch analysis (semi-)automatically, which has been shown to be comparable with the standard Rasch analysis (Feri Wijayanto et al. (2021) <doi:10.1111/bmsp.12218>, Feri Wijayanto et al. (2022) <https://psyarxiv.com/erxuh/>).
 Authors@R: 

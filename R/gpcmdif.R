@@ -23,9 +23,10 @@
 #' @seealso \code{\link{pcm}}, \code{\link{pcm_dif}}, \code{\link{gpcm}}, \code{\link{gpcm_dif}}
 #'
 #' @examples
+#' \dontrun{
 #' gpcmdif_res <- gpcm_dif(shortDIF, groups_map = c(rep(1,50),rep(0,50)))
 #' summary(gpcmdif_res, par="delta")
-#'
+#' }
 #'
 #' @export
 gpcm_dif <- function(X, init_par = c(), groups_map = c(), setting = c(), method = c("fast","novel")){

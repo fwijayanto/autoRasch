@@ -404,8 +404,10 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
 }
 
 #' @examples
+#' \dontrun{
 #' search_res <- backward_search(shortDIF,criterion = "ipoqll", incl_set = c(1:4), cores = 2)
 #' plot_search(search_res, type="l")
+#' }
 #'
 #' @rdname search
 #'

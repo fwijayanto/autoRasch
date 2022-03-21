@@ -107,7 +107,9 @@ To search itemset that give maximum value of the criterion
 To search the itemset that give the maximum score.
 }
 \examples{
+\dontrun{
 search_res <- backward_search(shortDIF,criterion = "ipoqll", incl_set = c(1:4), cores = 2)
 plot_search(search_res, type="l")
+}
 
 }

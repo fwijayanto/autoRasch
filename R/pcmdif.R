@@ -103,11 +103,13 @@ pcm_dif <- function(X, init_par = c(), groups_map = c(), setting = c(), method =
 #'
 #'
 #' @examples
+#' \dontrun{
 #' pcmdif_res <- pcm_dif(shortDIF, groups_map = c(rep(1,50),rep(0,50)))
 #' fit_res <- fitStats(pcmdif_res)
 #' itemfit(fit_res)
 #' personfit(fit_res)
 #' plot_fitStats(fit_res, toPlot = c("alpha","outfit"), useName = FALSE)
+#' }
 #'
 #' @rdname pcm_dif
 #' @export
