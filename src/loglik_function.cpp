@@ -7,7 +7,7 @@ using namespace Rcpp;
 double ll_cpp(arma::vec theta, arma::vec gamma, arma::mat delta, arma::mat groups,
                    arma::mat beta, arma::vec m_cat, arma::mat X,
                    bool gamma_penalized, bool delta_penalized, bool theta_penalized,
-                   double lambda_in, double lambda_out, double lambda_delta, double lambda_theta, double eps
+                   double lambda_in, double lambda_out, double lambda_delta, double lambda_theta, double eps, int mode
                    ) {
 
   arma::mat exp_gamma = exp(gamma);
@@ -19,10 +19,20 @@ double ll_cpp(arma::vec theta, arma::vec gamma, arma::mat delta, arma::mat group
 
   // std::cout << "I = " << I << std::endl;
   // std::cout << "V = " << V << std::endl;
+  // std::cout << "max_J = " << max_J << std::endl;
 
   // std::cout << m_cat << std::endl;
 
   arma::mat delta_group = groups * delta.t();
+
+  arma::cube delta_cube(V,(max_J) * I,1);
+
+  if(mode == 2){
+    arma::cube delta_cube_full(V,(max_J) * I,1);
+    delta_cube_full.slice(0) = delta_group;
+    delta_cube = reshape(delta_cube_full,V,(max_J),I);
+  }
+
   arma::cube elem(V, I, max_J + 1);
 
   // std::cout << size(elem) << std::endl;
@@ -31,7 +41,11 @@ double ll_cpp(arma::vec theta, arma::vec gamma, arma::mat delta, arma::mat group
     J = m_cat[i];
     for (size_t v = 0; v < V; ++v) {
       for (size_t j = 0; j < J; ++j) {
-        elem(v, i, j+1) = elem(v, i, j) + (theta(v) - beta(i, j) - delta_group(v, i)) * exp_gamma(i);
+        if(mode == 1){
+          elem(v, i, j+1) = elem(v, i, j) + (theta(v) - beta(i, j) - delta_group(v, i)) * exp_gamma(i);
+        } else {
+          elem(v, i, j+1) = elem(v, i, j) + (theta(v) - beta(i, j) - delta_cube(v,j,i)) * exp_gamma(i);
+        }
       }
     }
   }
@@ -84,6 +98,8 @@ double ll_cpp(arma::vec theta, arma::vec gamma, arma::mat delta, arma::mat group
 
   //std::cout << -ll << std::endl;
 
+
+
   return -ll;
 }
 
@@ -91,7 +107,7 @@ double ll_cpp(arma::vec theta, arma::vec gamma, arma::mat delta, arma::mat group
 Rcpp::List grad_cpp(arma::vec theta, arma::vec gamma, arma::mat delta, arma::mat groups,
                    arma::mat beta, arma::vec m_cat, arma::mat X,
                    bool gamma_penalized, bool delta_penalized, bool theta_penalized,
-                   double lambda_in, double lambda_out, double lambda_delta, double lambda_theta, double eps
+                   double lambda_in, double lambda_out, double lambda_delta, double lambda_theta, double eps, int mode
 ) {
 
   arma::mat exp_gamma = exp(gamma);
@@ -119,9 +135,16 @@ Rcpp::List grad_cpp(arma::vec theta, arma::vec gamma, arma::mat delta, arma::mat
   // std::cout << "I = " << I << std::endl;
   // std::cout << "V = " << V << std::endl;
 
-  // std::cout << m_cat << std::endl;
-
   arma::mat delta_group = groups * delta.t();
+
+  arma::cube delta_cube(V,(max_J) * I,1);
+
+  if(mode == 2){
+    arma::cube delta_cube_full(V,(max_J) * I,1);
+    delta_cube_full.slice(0) = delta_group;
+    delta_cube = reshape(delta_cube_full,V,(max_J),I);
+  }
+
   arma::cube Psi(V, I, max_J + 1);
 
   // std::cout << "in 1" << std::endl;
@@ -133,7 +156,11 @@ Rcpp::List grad_cpp(arma::vec theta, arma::vec gamma, arma::mat delta, arma::mat
 
         for (size_t j = 0; j < J; ++j) {
           if(!NumericVector::is_na(X(v, i))){
-            Psi(v, i, j+1) = Psi(v, i, j) + (theta(v) - beta(i, j) - delta_group(v, i)) * exp_gamma(i);
+            if(mode == 1){
+              Psi(v, i, j+1) = Psi(v, i, j) + (theta(v) - beta(i, j) - delta_group(v, i)) * exp_gamma(i);
+            } else {
+              Psi(v, i, j+1) = Psi(v, i, j) + (theta(v) - beta(i, j) - delta_cube(v, j, i)) * exp_gamma(i);
+            }
           } else {
             Psi(v, i, j+1) = 0;
           }
@@ -310,6 +337,8 @@ Rcpp::List grad_cpp(arma::vec theta, arma::vec gamma, arma::mat delta, arma::mat
 // run after the compilation.
 //
 
+
+
 /*** R
 
   source('../R/gpcmdif.R')
@@ -475,3 +504,5 @@ Rcpp::List grad_cpp(arma::vec theta, arma::vec gamma, arma::mat delta, arma::mat
   # rbenchmark::benchmark(grad_benchmark(), grad_novel(), grad_fast())
 
 */
+
+

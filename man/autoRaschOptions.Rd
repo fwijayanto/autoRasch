@@ -30,6 +30,8 @@ When it is set to \code{mixed} means that it applies the coordinate descent.}
 \item{random.init.th}{   A threshold value to limit the range of the initial values. The default value is \code{1e-2}, means that the initial values range between \code{[-0.01,0.01]}}
 \item{isHessian}{   A logical parameter whether, in the estimation procedure, need to return the Hessian matrix or not. The default value is \code{TRUE}, which means the Hessian matrix will be computed.}
 \item{cd_control}{   A list of coordinate descent optimization setting.}
+\item{mode}{   An option setting to use "DIF" or "DSF" mode.}
+\item{isTraced}{   A logical value whether the progress need to be tracked or not.}
 }
 \description{
 Returns and updates the default settings used by the functions in \strong{autoRasch} package.

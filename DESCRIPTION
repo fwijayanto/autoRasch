@@ -1,28 +1,13 @@
 Package: autoRasch
-Version: 0.1.6
-Date: 2022-03-21
+Version: 0.2.1
+Date: 2022-07-07
 Title: Semi-Automated Rasch Analysis
 Description: Performs Rasch analysis (semi-)automatically, which has been shown to be comparable with the standard Rasch analysis (Feri Wijayanto et al. (2021) <doi:10.1111/bmsp.12218>, Feri Wijayanto et al. (2022) <https://psyarxiv.com/erxuh/>).
 Authors@R: 
-  c(person(given = "Feri",
-           family = "Wijayanto",
+  c(person(given = "John",
+           family = "Doe",
            role = c("aut", "cre"),
-           email = "f.wijayanto@cs.ru.nl"),
-    person(given = "Ioan Gabriel",
-           family = "Bucur",
-           role = "aut"),
-    person(given = "Perry",
-           family = "Groot",
-           role = "aut"),
-    person(given = "Tom",
-           family = "Heskes",
-           role = "aut"),
-    person(given = "Karlien",
-           family = "Mul",
-           role = "ctb"),
-    person(given = "Baziel G.M.",
-           family = "van Engelen",
-           role = "ctb"))
+           email = "john.doe@email.com"))
 Depends: R (>= 3.4.0)
 Imports:
     doParallel,

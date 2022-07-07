@@ -64,9 +64,12 @@ plot_EVC <- function(obj = c(), itemno = 5, xlab = NULL, ylab = NULL, xlim = c(-
     length(lty) <- (length(emat_list$emat) - 1)
   }
 
+  # print(length(emat_list[[1]]))
+  # print(length(emat_list$emat[[1]][,7]))
+
   plot(emat_list[[1]], emat_list$emat[[1]][,itemno], col = col[1], type = "l", lty = lty[1],
        mgp = c(5,2,0), xlab = x.lab, ylab = y.lab, xlim = xlim, ...)
-  print(length(emat_list$emat))
+  # print(length(emat_list$emat))
   if(length(emat_list$emat) > 1){
     for(i in 2:length(emat_list$emat)){
       lines(emat_list[[1]], emat_list$emat[[i]][,itemno], col = col[i], lty = lty[i], ...)
@@ -167,8 +170,12 @@ emat_compute <- function(obj, theta.lim = c(-10,10)){
   }
 
   if(!is.null(obj$delta)){
-    delta_mat <- matrix(obj$delta, ncol = (n_groups))
-    delta_mat <- cbind(rep(0,nrow(delta_mat)),delta_mat)
+    #if(obj$mode == "DIF"){
+      delta_mat <- matrix(obj$delta, ncol = (n_groups))
+      delta_mat <- cbind(rep(0,nrow(delta_mat)),delta_mat)
+    #} else {
+      #delta_cube <- array(obj$delta, c(,,n_groups))
+    #}
   } else {
     delta_mat <- matrix(rep(0,length(obj$mt_vek)),ncol = 1)
   }
@@ -201,9 +208,17 @@ emat_compute <- function(obj, theta.lim = c(-10,10)){
     theta <- seq(theta.lim[1],theta.lim[2],0.01)
     if(z > 1){
       # beta <- beta + rep(rowSums(delta_mat[,1:z]) ,each = max(obj$mt_vek,na.rm = TRUE))
-      beta <- beta + rep((delta_mat[,z]) ,each = max(obj$mt_vek,na.rm = TRUE))
+      if(obj$mode == "DIF"){
+        beta <- beta + rep((delta_mat[,z]) ,each = max(obj$mt_vek,na.rm = TRUE))
+      } else {
+        beta <- beta + delta_mat[,z]
+      }
     } else {
-      beta <- beta + rep((delta_mat[,1]) ,each = max(obj$mt_vek,na.rm = TRUE))
+      if(obj$mode == "DIF"){
+        beta <- beta + rep((delta_mat[,1]) ,each = max(obj$mt_vek,na.rm = TRUE))
+      } else {
+        beta <- beta + delta_mat[,1]
+      }
     }
     exp.gamma <- exp(gamma)
 
@@ -331,15 +346,30 @@ plot_PImap <- function(obj, main = NULL, xlab = NULL, cex = NULL, cex.lab = NULL
   colnames(beta_mat) <- paste("Th_",c(1:max(obj$mt_vek)),sep = "")
 
   if("pcmdif" %in% class(obj)){
-    delta_mat <- matrix(obj$delta, ncol = ncol(obj$groups_map))
-    for(i in seq_len(ncol(obj$groups_map))) {
-      idx <- which(abs(delta_mat[,i]) > th_dif)
-      for(j in idx){
-        # tempName <- paste(rownames(beta_mat)[j],"_",letters[i],sep = "")
-        tempName <- paste(rownames(beta_mat)[j],"_",colnames(obj$groups_map)[i],sep = "")
-        tempItem <- beta_mat[j,] + delta_mat[j,i]
-        beta_mat[nrow(beta_mat)+1,] <- tempItem
-        rownames(beta_mat)[nrow(beta_mat)] <- tempName
+    if(obj$mode == "DIF"){
+      delta_mat <- matrix(obj$delta, ncol = ncol(obj$groups_map))
+      for(g in seq_len(ncol(obj$groups_map))) {
+        idx <- which(abs(delta_mat[,g]) > th_dif)
+        for(j in idx){
+          # tempName <- paste(rownames(beta_mat)[j],"_",letters[g],sep = "")
+          tempName <- paste(rownames(beta_mat)[j],"_",colnames(obj$groups_map)[g],sep = "")
+          tempItem <- beta_mat[j,] + delta_mat[j,g]
+          beta_mat[nrow(beta_mat)+1,] <- tempItem
+          rownames(beta_mat)[nrow(beta_mat)] <- tempName
+        }
+      }
+    } else {
+      delta_cube <- array(obj$delta, c(max(obj$mt_vek,na.rm = TRUE),length(obj$mt_vek),ncol(obj$groups_map)))
+      for(g in seq_len(ncol(obj$groups_map))) {
+        # idx <- which(abs(delta_mat[,g]) > th_dif)
+        idx <- which(apply(delta_cube[,,g],2,function(x){TRUE %in% (abs(x) > th_dif)}))
+        for(i in idx){
+          # tempName <- paste(rownames(beta_mat)[j],"_",letters[g],sep = "")
+          tempName <- paste(rownames(beta_mat)[i],"_",colnames(obj$groups_map)[g],sep = "")
+          tempItem <- beta_mat[i,] + delta_cube[,i,g]
+          beta_mat[nrow(beta_mat)+1,] <- tempItem
+          rownames(beta_mat)[nrow(beta_mat)] <- tempName
+        }
       }
     }
   }

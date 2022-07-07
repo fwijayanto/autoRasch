@@ -51,7 +51,7 @@ gpcm <- function(X, init_par = c(), setting = c(), method = c("fast","novel")){
 
   result <- pjmle(X = X, init_par = init_par, setting = settingPar, method = method)
 
-  class(result) <- c(class(result),"armodels","gpcm","autoRasch")
+  class(result) <- c("gpcm","armodels","autoRasch",class(result))
   return(result)
 }
 

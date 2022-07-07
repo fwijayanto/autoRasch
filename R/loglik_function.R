@@ -283,11 +283,17 @@ loglik_fun_fast <- function(nlmPar, dset, estPar_arr, fixed_par, fixValue, fixLe
   theta <- map_nlmPar$theta
   beta_mat <- matrix(map_nlmPar$beta, ncol(dset), dataPrep$n_th, byrow = TRUE)
   gamma <- map_nlmPar$gamma
-  delta_mat <- matrix(map_nlmPar$delta, ncol(dset), ncol(dataPrep$groups_map))#, byrow = TRUE)
+  if(opts$mode == "DIF"){
+    delta_mat <- matrix(map_nlmPar$delta, ncol(dset), ncol(dataPrep$groups_map))#, byrow = TRUE)
+    mode <- 1
+  } else {
+    delta_mat <- matrix(map_nlmPar$delta, length(beta_mat), ncol(dataPrep$groups_map))#, byrow = TRUE)
+    mode <- 2
+  }
 
   ll_cpp(theta, gamma, delta_mat, dataPrep$groups_map, beta_mat, dataPrep$mt_vek, as.matrix(dset),
          opts$isPenalized_gamma, opts$isPenalized_delta, opts$isPenalized_theta,
-         opts$lambda_in, opts$lambda_out, opts$lambda_delta, opts$lambda_theta, opts$eps)
+         opts$lambda_in, opts$lambda_out, opts$lambda_delta, opts$lambda_theta, opts$eps,mode)
 }
 
 
@@ -757,11 +763,19 @@ grad_fun_fast <- function(nlmPar, dset, estPar_arr, fixed_par, fixValue, fixLeng
   theta <- map_nlmPar$theta
   beta_mat <- matrix(map_nlmPar$beta, ncol(dset), dataPrep$n_th, byrow = TRUE)
   gamma <- map_nlmPar$gamma
-  delta_mat <- matrix(map_nlmPar$delta, ncol(dset), ncol(dataPrep$groups_map))#, byrow = TRUE)
+  # # delta_mat <- matrix(map_nlmPar$delta, ncol(dset), ncol(dataPrep$groups_map))#, byrow = TRUE)
+  # delta_mat <- matrix(map_nlmPar$delta, length(beta_mat), ncol(dataPrep$groups_map))#, byrow = TRUE)
+  if(opts$mode == "DIF"){
+    delta_mat <- matrix(map_nlmPar$delta, ncol(dset), ncol(dataPrep$groups_map))#, byrow = TRUE)
+    mode <- 1
+  } else {
+    delta_mat <- matrix(map_nlmPar$delta, length(beta_mat), ncol(dataPrep$groups_map))#, byrow = TRUE)
+    mode <- 2
+  }
 
   result <- grad_cpp(theta, gamma, delta_mat, dataPrep$groups_map, beta_mat, dataPrep$mt_vek, as.matrix(dset),
          opts$isPenalized_gamma, opts$isPenalized_delta, opts$isPenalized_theta,
-         opts$lambda_in, opts$lambda_out, opts$lambda_delta, opts$lambda_theta, opts$eps)
+         opts$lambda_in, opts$lambda_out, opts$lambda_delta, opts$lambda_theta, opts$eps, mode)
 
   # print(result)
 

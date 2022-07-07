@@ -152,6 +152,7 @@ generate_data <- function(responseType = "multidim.nocorrel", theta = c(-3,3), s
   }
 
 
+  if(length(thGap) == 1){
   if(ncat > 2){
     D.mat <- matrix(NA, ncol = (ncat-1), nrow = length(D)) #Create a set of thersholds scores
 
@@ -187,6 +188,23 @@ generate_data <- function(responseType = "multidim.nocorrel", theta = c(-3,3), s
     D.mat <- matrix(D, ncol = (ncat-1), nrow = length(D)) #Create a set of thersholds scores
 
   }
+  }
+
+  tempth <- c(0)
+  if(length(thGap) > 1){
+    for(i in 1:(ncat-2)){
+      tempth <- c(tempth,tempth[i]+thGap[i])
+    }
+
+    D.mat <- c()
+    tempth.mean <- mean(tempth)
+    for(i in 1:length(D)){
+      dif.th <- D[i] - tempth.mean
+      D.mat <- rbind(D.mat, tempth + dif.th)
+    }
+  }
+
+  View(D.mat)
 
   temp.mx <- c()
   pmat.mx <- c()
@@ -223,14 +241,11 @@ generate_data <- function(responseType = "multidim.nocorrel", theta = c(-3,3), s
           for(i in 1:(ndim-1)){
             mBvec <- c(mBvec,rep(1,nthDim),rep(0,nthres))
           }
-          print(mBvec)
           mB <- matrix(c(mBvec,rep(1,nthDim)),ncol = ndim,byrow = FALSE)
           # mB <- matrix(c(rep(1,nthDim),rep(0,nthres),rep(1,nthDim),rep(0,nthres),rep(1,nthDim)),ncol = ndim,byrow = FALSE)
         } else {
-          print(nthres)
           mB <- matrix(1,ncol = 1,nrow = nthres)
         }
-        print(mB)
       }
     }
   }

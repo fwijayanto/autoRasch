@@ -7,18 +7,16 @@
 #' @param incl_set A vector of initial items in the included set to start the search. The default is to start with full items.
 #' @param groups_map A matrix or vector to map the subject to the DIFs groups.
 #' @param cores An integer value of number of cores should be used for computation. The default is 2.
-#' @param isTracked A logical value whether the progress need to be tracked or not.
 #' @param isContinued A logical value whether this search is continuing another unfinished search.
 #' @param prevData The filename of the temporary .RData file of the unfinished search.
 #' @param fileOutput The filename if it is wished to save the output results in file (.RData and .csv) and FALSE if not.
 #' @param tempFile The filename of the temporary file to track the search progress. The default is \code{"temp_stepSearch.RData"} which also automatically produces \code{"temp_stepSearch.csv"}.
-#' @param optim_control_iq The optimisation setting of the included set. See \code{\link[stats:optim]{stats::optim()}} \code{control} parameter.
-#' @param optim_control_oq The optimisation setting of the excluded set. See \code{\link[stats:optim]{stats::optim()}} \code{control} parameter.
 #' @param isConvert A logical value whether it is wanted to recompute the score of the search results using IPOQ-LL-DIF criterion.
 #' @param setting_par_iq a list of the optimization control setting parameters for the included set. See \code{setting} parameter in \code{\link[autoRasch:autoRaschOptions]{autoRaschOptions()}}.
 #' @param setting_par_oq a list of the optimization control setting parameters for the included set. See \code{setting} parameter in \code{\link[autoRasch:autoRaschOptions]{autoRaschOptions()}}.
 #' @param method The implementation option of log likelihood function. \code{fast} using a \code{c++} implementation and \code{novel} using an \code{R} implementation.
-#'
+#' @param isTraced A logical value whether the progress need to be tracked or not.
+
 #' @return
 #' Matrix of the highest scores (IQ-LL, OQ-LL, and IPOQ-LL) for every number of items in the included set in the set along with the corresponding itemset.
 #'
@@ -31,9 +29,9 @@
 #' @rdname search
 #' @export
 stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = c(), groups_map = c(), cores = NULL,
-                            optim_control_iq = c(), optim_control_oq = c(), isTracked = TRUE, isContinued = FALSE,
-                            prevData = c(), fileOutput = FALSE, tempFile = "temp_stepSearch.RData",
-                            isConvert = FALSE, setting_par_iq = c(), setting_par_oq = c(), method = c("fast","novel")){
+                            isContinued = FALSE, prevData = c(), fileOutput = FALSE, tempFile = "temp_stepSearch.RData",
+                            isConvert = FALSE, setting_par_iq = c(), setting_par_oq = c(), method = c("fast","novel"),
+                            isTraced = FALSE){
 
   isLegacy <- FALSE
   namecsv <- paste(paste(strsplit(tempFile, "(\\.)")[[1]][1:(length(strsplit(tempFile, "(\\.)")[[1]])-1)],collapse = "."),".csv",sep = "")
@@ -43,28 +41,34 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
     incl_set <- seq_len(ncol(X))
   }
 
-  # if(isLegacy){
-  #   optim_control_iq <- list(maxit=5e+2, reltol=1e-21, fnscale = 10)
-  #   optim_control_oq <- list(maxit=5e+2, reltol=1e-21, fnscale = 10)
-  # } else {
-    optim_control_iq <- list(maxit=1e+4, reltol=1e-12, fnscale = 10)
-    optim_control_oq <- list(maxit=2e+4, reltol=1e-12, fnscale = 10)
-  # }
-
-  if(!is.null(optim_control_iq) & !is.null(optim_control_oq)){
-    optim_control_iq <- optim_control_iq
-    optim_control_oq <- optim_control_oq
-  }
-
   if(criterion[1] == "ipoqlldif"){
     n_par <- sum(nrow(X),((1+ncol(groups_map)+(max(X,na.rm = TRUE)-min(X,na.rm = TRUE)))*ncol(X)))
   } else {
     n_par <- sum(nrow(X),((1+(max(X,na.rm = TRUE)-min(X,na.rm = TRUE)))*ncol(X)))
-    # print(n_par)
+  }
+
+  if(is.null(setting_par_iq)){
+    setting_par_iq <- autoRaschOptions()
+
+  }
+
+  if(is.null(setting_par_oq)){
+    setting_par_oq <- autoRaschOptions()
+  }
+
+  if(criterion[1] == "ipoqlldif"){
+    setting_par_iq$optz_method <- setting_par_oq$optz_method <- "mixed"
+  } else {
+    setting_par_iq$optz_method <- setting_par_oq$optz_method <- "optim"
+  }
+
+  if(setting_par_iq$isTraced | setting_par_oq$isTraced | isTraced){
+    isTraced <- TRUE
+  } else {
+    isTraced <- FALSE
   }
 
   trace <- list()
-  # trace[["isLegacy"]] <- isLegacy
 
   # To handle mechanism of continuing unfinished search
   if(isContinued){
@@ -97,15 +101,16 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
         init_par_iq <- init_par_oq <- c()
       }
 
-      if(isTracked){
+      if(isTraced){
         # cat(":::",format(Sys.time(),"%d/%m/%Y %H:%M:%S"),":::","do forward selection...")
         cat("do forward...")
         cat("\n")
       }
 
-      time <- system.time(res.fwd <- compute_scores_unparalleled(X = X, incl_sets = incl_set, type = criterion, step_direct = c("forward"), groups_map = groups_map,
-                                                                 init_par_iq = init_par_iq, init_par_oq = init_par_oq, optim_control_iq = optim_control_iq,
-                                                                 optim_control_oq = optim_control_oq, setting_par_iq = setting_par_iq, setting_par_oq = setting_par_oq))
+      time <- system.time(res.fwd <- compute_scores_unparalleled(X = X, incl_sets = incl_set, type = criterion, step_direct = c("forward"),
+                                                                 groups_map = groups_map, init_par_iq = init_par_iq,
+                                                                 init_par_oq = init_par_oq, setting_par_iq = setting_par_iq,
+                                                                 setting_par_oq = setting_par_oq))
 
       best.fwd <- res.fwd[order(res.fwd[,3],decreasing = TRUE),][1,]
 
@@ -122,7 +127,7 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
         incl_set <- new.incl_set
         excl_set <- fullitem[-incl_set]
 
-        if(isTracked){
+        if(isTraced){
           cat((i),":",paste(incl_set,collapse = ","))
           cat("\n")
         }
@@ -140,15 +145,15 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
           init_par_iq <- init_par_oq <- c()
         }
 
-        if(isTracked){
+        if(isTraced){
           # cat(":::",format(Sys.time(),"%d/%m/%Y %H:%M:%S"),":::","do forward selection...")
           cat("do forward...")
           cat("\n")
         }
 
-        time <- system.time(res.fwd <- compute_scores_unparalleled(X = X, incl_sets = incl_set, type = criterion, step_direct = c("forward"), groups_map = groups_map,
-                                                                   init_par_iq = init_par_iq, init_par_oq = init_par_oq, optim_control_iq = optim_control_iq,
-                                                                   optim_control_oq = optim_control_oq, setting_par_iq = setting_par_iq, setting_par_oq = setting_par_oq))
+        time <- system.time(res.fwd <- compute_scores_unparalleled(X = X, incl_sets = incl_set, type = criterion, step_direct = c("forward"),
+                                                                   groups_map = groups_map, init_par_iq = init_par_iq, init_par_oq = init_par_oq,
+                                                                   setting_par_iq = setting_par_iq, setting_par_oq = setting_par_oq))
 
         best.fwd <- res.fwd[order(res.fwd[,3],decreasing = TRUE),][1,]
 
@@ -166,20 +171,19 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
   } else {
 
     # If not continuing the unfinished search then it will start with the specified incl_set
-    if(isTracked){
+    if(isTraced){
       # cat(":::",format(Sys.time(),"%d/%m/%Y %H:%M:%S"),":::","do forward selection...")
       cat("do full items estimation...")
       cat("\n")
     }
 
     score <- compute_score(X = X, incl_set = incl_set, type = criterion , groups_map = groups_map,
-                           optim_control_iq = optim_control_iq, optim_control_oq = optim_control_oq,
                            setting_par_iq = setting_par_iq, setting_par_oq = setting_par_oq, method = method)
 
     scoreMat <- matrix(NA,nrow = ncol(X), ncol = length(score))
     scoreMat[ncol(X),] <- score
 
-    if(isTracked){
+    if(isTraced){
       cat((length(incl_set)),":",paste(incl_set,collapse = ","))
       cat("\n")
     }
@@ -212,7 +216,7 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
       init_par_iq <- init_par_oq <- c()
     }
 
-    if(isTracked){
+    if(isTraced){
       # cat(":::",format(Sys.time(),"%d/%m/%Y %H:%M:%S"),":::","do backward elimination...")
       cat("do backward...")
       cat("\n")
@@ -220,9 +224,9 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
 
     # Compute all of the ipoq-ll possible for onestep backward elimination
     time <- system.time(res.bck <- compute_scores_unparalleled(X = X, incl_sets = incl_set, type = criterion, step_direct = c("backward"), groups_map = groups_map,
-                                                               init_par_iq = init_par_iq, init_par_oq = init_par_oq, optim_control_iq = optim_control_iq,
-                                                               optim_control_oq = optim_control_oq, setting_par_iq = setting_par_iq, setting_par_oq = setting_par_oq,
-                                                               method = method))
+                                                               init_par_iq = init_par_iq, init_par_oq = init_par_oq, setting_par_iq = setting_par_iq,
+                                                               setting_par_oq = setting_par_oq, method = method))
+
     best.bck <- res.bck[order(res.bck[,3],decreasing = TRUE),][1,] ### keep information of the highest ipoq-ll
     new.incl_set <- best.bck[4:(3+i)]                              ### store the items of the included itemset
     incl_set <- new.incl_set
@@ -240,7 +244,7 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
       write.csv(scoreMat, file = namecsv)
 
       # print the information that is being tracked
-      if(isTracked){
+      if(isTraced){
         cat(i,":",paste(incl_set,collapse = ","))
         cat("\n")
       }
@@ -259,15 +263,14 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
           init_par_iq <- init_par_oq <- c()
         }
 
-        if(isTracked){
+        if(isTraced){
           cat("do forward...")
           cat("\n")
         }
 
         time <- system.time(res.fwd <- compute_scores_unparalleled(X = X, incl_sets = incl_set, type = criterion, step_direct = c("forward"), groups_map = groups_map,
-                                                                   init_par_iq = init_par_iq, init_par_oq = init_par_oq, optim_control_iq = optim_control_iq,
-                                                                   optim_control_oq = optim_control_oq, setting_par_iq = setting_par_iq, setting_par_oq = setting_par_oq,
-                                                                   method = method))
+                                                                   init_par_iq = init_par_iq, init_par_oq = init_par_oq, setting_par_iq = setting_par_iq,
+                                                                   setting_par_oq = setting_par_oq, method = method))
 
         best.fwd <- res.fwd[order(res.fwd[,3],decreasing = TRUE),][1,]
 
@@ -290,7 +293,7 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
           save(trace_data, file = tempFile)
           write.csv(scoreMat, file = namecsv)
 
-          if(isTracked){
+          if(isTraced){
             cat((i),":",paste(incl_set,collapse = ","))
             cat("\n")
           }
@@ -302,15 +305,14 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
             init_par_iq <- init_par_oq <- c()
           }
 
-          if(isTracked){
+          if(isTraced){
             cat("do forward..")
             cat("\n")
           }
 
           time <- system.time(res.fwd <- compute_scores_unparalleled(X = X, incl_sets = incl_set, type = criterion, step_direct = c("forward"), groups_map = groups_map,
-                                                                     init_par_iq = init_par_iq, init_par_oq = init_par_oq, optim_control_iq = optim_control_iq,
-                                                                     optim_control_oq = optim_control_oq, setting_par_iq = setting_par_iq, setting_par_oq = setting_par_oq,
-                                                                     method = method))
+                                                                     init_par_iq = init_par_iq, init_par_oq = init_par_oq, setting_par_iq = setting_par_iq,
+                                                                     setting_par_oq = setting_par_oq, method = method))
 
           best.fwd <- res.fwd[order(res.fwd[,3],decreasing = TRUE),][1,]
 
@@ -341,35 +343,35 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
 
   res_search <- scoreMat[,1:(3+ncol(X))]
 
-  if(isTracked){
+  if(isTraced){
     cat("::: End of search :::")
     cat("\n")
   }
 
 
   if(isLegacy & !isConvert){
-    if(isTracked){
+    if(isTraced){
       cat("::: Recompute score... :::")
       cat("\n")
     }
-    res_search <- compute_scores(X, incl_sets = res_search[,4:(3+ncol(X))], type = criterion[1], step_direct = c("fixed"), groups_map = groups_map,
-                                 cores = cores, init_par_iq = c(), init_par_oq = c(), optim_control_iq = optim_control_iq,
-                                 optim_control_oq = optim_control_oq, setting_par_iq = setting_par_iq, setting_par_oq = setting_par_oq,
-                                 method = method)
+    res_search <- compute_scores(X, incl_sets = res_search[,4:(3+ncol(X))], type = criterion[1], step_direct = c("fixed"),
+                                 groups_map = groups_map, cores = cores, init_par_iq = c(), init_par_oq = c(),
+                                 setting_par_iq = setting_par_iq, setting_par_oq = setting_par_oq, method = method)
+
     res_search <- res_search[,1:(3+ncol(X))]
   }
 
   if(isConvert){
     if(criterion[1] == "ipoqll"){
       if(!is.null(groups_map)){
-        if(isTracked){
+        if(isTraced){
           cat("::: Start converting.... :::")
           cat("\n")
         }
-        res_search <- compute_scores(X, incl_sets = res_search[,4:(3+ncol(X))], type = criterion[1], step_direct = c("fixed"), groups_map = groups_map,
-                                     cores = cores, init_par_iq = c(), init_par_oq = c(), optim_control_iq = optim_control_iq,
-                                     optim_control_oq = optim_control_oq, setting_par_iq = setting_par_iq, setting_par_oq = setting_par_oq,
-                                     method = method)
+        res_search <- compute_scores(X, incl_sets = res_search[,4:(3+ncol(X))], type = criterion[1], step_direct = c("fixed"),
+                                     groups_map = groups_map, cores = cores, init_par_iq = c(), init_par_oq = c(),
+                                     setting_par_iq = setting_par_iq, setting_par_oq = setting_par_oq, method = method)
+
         res_search <- res_search[,1:(3+ncol(X))]
       } else {
         "Can not convert the score, groups_map is not provided."
@@ -416,26 +418,26 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
 #'
 #' @export
 backward_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = c(), groups_map = c(), cores = NULL,
-                            optim_control_iq = c(), optim_control_oq = c(), isTracked = TRUE, isContinued = FALSE,
-                            prevData = c(), fileOutput = FALSE, tempFile = "temp_backSearch.RData",
-                            isConvert = FALSE, setting_par_iq = c(), setting_par_oq = c(), method = c("fast","novel")){
+                            isTraced = TRUE, isContinued = FALSE, isConvert = FALSE, setting_par_iq = c(),
+                            setting_par_oq = c(), method = c("fast","novel"), tempFile = "temp_backSearch.RData"){
 
   namecsv <- paste(paste(strsplit(tempFile, "(\\.)")[[1]][1:(length(strsplit(tempFile, "(\\.)")[[1]])-1)],collapse = "."),".csv",sep = "")
   fullitem <- seq_len(ncol(X))
 
   isLegacy <- FALSE
 
-  # if(isLegacy){
-  #   optim_control_iq <- list(maxit=5e+2, reltol=1e-21, fnscale = 10)
-  #   optim_control_oq <- list(maxit=5e+2, reltol=1e-21, fnscale = 10)
-  # } else {
-    optim_control_iq <- list(maxit=1e+4, reltol=1e-12, fnscale = 10)
-    optim_control_oq <- list(maxit=2e+4, reltol=1e-12, fnscale = 10)
-  # }
+  if(is.null(setting_par_iq)){
+    setting_par_iq <- autoRaschOptions()
+  }
 
-  if(!is.null(optim_control_iq) & !is.null(optim_control_oq)){
-    optim_control_iq <- optim_control_iq
-    optim_control_oq <- optim_control_oq
+  if(is.null(setting_par_oq)){
+    setting_par_oq <- autoRaschOptions()
+  }
+
+  if(setting_par_iq$isTraced | setting_par_oq$isTraced){
+    isTraced <- TRUE
+  } else {
+    isTraced <- FALSE
   }
 
   n_par <- sum(nrow(X),((1+(max(X,na.rm = TRUE)-min(X,na.rm = TRUE)))*ncol(X)))
@@ -455,19 +457,18 @@ backward_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
   } else {
 
     # If not continuing the unfinished search then it will start with the specified incl_set
-    if(isTracked){
+    if(isTraced){
       # cat(":::",format(Sys.time(),"%d/%m/%Y %H:%M:%S"),":::","do forward selection...")
       cat("do full items estimation...")
       cat("\n")
     }
     score <- compute_score(X = X, incl_set = incl_set, type = criterion , groups_map = groups_map,
-                           optim_control_iq = optim_control_iq, optim_control_oq = optim_control_oq,
                            setting_par_iq = setting_par_iq, setting_par_oq = setting_par_oq, method = method)
 
     scoreMat <- matrix(NA,nrow = ncol(X), ncol = length(score))
     scoreMat[ncol(X),] <- score
 
-    if(isTracked){
+    if(isTraced){
       cat((length(incl_set)),":",paste(incl_set,collapse = ","))
       cat("\n")
     }
@@ -501,16 +502,16 @@ backward_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
       init_par_iq <- init_par_oq <- c()
     }
 
-    if(isTracked){
+    if(isTraced){
       # cat(":::",format(Sys.time(),"%d/%m/%Y %H:%M:%S"),":::","do backward elimination...")
       cat("do backward...")
       cat("\n")
     }
 
     # Compute all of the ipoq-ll possible for onestep backward elimination
-    time <- system.time(res.bck <- compute_scores_unparalleled(X = X, incl_sets = incl_set, type = criterion, step_direct = c("backward"), groups_map = groups_map,
-                                                               init_par_iq = init_par_iq, init_par_oq = init_par_oq, optim_control_iq = optim_control_iq,
-                                                               optim_control_oq = optim_control_oq, setting_par_iq = setting_par_iq, setting_par_oq = setting_par_oq,
+    time <- system.time(res.bck <- compute_scores_unparalleled(X = X, incl_sets = incl_set, type = criterion, step_direct = c("backward"),
+                                                               groups_map = groups_map, init_par_iq = init_par_iq, init_par_oq = init_par_oq,
+                                                               setting_par_iq = setting_par_iq, setting_par_oq = setting_par_oq,
                                                                method = method))
 
 
@@ -532,7 +533,7 @@ backward_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
       write.csv(scoreMat, file = namecsv)
 
       # print the information that is being tracked
-      if(isTracked){
+      if(isTraced){
         cat(i,":",paste(incl_set,collapse = ","))
         cat("\n")
       }
@@ -559,31 +560,32 @@ backward_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
 
   res_search <- scoreMat[,1:(3+ncol(X))]
 
-  if(isTracked){
+  if(isTraced){
     cat("::: End of search :::")
     cat("\n")
   }
 
   if(isLegacy & !isConvert){
-    if(isTracked){
+    if(isTraced){
       cat("::: Recompute score... :::")
       cat("\n")
     }
     res_search <- compute_scores(X, incl_sets = res_search[,4:(3+ncol(X))], type = criterion[1], step_direct = c("fixed"), groups_map = groups_map,
-                                 init_par_iq = init_par_iq, init_par_oq = init_par_oq, optim_control_iq = optim_control_iq, optim_control_oq = optim_control_oq, cores = NULL,
+                                 init_par_iq = init_par_iq, init_par_oq = init_par_oq,  cores = NULL,
                                  setting_par_iq = setting_par_iq, setting_par_oq = setting_par_oq, method = method)
+
     res_search <- res_search[,1:(3+ncol(X))]
   }
 
   if(isConvert){
     if(criterion[1] == "ipoqll"){
       if(!is.null(groups_map)){
-        if(isTracked){
+        if(isTraced){
           cat("::: Start converting.... :::")
           cat("\n")
         }
         res_search <- compute_scores(X, incl_sets = res_search[,4:(3+ncol(X))], type = c("ipoqlldif"), step_direct = c("fixed"), groups_map = groups_map,
-                                     init_par_iq = c(), init_par_oq = c(), optim_control_iq = c(), optim_control_oq = c(), cores = NULL,
+                                     init_par_iq = c(), init_par_oq = c(), cores = NULL,
                                      setting_par_iq = setting_par_iq, setting_par_oq = setting_par_oq, method = method)
         res_search <- res_search[,1:(3+ncol(X))]
       } else {
@@ -596,9 +598,9 @@ backward_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
   }
 
   if(criterion[1] == "ipoqlldif"){
-    class(res_search) <- c(class(res_search),"search", "ipoqlldif", "autoRasch")
+    class(res_search) <- c("search", "ipoqlldif", "autoRasch", class(res_search))
   } else {
-    class(res_search) <- c(class(res_search),"search", "ipoqll", "autoRasch")
+    class(res_search) <- c("search", "ipoqll", "autoRasch", class(res_search))
   }
 
   # If saved in file

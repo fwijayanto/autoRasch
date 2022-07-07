@@ -14,9 +14,6 @@ stepwise_search(
   incl_set = c(),
   groups_map = c(),
   cores = NULL,
-  optim_control_iq = c(),
-  optim_control_oq = c(),
-  isTracked = TRUE,
   isContinued = FALSE,
   prevData = c(),
   fileOutput = FALSE,
@@ -24,7 +21,8 @@ stepwise_search(
   isConvert = FALSE,
   setting_par_iq = c(),
   setting_par_oq = c(),
-  method = c("fast", "novel")
+  method = c("fast", "novel"),
+  isTraced = FALSE
 )
 
 backward_search(
@@ -33,17 +31,13 @@ backward_search(
   incl_set = c(),
   groups_map = c(),
   cores = NULL,
-  optim_control_iq = c(),
-  optim_control_oq = c(),
-  isTracked = TRUE,
+  isTraced = TRUE,
   isContinued = FALSE,
-  prevData = c(),
-  fileOutput = FALSE,
-  tempFile = "temp_backSearch.RData",
   isConvert = FALSE,
   setting_par_iq = c(),
   setting_par_oq = c(),
-  method = c("fast", "novel")
+  method = c("fast", "novel"),
+  tempFile = "temp_backSearch.RData"
 )
 
 \method{summary}{search}(object, ...)
@@ -63,12 +57,6 @@ plot_search(obj, remOrdered = TRUE, locateMax = TRUE, ...)
 
 \item{cores}{An integer value of number of cores should be used for computation. The default is 2.}
 
-\item{optim_control_iq}{The optimisation setting of the included set. See \code{\link[stats:optim]{stats::optim()}} \code{control} parameter.}
-
-\item{optim_control_oq}{The optimisation setting of the excluded set. See \code{\link[stats:optim]{stats::optim()}} \code{control} parameter.}
-
-\item{isTracked}{A logical value whether the progress need to be tracked or not.}
-
 \item{isContinued}{A logical value whether this search is continuing another unfinished search.}
 
 \item{prevData}{The filename of the temporary .RData file of the unfinished search.}
@@ -84,6 +72,8 @@ plot_search(obj, remOrdered = TRUE, locateMax = TRUE, ...)
 \item{setting_par_oq}{a list of the optimization control setting parameters for the included set. See \code{setting} parameter in \code{\link[autoRasch:autoRaschOptions]{autoRaschOptions()}}.}
 
 \item{method}{The implementation option of log likelihood function. \code{fast} using a \code{c++} implementation and \code{novel} using an \code{R} implementation.}
+
+\item{isTraced}{A logical value whether the progress need to be tracked or not.}
 
 \item{object}{The object of class \code{'search'}.}
 

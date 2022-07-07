@@ -35,12 +35,20 @@ pjmle <- function(X, init_par = c(), setting = c(), method = c("fast","novel")){
     theta <- runif(nrow(dataPrep$dset),-1,1)*opts$random.init.th
     beta <- runif(dataPrep$allcat,-1,1)*opts$random.init.th
     gamma <- runif(ncol(dataPrep$dset),-1,1)*opts$random.init.th
-    delta <- rep(0,(ncol(dataPrep$dset)*ncol(dataPrep$groups_map)))
+    if(opts$mode == "DIF"){
+      delta <- rep(0,(ncol(dataPrep$dset)*ncol(dataPrep$groups_map)))
+    } else {
+      delta <- rep(0,(dataPrep$allcat*ncol(dataPrep$groups_map)))
+    }
   } else {
     theta <- rep(0,nrow(dataPrep$dset))
     beta <- rep(0,dataPrep$allcat)
     gamma <- rep(0,ncol(dataPrep$dset)) #gpcm uses different gamma for each item
-    delta <- rep(0,(ncol(dataPrep$dset)*ncol(dataPrep$groups_map)))
+    if(opts$mode == "DIF"){
+      delta <- rep(0,(ncol(dataPrep$dset)*ncol(dataPrep$groups_map)))
+    } else {
+      delta <- rep(0,(dataPrep$allcat*ncol(dataPrep$groups_map)))
+    }
   }
 
   ### setting the optimized parameter
@@ -51,6 +59,7 @@ pjmle <- function(X, init_par = c(), setting = c(), method = c("fast","novel")){
   length_delta <- length(delta)
   length_array <- c(length_theta,length_beta,length_gamma,length_delta)
   fullPar_arr <- c("theta","beta","gamma","delta")
+
 
   if(is.null(opts$fixed_par)){
     estPar_arr <- fullPar_arr
@@ -118,13 +127,15 @@ pjmle <- function(X, init_par = c(), setting = c(), method = c("fast","novel")){
   output <- list("X" = X, "mt_vek" = dataPrep$mt_vek, "real_vek" = dataPrep$na_catVec, "itemName" = nameCol,
                  "penalty.coeff" = list("lambda_theta" = opts$lambda_theta,"lambda_in" = opts$lambda_in,
                                         "lambda_out" = opts$lambda_out,"lambda_delta" = opts$lambda_delta),
-                 "exclResp" = exclResp)
+                 "exclResp" = exclResp, "mode" = opts$mode)
 
   if(!is.null(opts$groups_map)){
     output[["groups_map"]] <- oriGroupsMap
   }
 
-  print("Estimation starts...")
+  if(opts$isTraced){
+    print("Estimation starts...")
+  }
 
   if(opts$optz_method == "optim"){
     if(method[1] == "novel"){
@@ -156,7 +167,9 @@ pjmle <- function(X, init_par = c(), setting = c(), method = c("fast","novel")){
     output[["hessian"]] <- minRes$hessian
   }
 
-  print("...done!")
+  if(opts$isTraced){
+    print("...done!")
+  }
 
 
   ### parsing the parameters estimate
@@ -172,6 +185,10 @@ pjmle <- function(X, init_par = c(), setting = c(), method = c("fast","novel")){
       }
       if(method[1] == "fast" & cd == "beta"){
         output[["beta.raw"]] <- output[[cd]]
+        output[[cd]] <- output[[cd]]*dataPrep$na_catVec
+      }
+      if(method[1] == "fast" & cd == "delta" & opts$mode == "DSF"){
+        output[["delta.raw"]] <- output[[cd]]
         output[[cd]] <- output[[cd]]*dataPrep$na_catVec
       }
     }

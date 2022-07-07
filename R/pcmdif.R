@@ -298,7 +298,7 @@ fitStats.pcmdif <- function(obj, isAlpha = TRUE, isTraced = FALSE){
     res_fit[["traceMat"]] <- list("emat" = Emat, "vmat" = Vmat, "cmat" = Cmat, "std.res" = st.res)
   }
 
-  class(res_fit) <- c(class(res_fit),"fit","autoRasch")
+  class(res_fit) <- c("fit","autoRasch",class(res_fit))
   return(res_fit)
 }
 

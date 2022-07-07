@@ -37,6 +37,8 @@
 #' \item{random.init.th}{   A threshold value to limit the range of the initial values. The default value is \code{1e-2}, means that the initial values range between \code{[-0.01,0.01]}}
 #' \item{isHessian}{   A logical parameter whether, in the estimation procedure, need to return the Hessian matrix or not. The default value is \code{TRUE}, which means the Hessian matrix will be computed.}
 #' \item{cd_control}{   A list of coordinate descent optimization setting.}
+#' \item{mode}{   An option setting to use "DIF" or "DSF" mode.}
+#' \item{isTraced}{   A logical value whether the progress need to be tracked or not.}
 #'
 #' @examples
 #' ### To show the default values
@@ -60,26 +62,28 @@ autoRaschOptions <- function(x = NULL){
 
       # check if x is in names(aRoptions)
       not.ok <- which(!x %in% names(aRoptions))
+      if(length(x) > 1L) {
+        stop("autoRasch ERROR: `x' could only opt an option.")
+      }
       if(length(not.ok) > 0L) {
         # only warn if multiple options were requested
-        if(length(x) > 1L) {
           warning("autoRasch WARNING: option `", x[not.ok],
                   "' not available")
-        }
         x <- x[ -not.ok ]
+
       }
 
-      return(aRoptions[x])
+      # return(aRoptions[[x]])
       # return requested option(s)
       if(length(x) == 0L) {
       } else {
-        aRoptions[x]
+        return(aRoptions[[x]])
       }
     } else {
-      stop("autoRasch ERROR: `x' must be a character string")
+      stop("autoRasch ERROR: `x' must be a string.")
     }
   } else {
-    class(aRoptions) <- c(class(aRoptions),"aR_opt")
+    class(aRoptions) <- c("aR_opt",class(aRoptions))
     return(aRoptions)
   }
 }
@@ -107,7 +111,9 @@ autoRasch_options_default <- function(){
     random.init.th = 1e-2,
     isHessian = FALSE,
     cd_control = list("init.step" = 0.7, scale.down = 0.25, maxit.cd.higher = 500, maxit.cd.lower = 500, maxit.optim = 1e+4,
-                      abs.tol = 1e-12, max.diff.par = 1e-8)
+                      abs.tol = 1e-12, max.diff.par = 1e-8),
+    mode = "DIF",
+    isTraced = FALSE
   )
 
   return(opt)

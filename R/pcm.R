@@ -46,7 +46,7 @@ pcm <- function(X, init_par = c(), setting = c(), method = c("fast","novel")){
     if("aR_opt" %in% class(setting)){
       settingPar <- setting
     } else {
-      stop("The setting used should be a class of aR_opt!")
+      stop("autoRasch ERROR: The setting used should be a class of `aR_opt'!")
     }
   }
 
@@ -61,7 +61,7 @@ pcm <- function(X, init_par = c(), setting = c(), method = c("fast","novel")){
 
   result <- pjmle(X = X, init_par = init_par, setting = settingPar, method = method)
 
-  class(result) <- c(class(result),"armodels","pcm","autoRasch")
+  class(result) <- c("pcm","armodels","autoRasch",class(result))
 
   return(result)
 
@@ -246,7 +246,7 @@ fitStats.pcm <- function(obj, isAlpha = TRUE, isTraced = FALSE){
     res_fit[["traceMat"]] <- list("emat" = Emat, "vmat" = Vmat, "cmat" = Cmat, "std.res" = st.res)
   }
 
-  class(res_fit) <- c(class(res_fit),"fit","autoRasch")
+  class(res_fit) <- c("fit","autoRasch",class(res_fit))
 
   return(res_fit)
 }
