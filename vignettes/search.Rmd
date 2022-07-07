@@ -61,7 +61,7 @@ setting <- autoRaschOptions()
 setting$isHessian <- FALSE
 stepwise_res <- stepwise_search(shortDIF, incl_set = c(1:4), cores = 2, 
                                 groups_map = grMap, method = "fast", 
-                                criterion = "ipoqlldif", isTracked = TRUE)
+                                criterion = "ipoqlldif", isTraced = TRUE)
 ```
 
 This `stepwise_search()` aims to search the maximum IPOQ-LL score over all items combinations possible. This maximum score correspond to the "best" itemset according to the semi-automated Rasch analysis. Therefore, to speed up the search, we implements parallelization in every step of the stepwise selection search. If `isTracked = TRUE` the function prints the combination of items which returns the highest IPOQ-LL score at every step.
