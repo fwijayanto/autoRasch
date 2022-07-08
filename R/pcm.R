@@ -75,7 +75,6 @@ pcm <- function(X, init_par = c(), setting = c(), method = c("fast","novel")){
 #' @param obj The object of class \code{'pcm'}.
 #' @param isAlpha Boolean value that indicates whether the discrimination parameters is needed to be estimated or not.
 #' The discrimination parameters are estimated using the corresponding models (GPCM or GPCM-DIF).
-#' @param isTraced A list of some matrices, i.e., the expected values, the variances, the curtosis, and the standardized residual matrix.
 #'
 #' @return
 #' \strong{\code{fitStats()} will return a \code{\link[base:list]{list}} which contains:}
@@ -94,7 +93,7 @@ pcm <- function(X, init_par = c(), setting = c(), method = c("fast","novel")){
 #'    \item{p.outfitZ}{   A vector of OutfitZ values for each persons.}
 #'    \item{p.infitZ}{   A vector of InfitZ values for each persons.}
 #' }
-#' \emph{traceMat}{   Some computed matrices in the process. Only if \code{isTraced = TRUE}}
+#' \emph{traceMat}{   Some computed matrices in the process.}
 #' \itemize{
 #'    \item{emat}{   The expected values matrix.}
 #'    \item{vmat}{   The variance matrix.}
@@ -109,7 +108,7 @@ pcm <- function(X, init_par = c(), setting = c(), method = c("fast","novel")){
 #'
 #' @rdname pcm
 #' @export
-fitStats.pcm <- function(obj, isAlpha = TRUE, isTraced = FALSE){
+fitStats.pcm <- function(obj, isAlpha = TRUE){
 
   min.x <- min(obj$X, na.rm = TRUE)
   X <- obj$X - min.x
@@ -242,9 +241,7 @@ fitStats.pcm <- function(obj, isAlpha = TRUE, isTraced = FALSE){
     res_fit[["alpha"]] <- exp(gpcm_res$gamma)
   }
 
-  if(isTraced){
-    res_fit[["traceMat"]] <- list("emat" = Emat, "vmat" = Vmat, "cmat" = Cmat, "std.res" = st.res)
-  }
+  res_fit[["traceMat"]] <- list("emat" = Emat, "vmat" = Vmat, "cmat" = Cmat, "std.res" = st.res)
 
   class(res_fit) <- c("fit","autoRasch",class(res_fit))
 

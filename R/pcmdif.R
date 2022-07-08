@@ -74,7 +74,6 @@ pcm_dif <- function(X, init_par = c(), groups_map = c(), setting = c(), method =
 #' @param obj The object of class \code{'pcmdif'}.
 #' @param isAlpha Boolean value that indicates whether the discrimination parameters is needed to be estimated or not.
 #' The discrimination parameters are estimated using the corresponding models (GPCM or GPCM-DIF).
-#' @param isTraced Logical statement whether returns some computed matrices, i.e., the expected values, the variances, the curtosis, and the standardized residual matrix.
 #'
 #' @return
 #' \strong{\code{fitStats()} will return a \code{\link[base:list]{list}} which contains:}
@@ -93,7 +92,7 @@ pcm_dif <- function(X, init_par = c(), groups_map = c(), setting = c(), method =
 #'    \item{p.outfitZ}{   A vector of OutfitZ values for each persons.}
 #'    \item{p.infitZ}{   A vector of InfitZ values for each persons.}
 #' }
-#' \emph{traceMat}{   Some computed matrices in the process. Only if \code{isTraced = TRUE}}
+#' \emph{traceMat}{   Some computed matrices in the process.}
 #' \itemize{
 #'    \item{emat}{   The expected values matrix.}
 #'    \item{vmat}{   The variance matrix.}
@@ -113,7 +112,7 @@ pcm_dif <- function(X, init_par = c(), groups_map = c(), setting = c(), method =
 #'
 #' @rdname pcm_dif
 #' @export
-fitStats.pcmdif <- function(obj, isAlpha = TRUE, isTraced = FALSE){
+fitStats.pcmdif <- function(obj, isAlpha = TRUE){
 
   if(is.null(dim(obj$X))){
     obj$X <- matrix(obj$X,ncol = 1)
@@ -294,9 +293,7 @@ fitStats.pcmdif <- function(obj, isAlpha = TRUE, isTraced = FALSE){
     res_fit[["alpha"]] <- exp(gpcmdif_res$gamma)
   }
 
-  if(isTraced){
-    res_fit[["traceMat"]] <- list("emat" = Emat, "vmat" = Vmat, "cmat" = Cmat, "std.res" = st.res)
-  }
+  res_fit[["traceMat"]] <- list("emat" = Emat, "vmat" = Vmat, "cmat" = Cmat, "std.res" = st.res)
 
   class(res_fit) <- c("fit","autoRasch",class(res_fit))
   return(res_fit)

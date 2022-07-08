@@ -9,7 +9,7 @@
 \usage{
 pcm(X, init_par = c(), setting = c(), method = c("fast", "novel"))
 
-\method{fitStats}{pcm}(obj, isAlpha = TRUE, isTraced = FALSE)
+\method{fitStats}{pcm}(obj, isAlpha = TRUE)
 
 \method{summary}{pcm}(object, ...)
 
@@ -29,8 +29,6 @@ rows represent individuals, columns represent items.}
 
 \item{isAlpha}{Boolean value that indicates whether the discrimination parameters is needed to be estimated or not.
 The discrimination parameters are estimated using the corresponding models (GPCM or GPCM-DIF).}
-
-\item{isTraced}{A list of some matrices, i.e., the expected values, the variances, the curtosis, and the standardized residual matrix.}
 
 \item{object}{The object of class \code{'pcm'}.}
 
@@ -64,7 +62,7 @@ The discrimination parameters are estimated using the corresponding models (GPCM
 \item{p.outfitZ}{   A vector of OutfitZ values for each persons.}
 \item{p.infitZ}{   A vector of InfitZ values for each persons.}
 }
-\emph{traceMat}{   Some computed matrices in the process. Only if \code{isTraced = TRUE}}
+\emph{traceMat}{   Some computed matrices in the process.}
 \itemize{
 \item{emat}{   The expected values matrix.}
 \item{vmat}{   The variance matrix.}
