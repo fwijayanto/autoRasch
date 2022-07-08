@@ -31,7 +31,7 @@
 #'
 #' #To summarize only for beta parameters
 #' summary(pcm_res, par="beta")
-#' fit_res <- fitStats(pcm_res, isTraced = TRUE)
+#' fit_res <- fitStats(pcm_res)
 #' itemfit(fit_res)
 #' personfit(fit_res)
 #' plot_fitStats(fit_res, toPlot = c("alpha","outfit"), useName = TRUE)

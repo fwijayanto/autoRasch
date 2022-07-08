@@ -31,13 +31,14 @@ backward_search(
   incl_set = c(),
   groups_map = c(),
   cores = NULL,
-  isTraced = TRUE,
   isContinued = FALSE,
   isConvert = FALSE,
   setting_par_iq = c(),
+  fileOutput = FALSE,
   setting_par_oq = c(),
   method = c("fast", "novel"),
-  tempFile = "temp_backSearch.RData"
+  tempFile = "temp_backSearch.RData",
+  isTraced = FALSE
 )
 
 \method{summary}{search}(object, ...)

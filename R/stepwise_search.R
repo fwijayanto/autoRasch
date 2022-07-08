@@ -418,8 +418,9 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
 #'
 #' @export
 backward_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = c(), groups_map = c(), cores = NULL,
-                            isTraced = TRUE, isContinued = FALSE, isConvert = FALSE, setting_par_iq = c(),
-                            setting_par_oq = c(), method = c("fast","novel"), tempFile = "temp_backSearch.RData"){
+                            isContinued = FALSE, isConvert = FALSE, setting_par_iq = c(), fileOutput = FALSE,
+                            setting_par_oq = c(), method = c("fast","novel"), tempFile = "temp_backSearch.RData",
+                            isTraced = FALSE){
 
   namecsv <- paste(paste(strsplit(tempFile, "(\\.)")[[1]][1:(length(strsplit(tempFile, "(\\.)")[[1]])-1)],collapse = "."),".csv",sep = "")
   fullitem <- seq_len(ncol(X))
@@ -428,13 +429,20 @@ backward_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
 
   if(is.null(setting_par_iq)){
     setting_par_iq <- autoRaschOptions()
+
   }
 
   if(is.null(setting_par_oq)){
     setting_par_oq <- autoRaschOptions()
   }
 
-  if(setting_par_iq$isTraced | setting_par_oq$isTraced){
+  if(criterion[1] == "ipoqlldif"){
+    setting_par_iq$optz_method <- setting_par_oq$optz_method <- "mixed"
+  } else {
+    setting_par_iq$optz_method <- setting_par_oq$optz_method <- "optim"
+  }
+
+  if(setting_par_iq$isTraced | setting_par_oq$isTraced | isTraced){
     isTraced <- TRUE
   } else {
     isTraced <- FALSE
