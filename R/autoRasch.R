@@ -7,5 +7,6 @@
 #' common statistics.
 #'
 #' @useDynLib autoRasch, .registration=TRUE
+#' @exportPattern("^[[:alpha:]]+")
 #' @importFrom Rcpp evalCpp
 NULL
