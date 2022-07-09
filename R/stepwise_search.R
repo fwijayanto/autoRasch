@@ -91,6 +91,8 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
 
       cl <- parallel::makeCluster(cores)
       doParallel::registerDoParallel(cl = cl, cores = cores)
+      parallel::clusterCall(cl, function(x) .libPaths(x), .libPaths())
+
 
       trace[["next_step"]] <- "forward"
 
@@ -203,6 +205,8 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
   }
   cl <- parallel::makeCluster(cores)
   doParallel::registerDoParallel(cl=cl, cores = cores)
+  parallel::clusterCall(cl, function(x) .libPaths(x), .libPaths())
+
 
   ### iteration will stop if the number of items in the incl_set reaches zero
   while(i >= 1){
@@ -497,6 +501,8 @@ backward_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
   }
   cl <- parallel::makeCluster(cores)
   doParallel::registerDoParallel(cl = cl, cores = cores)
+  parallel::clusterCall(cl, function(x) .libPaths(x), .libPaths())
+
 
   # iteration will stop if the number of items in the incl_set reaches zero
   while(i >= 1){
