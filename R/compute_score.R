@@ -335,7 +335,7 @@ compute_scores_unparalleled <- function(X, incl_sets, type = c("ipoqll","ipoqlld
 
   i <- NULL
 
-  scoreList <- foreach(i=seq_len(nrow(incl_sets)), .combine = rbind, .errorhandling = "stop", .packages = "autoRasch", .export = c("compute_score")) %dopar% {
+  scoreList <- foreach(i=seq_len(nrow(incl_sets)), .combine = rbind, .errorhandling = "stop") %dopar% {
 
     incl_set <- incl_sets[i,]
     incl_set <- incl_set[!is.na(incl_set)]
