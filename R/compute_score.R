@@ -335,7 +335,7 @@ compute_scores_unparalleled <- function(X, incl_sets, type = c("ipoqll","ipoqlld
 
   i <- NULL
 
-  scoreList <- foreach(i=seq_len(nrow(incl_sets)), .combine = rbind, .errorhandling = "stop") %dopar% {
+  scoreList <- foreach(i=seq_len(nrow(incl_sets)), .combine = rbind, .errorhandling = "stop", .packages = c("autoRasch","doParallel")) %dopar% {
 
     incl_set <- incl_sets[i,]
     incl_set <- incl_set[!is.na(incl_set)]
@@ -376,7 +376,7 @@ compute_scores_unparalleled <- function(X, incl_sets, type = c("ipoqll","ipoqlld
       # } else {
         withCallingHandlers({
           setTimeLimit(elapsed = timeLimit)
-          score_res <- compute_score(dset, incl_set = incl_set, type = type, groups_map = groups_map,
+          score_res <- autoRasch::compute_score(dset, incl_set = incl_set, type = type, groups_map = groups_map,
                                      init_par_iq = init_iq, init_par_oq = init_oq,
                                      setting_par_iq = setting_par_iq, setting_par_oq = setting_par_oq,
                                      method = method)
@@ -444,7 +444,7 @@ compute_scores <- function(X, incl_sets, type = c("ipoqll","ipoqlldif"),
     doParallel::registerDoParallel(cl=cl, cores = cores)
   # }
 
-  scoreList <- compute_scores_unparalleled(X = X, incl_sets = incl_sets, type = type,
+  scoreList <- autoRasch::compute_scores_unparalleled(X = X, incl_sets = incl_sets, type = type,
                                            step_direct = step_direct, groups_map = groups_map,
                                           init_par_iq = init_par_iq, init_par_oq = init_par_oq,
                                           setting_par_iq = setting_par_iq, setting_par_oq = setting_par_oq, method = method, timeLimit = timeLimit)
