@@ -27,7 +27,7 @@ devtools::load_all(".")
 remotes::install_github("fwijayanto/autoRasch", build_manual = TRUE, build_vignettes = TRUE)
 ```
 
-```{r setup}
+```{r}
 library(autoRasch)
 library(doParallel)
 ```
@@ -41,14 +41,14 @@ For example, we have a 9-item original survey and we want to examine how good to
 
 ```{r}
 grMap <- matrix(c(rep(0,50),rep(1,50)),ncol = 1, dimnames = list(c(1:100),c("cov")))
-ipoqlldif_score <- compute_score(shortDIF, incl_set = c(1:4), type = "ipoqlldif", groups_map = grMap)
+ipoqlldif_score <- autoRasch::compute_score(shortDIF, incl_set = c(1:4), type = "ipoqlldif", groups_map = grMap)
 summary(ipoqlldif_score)
 ```
 
 Furthermore, to compute multiple IPOQ-LL scores of several itemsets simultanously, we simply use
 
 ```{r}
-ipoqll_scores <- compute_scores(shortDIF, incl_sets = rbind(c(1:3),c(2:4)), type = "ipoqll", cores = 2)
+ipoqll_scores <- autoRasch::compute_scores(shortDIF, incl_sets = rbind(c(1:3),c(2:4)), type = "ipoqll", cores = 2)
 ipoqll_scores[,1:7]
 ```
 
