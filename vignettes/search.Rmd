@@ -24,7 +24,7 @@ devtools::load_all(".")
 
 ```{}
 # install.packages("remotes")
-remotes::install_github("fwijayanto/autoRasch", build_manual = TRUE, build_vignettes = TRUE)
+# remotes::install_github("fwijayanto/autoRasch", build_manual = TRUE, build_vignettes = TRUE)
 ```
 
 ```{r}
