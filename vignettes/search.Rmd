@@ -58,11 +58,11 @@ Furthermore, to compute multiple IPOQ-LL scores of several itemsets simultanousl
 The IPOQ-LL obtains by totalling the IQ-LL and OQ-LL. Changing `type = ipoqlldif` means the IPOQ-LL-DIF score is computed, by considering the DIF effects, instead of the IPOQ-LL. This log-likelihood is a score for model comparison, which means that there are more items combinations to be compared in order to obtain the maximum. Hence, we conduct the semi-automated Rasch analysis using the IPOQ-LL score by running
 
 ```{r}
-setting <- autoRaschOptions()
-setting$isHessian <- FALSE
-stepwise_res <- stepwise_search(shortDIF, incl_set = c(1:4), cores = 2, 
-                                groups_map = grMap, method = "fast", 
-                                criterion = "ipoqlldif", isTraced = TRUE)
+#setting <- autoRaschOptions()
+#setting$isHessian <- FALSE
+#stepwise_res <- stepwise_search(shortDIF, incl_set = c(1:4), cores = 2, 
+#                                groups_map = grMap, method = "fast", 
+#                                criterion = "ipoqlldif", isTraced = TRUE)
 ```
 
 This `stepwise_search()` aims to search the maximum IPOQ-LL score over all items combinations possible. This maximum score correspond to the "best" itemset according to the semi-automated Rasch analysis. Therefore, to speed up the search, we implements parallelization in every step of the stepwise selection search. If `isTracked = TRUE` the function prints the combination of items which returns the highest IPOQ-LL score at every step.
@@ -70,7 +70,7 @@ This `stepwise_search()` aims to search the maximum IPOQ-LL score over all items
 Obtaining the analysis result, we could plot
 
 ```{r}
-plot_search(stepwise_res, type="l")
+#plot_search(stepwise_res, type="l")
 ```
 
 The plot show the highest IPOQ-LL scores in every possible number of items in the itemsets. The numbers in the plot represent the item(s) which are removed (and added) to obtained the plotted scores, compared to the previous step. For instance, starting with full items, the highest IPOQ-LL score for itemset consisting with 8 items is obtained by removing item~1~. Subsequently, the highest IPOQ-LL score for itemset consisting with 7 items is obtained by removing item~2~.
