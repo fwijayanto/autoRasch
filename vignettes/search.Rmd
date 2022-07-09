@@ -48,7 +48,7 @@ summary(ipoqlldif_score)
 Furthermore, to compute multiple IPOQ-LL scores of several itemsets simultanously, we simply use
 
 ```{r}
-ipoqll_scores <- autoRasch::compute_scores(shortDIF, incl_sets = rbind(c(1:3),c(2:4)), type = "ipoqll", cores = 2)
+ipoqll_scores <- autoRasch::compute_scores(shortDIF, incl_sets = rbind(c(1:3),c(2:4)), type = "ipoqll", cores = 1)
 ipoqll_scores[,1:7]
 ```
 
