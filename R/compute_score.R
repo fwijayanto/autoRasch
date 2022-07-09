@@ -438,10 +438,11 @@ compute_scores <- function(X, incl_sets, type = c("ipoqll","ipoqlldif"),
   # if(checkOS['sysname'] == "Linux"){
   #   doParallel::registerDoParallel(cores = cores)
   # } else {
-    cl <- parallel::makeCluster(cores)
     # oFuture::registerDoFuture()
     # future::plan(future::cluster, workers = cl)
-    doParallel::registerDoParallel(cl=cl, cores = cores)
+    # cl <- parallel::makeCluster(cores)
+    # doParallel::registerDoParallel(cl=cl, cores = cores)
+    doParallel::registerDoParallel(cores = cores)
   # }
 
   scoreList <- compute_scores_unparalleled(X = X, incl_sets = incl_sets, type = type,
