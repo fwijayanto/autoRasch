@@ -440,9 +440,10 @@ compute_scores <- function(X, incl_sets, type = c("ipoqll","ipoqlldif"),
   # } else {
     # oFuture::registerDoFuture()
     # future::plan(future::cluster, workers = cl)
-    # cl <- parallel::makeCluster(cores)
-    # doParallel::registerDoParallel(cl=cl, cores = cores)
-    doParallel::registerDoParallel(cores = cores)
+    cl <- parallel::makeCluster(cores)
+    doParallel::registerDoParallel(cl=cl, cores = cores)
+    # doParallel::registerDoParallel(cores = cores)
+    parallel::clusterCall(cl, function(x) .libPaths(x), .libPaths())
   # }
 
   scoreList <- compute_scores_unparalleled(X = X, incl_sets = incl_sets, type = type,
