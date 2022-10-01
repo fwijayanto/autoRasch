@@ -53,13 +53,14 @@ pcm <- function(X, init_par = c(), setting = c(), method = c("fast","novel")){
   settingPar$fixed_par <- c("gamma","delta")
   settingPar$isPenalized_gamma <- FALSE
   settingPar$isPenalized_delta <- FALSE
+
   settingPar$optz_method <- "optim"
 
   if(!is.null(setting$optim_control)){
     settingPar$optim_control <- setting$optim_control
   }
 
-  result <- pjmle(X = X, init_par = init_par, setting = settingPar, method = method)
+  result <- pjmle(X = X, init_par = init_par, setting = settingPar, method = method[1])
 
   class(result) <- c("pcm","armodels","autoRasch",class(result))
 

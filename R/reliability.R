@@ -100,16 +100,7 @@ checkRel <- function(obj){
       stop("autoRasch ERROR: the separation reliability and standard error can not be computed without Hessian matrix.")
     }
 
-    if(method == "fast"){
-      if(NA %in% obj$real_vek){
-        NAvek <- which(is.na(obj$real_vek)) + length(obj$theta)
-        obj[["hessian"]] <- obj_hessian$hessian[-c(NAvek),-c(NAvek)]
-      } else {
-        obj[["hessian"]] <- obj_hessian$hessian
-      }
-    } else {
-      obj[["hessian"]] <- obj_hessian$hessian
-    }
+    obj[["hessian"]] <- obj_hessian$hessian
 
   }
 
@@ -123,7 +114,7 @@ checkRel <- function(obj){
   p_rel_idx <- (true_pvar)/(p_var)
 
   rmse_item <- rmseroor$rmsse_item
-  i_var <- var(beta)
+  i_var <- var(obj$beta.raw[c(which(!is.na(obj$real_vek)))])
   true_ivar <- i_var - (rmse_item^2)
   true_isd <- sqrt(true_ivar)
   i_sep_coeff <- true_isd/rmse_item
@@ -138,19 +129,17 @@ stdError <- function(obj){
 
   hess_theta <- obj$hessian[seq_along(obj$theta), seq_along(obj$theta)]
   varerr_p <- (diag(solve(hess_theta)))
-  # print(varerr_p)
   stderr_p <- sqrt(varerr_p)
   rmse_p <- sqrt(mean(varerr_p))
+
   if(is.null(obj$beta.raw)){
     hess_beta <- obj$hessian[(length(obj$theta)+1):(length(obj$theta)+length(which(!is.na(obj$real_vek)))),(length(obj$theta)+1):(length(obj$theta)+length(which(!is.na(obj$real_vek))))]
   } else {
+    lengthBeta <- length(which(!is.na(obj$real_vek)))
     hess_beta <- obj$hessian[(length(obj$theta)+1):(length(obj$theta)+length(obj$beta)),(length(obj$theta)+1):(length(obj$theta)+length(obj$beta))]
   }
-  # hess_beta <- hess_beta[-c(which(is.na(diag(hess_beta)))),-c(which(is.na(diag(hess_beta))))]
+  hess_beta <- hess_beta[c(which(!is.na(obj$real_vek))),c(which(!is.na(obj$real_vek)))]
   varerr_i <- (diag(solve(hess_beta)))
-  if(!is.null(obj$beta.raw)){
-    varerr_i <- varerr_i[c(which(!is.na(obj$real_vek)))]
-  }
   stderr_i <- sqrt(varerr_i)
   rmse_i <- sqrt(mean(varerr_i))
 

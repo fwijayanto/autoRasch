@@ -4,24 +4,12 @@
 \alias{check.unidim}
 \title{Unidimensionality Check}
 \usage{
-check.unidim(
-  x,
-  is.polychor = TRUE,
-  se = "robust",
-  estimator = "WLSMV",
-  test = "Satorra.Bentler"
-)
+check.unidim(x, is.polychor = TRUE)
 }
 \arguments{
 \item{x}{The dataset of responses.}
 
 \item{is.polychor}{A boolean parameter to set whether the dataset is categorical or not.}
-
-\item{se}{The standard error type. Please refer to \code{\link[lavaan:cfa]{cfa()}}.}
-
-\item{estimator}{The type of the estimator. Please refer to \code{\link[lavaan:cfa]{cfa()}}.}
-
-\item{test}{The test used in the factor analysis. Please refer to \code{\link[lavaan:cfa]{cfa()}}.}
 }
 \value{
 A list of the CFA output and the some of the goodness-of-fit indices (i.e., cfi, tli, rmsea, and srmr)
