@@ -47,7 +47,8 @@
 #'
 #' ### To change the default values
 #' adj_setting <- autoRaschOptions()
-#' adj_setting$isHessian <- FALSE
+#' adj_setting$isHessian <- TRUE
+#' pcm_res <- pcm(shortDIF, setting = adj_setting)
 #'
 #' @importFrom graphics hist layout legend lines matlines matplot par plot points text
 #' @importFrom utils combn write.csv

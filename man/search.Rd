@@ -32,6 +32,7 @@ backward_search(
   groups_map = c(),
   cores = NULL,
   isContinued = FALSE,
+  prevData = c(),
   isConvert = FALSE,
   setting_par_iq = c(),
   fileOutput = FALSE,

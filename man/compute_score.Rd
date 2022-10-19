@@ -62,6 +62,8 @@ compute_scores(
 
 \item{cores}{Number of cores that is used in the paralellization.}
 
+\item{timeLimit}{To limit the execution time of scores' computation.}
+
 \item{object}{The object from the class \code{score}. The result of the score computation.}
 
 \item{...}{further argument passed or from other method.}

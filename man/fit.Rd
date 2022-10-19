@@ -8,7 +8,7 @@
 \alias{plot_fitStats}
 \title{Fit statistics}
 \usage{
-fitStats(obj, isAlpha = TRUE, isTraced = FALSE)
+fitStats(obj, isAlpha = TRUE)
 
 \method{summary}{fit}(object, ...)
 
@@ -23,8 +23,6 @@ plot_fitStats(objFit, toPlot = c("alpha", "infit"), useName = FALSE, ...)
 
 \item{isAlpha}{Boolean value that indicates whether the discrimination parameters is needed to be estimated or not.
 The discrimination parameters are estimated using the corresponding models (GPCM or GPCM-DIF).}
-
-\item{isTraced}{A list of some matrices, i.e., the expected values, the variances, the curtosis, and the standardized residual matrix.}
 
 \item{object}{The object of class \code{'fit'}.}
 

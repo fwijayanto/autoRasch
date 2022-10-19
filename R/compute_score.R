@@ -404,6 +404,7 @@ compute_scores_unparalleled <- function(X, incl_sets, type = c("ipoqll","ipoqlld
 #' @param step_direct How will you compute the criterion score. \code{fixed} for the given itemset,
 #' \code{forward} computes all the scores of the possible combination of items if an item is added to the given set,
 #' \code{backward}  computes all the scores of the possible combination of items if an item is removed to the given set.
+#' @param timeLimit To limit the execution time of scores' computation.
 #'
 #' @return
 #' \code{compute_scores} will return a matrix as a result of the \code{rbind} operation of the \code{compute_score}'s result.

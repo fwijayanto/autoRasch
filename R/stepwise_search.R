@@ -422,7 +422,7 @@ stepwise_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = 
 #'
 #' @export
 backward_search <- function(X, criterion = c("ipoqll","ipoqlldif") , incl_set = c(), groups_map = c(), cores = NULL,
-                            isContinued = FALSE, isConvert = FALSE, setting_par_iq = c(), fileOutput = FALSE,
+                            isContinued = FALSE, prevData = c(), isConvert = FALSE, setting_par_iq = c(), fileOutput = FALSE,
                             setting_par_oq = c(), method = c("fast","novel"), tempFile = "temp_backSearch.RData",
                             isTraced = FALSE){
 

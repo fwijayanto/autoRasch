@@ -204,8 +204,6 @@ generate_data <- function(responseType = "multidim.nocorrel", theta = c(-3,3), s
     }
   }
 
-  View(D.mat)
-
   temp.mx <- c()
   pmat.mx <- c()
 

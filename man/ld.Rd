@@ -2,10 +2,13 @@
 % Please edit documentation in R/itemfit.R
 \name{residCor}
 \alias{residCor}
+\alias{corResid}
 \alias{summary.ld}
 \title{Residual Correlation}
 \usage{
 residCor(objFit)
+
+corResid(objFit)
 
 \method{summary}{ld}(object, ...)
 }

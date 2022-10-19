@@ -6,7 +6,6 @@
 #' @param obj The object of class \code{'pcm'} or \code{'pcmdif'}.
 #' @param isAlpha Boolean value that indicates whether the discrimination parameters is needed to be estimated or not.
 #' The discrimination parameters are estimated using the corresponding models (GPCM or GPCM-DIF).
-#' @param isTraced A list of some matrices, i.e., the expected values, the variances, the curtosis, and the standardized residual matrix.
 #'
 #' @return
 #' \strong{\code{fitStats()} will return a \code{\link[base:list]{list}} which contains:}
@@ -35,7 +34,7 @@
 #'
 #' @rdname fit
 #' @export
-fitStats <- function (obj, isAlpha = TRUE, isTraced = FALSE) {
+fitStats <- function (obj, isAlpha = TRUE) {
 
   if(!("pcm" %in% class(obj)) & !("pcmdif" %in% class(obj))){
     stop("autoRasch ERROR: itemfit is only for pcm and pcmdif object.")
@@ -225,6 +224,14 @@ residCor <- function(objFit){
   # }
   corLD <- cor(objFit$traceMat$std.res, use = "pairwise.complete.obs")
   class(corLD) <- c("ld",class(corLD))
+  return(corLD)
+}
+
+#' @rdname ld
+#'
+#' @export
+corResid <- function(objFit){
+  corLD <- residCor(objFit)
   return(corLD)
 }
 
