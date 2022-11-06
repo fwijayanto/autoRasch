@@ -42,6 +42,32 @@
 "shortDIF"
 
 
+#' A Shorter Polytomous Dataset with DSF
+#'
+#' The artificial dataset of a polytomous responses (four categories) which
+#' contains four non-DSF items and two DSF items.
+#'
+#' @docType data
+#'
+#' @usage data(shortDSF)
+#'
+#' @rdname shortDSF
+"shortDSF"
+
+
+#' The Two-subscale Inhomogenous Polytomous Dataset containing DIF items
+#'
+#' The artificial data set of a polytomous responses (four categories) which
+#' contains two subsets with different discrimination values and two DIF-items.
+#'
+#' @docType data
+#'
+#' @usage data(DIFdataset)
+#'
+#' @rdname DIFdataset
+"DIFdataset"
+
+
 #' The Inhomogenous Polytomous Dataset containing DIF items
 #'
 #' The artificial data set of a polytomous responses (five categories) which
