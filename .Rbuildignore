@@ -3,6 +3,11 @@
 ^\.RData$
 ^.*osteo.*\.RData$
 ^.*ieps.*\.RData$
+^data/msqol\.RData$
+^data/octq\.RData$
+^vignettes/.*\.md$
+^cran-comments\.md$
+^\.gitignore$
 ^.*ipoqlldif.*\.RData$
 ^.*_random3\.RData$
 ^.*.pdf$

@@ -44,21 +44,29 @@ import(doParallel)
 import(foreach)
 import(stats)
 importFrom(Rcpp,evalCpp)
-importFrom(graphics,hist)
-importFrom(graphics,layout)
-importFrom(graphics,legend)
-importFrom(graphics,lines)
-importFrom(graphics,matlines)
-importFrom(graphics,matplot)
-importFrom(graphics,par)
-importFrom(graphics,plot)
-importFrom(graphics,points)
-importFrom(graphics,text)
-importFrom(lavaan,cfa)
-importFrom(lavaan,fitMeasures)
-importFrom(parallel,detectCores)
-importFrom(parallel,makeCluster)
-importFrom(parallel,stopCluster)
-importFrom(utils,combn)
-importFrom(utils,write.csv)
+importFrom(graphics,
+  hist,
+  layout,
+  legend,
+  lines,
+  matlines,
+  matplot,
+  par,
+  plot,
+  points,
+  text
+)
+importFrom(lavaan,
+  cfa,
+  fitMeasures
+)
+importFrom(parallel,
+  detectCores,
+  makeCluster,
+  stopCluster
+)
+importFrom(utils,
+  combn,
+  write.csv
+)
 useDynLib(autoRasch, .registration=TRUE)

@@ -80,27 +80,27 @@ pcm <- function(X, init_par = c(), setting = c(), method = c("fast","novel")){
 #' @return
 #' \strong{\code{fitStats()} will return a \code{\link[base:list]{list}} which contains:}
 #' \item{alpha}{   A vector of estimated discrimination parameters for each items.}
-#' \emph{i.fit}{   Item fit statistics.}
-#' \itemize{
+#' \item{i.fit}{   Item fit statistics, a list that contains:
+#'   \describe{
 #'    \item{i.outfitMSQ}{   A vector of Outfit mean square values for each items.}
 #'    \item{i.infitMSQ}{   A vector of Infit mean square values for each items.}
 #'    \item{i.outfitZ}{   A vector of OutfitZ values for each items.}
 #'    \item{i.infitZ}{   A vector of InfitZ values for each items.}
-#' }
-#' \emph{p.fit}{   Person fit statistics.}
-#' \itemize{
+#'   }}
+#' \item{p.fit}{   Person fit statistics, a list that contains:
+#'   \describe{
 #'    \item{p.outfitMSQ}{   A vector of Outfit mean square values for each persons.}
 #'    \item{p.infitMSQ}{   A vector of Infit mean square values for each persons.}
 #'    \item{p.outfitZ}{   A vector of OutfitZ values for each persons.}
 #'    \item{p.infitZ}{   A vector of InfitZ values for each persons.}
-#' }
-#' \emph{traceMat}{   Some computed matrices in the process.}
-#' \itemize{
+#'   }}
+#' \item{traceMat}{   Some computed matrices in the process, a list that contains:
+#'   \describe{
 #'    \item{emat}{   The expected values matrix.}
 #'    \item{vmat}{   The variance matrix.}
 #'    \item{cmat}{   The curtosis matrix.}
 #'    \item{std.res}{   The standardized residual.}
-#' }
+#'   }}
 #'
 #'
 #' @references

@@ -6,7 +6,7 @@
 #'
 #' @details
 #' \code{cd_control} lists the parameters used to control the coordinate descent optimization procedure. The paramaters are:
-#' \itemize{
+#' \describe{
 #'     \item{\code{init.step}}{   Initial value of the delta parameters updating step. The default is \code{1}.}
 #'     \item{\code{scale.down}}{   A constant value to scale down the updating step. The default is \code{0.5}.}
 #'     \item{\code{maxit.cd.higher}}{   Maximum iteration in the higher level coordinate descent. The default is \code{500}.}

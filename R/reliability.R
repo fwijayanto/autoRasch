@@ -7,15 +7,15 @@
 #' @return
 #' A list of two objects, the reliability and the standard error.
 #'
-#' \emph{reliability}
-#' \itemize{
+#' \item{reliability}{   A list that contains:
+#'   \describe{
 #'    \item{PRI}{   Person reliability index.}
 #'    \item{PSR}{   Person separation reliability.}
 #'    \item{IRI}{   Item reliability index.}
 #'    \item{ISR}{   Item separation reliability.}
-#' }
-#' \emph{stdError}
-#' \itemize{
+#'   }}
+#' \item{stdError}{   A list that contains:
+#'   \describe{
 #'    \item{var_err_pers}{   A matrix of variance error of the estimation.}
 #'    \item{std_err_pers}{   A matrix of standard error of the estimation.}
 #'    \item{rmsse_pers}{   Root mean square of the standard error per person.}
@@ -24,7 +24,7 @@
 #'    \item{rmsse_item}{   Root mean square of the standard error per person.}
 #'    \item{hessian_theta}{   Hessian matrix of \code{theta} parameter.}
 #'    \item{hessian_beta}{   Hessian matrix of \code{beta} parameter.}
-#' }
+#'   }}
 #'
 #' @details
 #' Person reliability index

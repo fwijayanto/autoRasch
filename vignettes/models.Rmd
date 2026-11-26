@@ -1,6 +1,6 @@
 ---
 title: "autoRasch: Working with the models"
-author: "John Doe"
+author: "Feri Wijayanto"
 # output:
 #   html_vignette:
 #     keep_md: true
